@@ -8,6 +8,18 @@
   --border: #e5e5e5;
   --surface: #f5f5f5;
   --surface-hover: #ebebeb;
+
+  /* Easing curves */
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-in-out-quart: cubic-bezier(0.77, 0, 0.175, 1);
+
+  /* Hairline border */
+  --border-hairline: 1px;
+
+  /* Z-index scale */
+  --z-nav: 50;
+  --z-lightbox: 100;
 }
 
 .dark {
@@ -32,9 +44,15 @@
   --font-mono: var(--font-geist-mono);
 }
 
+@media (min-resolution: 192dpi) {
+  :root { --border-hairline: 0.5px; }
+}
+
 * {
   box-sizing: border-box;
 }
+
+h1, h2, h3 { text-wrap: balance; }
 
 html {
   scroll-behavior: smooth;
@@ -55,6 +73,18 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+/* Prevent double-tap zoom on interactive elements */
+button, a, input { touch-action: manipulation; }
+
+/* Prevent iOS Safari zoom on input focus */
+input, textarea, select { font-size: 16px; }
+
+/* Disable transitions during theme switch */
+.no-transitions,
+.no-transitions * {
+  transition: none !important;
 }
 
 /* Bento grid layout */
@@ -90,42 +120,21 @@ a {
   .projects-grid .row-span-2 { grid-row: span 1; }
 }
 
-/* TV CRT Effects */
-@keyframes scan {
-  0% {
-    transform: translateY(-100%);
-  }
-  100% {
-    transform: translateY(13500%);
-  }
-}
+/* Lightbox animations */
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes scale-in { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
-@keyframes static {
-  0%, 100% {
-    opacity: 0.02;
-  }
-  50% {
-    opacity: 0.04;
-  }
-}
-
-.animate-scan {
-  animation: scan 8s linear infinite;
-}
-
-.animate-static {
-  animation: static 0.1s steps(2) infinite;
+/* Hover-only utility — prevents stuck :hover on touch devices */
+@media (hover: hover) and (pointer: fine) {
+  .hover-hover\:hover\:scale-\[1\.01\]:hover { transform: scale(1.01); }
+  .hover-hover\:hover\:opacity-90:hover { opacity: 0.9; }
 }
 
 /* Respect reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
-  .animate-scan,
-  .animate-static {
-    animation: none;
-  }
-
-  * {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
@@ -197,9 +206,4 @@ a {
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
-}
-
-.bg-noise {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  background-size: 100px 100px;
 }

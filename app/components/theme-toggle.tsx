@@ -20,12 +20,22 @@ export default function ThemeToggle() {
   const applyTheme = (newTheme: Theme) => {
     const root = document.documentElement;
 
+    // Disable transitions during theme switch to prevent flash
+    root.classList.add("no-transitions");
+
     if (newTheme === "system") {
       const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
       root.classList.toggle("dark", prefersDark);
     } else {
       root.classList.toggle("dark", newTheme === "dark");
     }
+
+    // Re-enable transitions after paint
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        root.classList.remove("no-transitions");
+      });
+    });
   };
 
   const selectTheme = (newTheme: Theme) => {
@@ -81,7 +91,7 @@ export default function ThemeToggle() {
 
   return (
     <div
-      className="flex items-center h-8 p-1 rounded-lg bg-[var(--surface)] border border-[var(--border)]"
+      className="flex items-center h-8 p-1 rounded-lg bg-[var(--surface)] shadow-[0_0_0_1px_var(--border)]"
       role="radiogroup"
       aria-label="Theme selector"
     >
@@ -90,7 +100,7 @@ export default function ThemeToggle() {
           key={option.value}
           onClick={() => selectTheme(option.value)}
           className={`
-            flex items-center justify-center w-8 h-6 rounded-md transition-all
+            relative flex items-center justify-center w-8 h-6 rounded-md transition-[background-color,color,box-shadow] duration-150 before:absolute before:inset-x-0 before:inset-y-[-10px] before:content-['']
             ${theme === option.value
               ? "bg-[var(--background)] text-[var(--foreground)] shadow-sm"
               : "text-[var(--muted)] hover:text-[var(--foreground)]"

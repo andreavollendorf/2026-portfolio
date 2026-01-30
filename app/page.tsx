@@ -185,7 +185,7 @@ I believe good design should make work feel lighter. Clear structure, thoughtful
               href={`/case-study/${project.slug}`}
               className={`group ${project.span} rounded-xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--accent)] outline-none`}
             >
-              <article className="relative h-full rounded-xl overflow-hidden bg-white shadow-[0_0_0_1px_#00000014,0px_2px_2px_#0000000a] transition-all duration-300 flex flex-col justify-end p-5">
+              <article className="relative h-full rounded-xl overflow-hidden bg-white shadow-[0_0_0_1px_#00000014,0px_2px_2px_#0000000a] transition-[transform,box-shadow] duration-200 will-change-transform hover-hover:hover:scale-[1.01] active:scale-[0.98] flex flex-col justify-end p-5" style={{ transitionTimingFunction: 'var(--ease-out-quart)' }}>
                 <span className="text-[13px] font-medium">{project.title}</span>
                 <span className="text-[11px] text-[var(--muted)] mt-1">{project.coverDate || project.year}</span>
               </article>

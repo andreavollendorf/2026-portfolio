@@ -35,19 +35,21 @@ function Lightbox({
 
   return (
     <div
-      className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-6 cursor-zoom-out"
+      className="fixed inset-0 bg-black/90 flex items-center justify-center p-6 cursor-zoom-out animate-[fade-in_200ms_ease-out]"
+      style={{ zIndex: 'var(--z-lightbox)' }}
       onClick={onClose}
     >
       <button
-        className="absolute top-6 right-6 text-white/60 hover:text-white transition-colors"
+        className="absolute top-6 right-6 p-[10px] -m-[10px] text-white/60 hover:text-white transition-colors"
         onClick={onClose}
+        aria-label="Close lightbox"
       >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
           <path d="M18 6L6 18M6 6l12 12" />
         </svg>
       </button>
       <div
-        className="relative max-w-[90vw] max-h-[90vh] bg-[var(--surface)] rounded-lg overflow-hidden"
+        className="relative max-w-[90vw] max-h-[90vh] bg-[var(--surface)] rounded-lg overflow-hidden animate-[scale-in_200ms_ease-out]"
         onClick={(e) => e.stopPropagation()}
       >
         {src ? (
@@ -150,10 +152,10 @@ export function CaseStudyLayout({
 
         {/* Top Navigation */}
         <nav
-          className={`sticky top-0 z-50 backdrop-blur-md transition-transform duration-300 ${
+          className={`sticky top-0 backdrop-blur-md transition-transform duration-300 ${
             navVisible ? "translate-y-0" : "-translate-y-full"
           }`}
-          style={{ backgroundColor: "color-mix(in srgb, var(--background) 80%, transparent)" }}
+          style={{ zIndex: 'var(--z-nav)', transitionTimingFunction: 'var(--ease-out-quart)', backgroundColor: "color-mix(in srgb, var(--background) 80%, transparent)" }}
         >
           <div className="flex items-center justify-between py-5 px-6 lg:px-8">
             <Link
@@ -167,11 +169,13 @@ export function CaseStudyLayout({
             </Link>
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className={`text-[14px] font-medium transition-all duration-300 ${
+              aria-label="Scroll to top"
+              className={`text-[14px] font-medium transition-[opacity,transform] duration-300 ${
                 showTitle
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 -translate-y-2 pointer-events-none"
               }`}
+              style={{ transitionTimingFunction: 'var(--ease-out-quart)' }}
             >
               {title.replace(/\.$/, "")}
             </button>
@@ -186,11 +190,12 @@ export function CaseStudyLayout({
               <li key={section.id}>
                 <a
                   href={`#${section.id}`}
-                  className={`text-[13px] block py-1 transition-all duration-200 ${
+                  className={`text-[13px] block py-1 transition-[color,opacity,transform] duration-200 ${
                     activeSection === section.id
                       ? "text-[var(--foreground)] font-medium translate-x-2 opacity-100"
                       : "text-[var(--muted)] hover:text-[var(--foreground)] opacity-50 hover:opacity-100"
                   }`}
+                  style={{ transitionTimingFunction: 'var(--ease-out-quart)' }}
                 >
                   {section.label}
                 </a>
@@ -321,7 +326,7 @@ export function ImageBlock({
   return (
     <figure className="my-10">
       <div
-        className={`relative rounded-lg overflow-hidden bg-[var(--surface)] ${src ? "cursor-zoom-in" : ""} transition-opacity hover:opacity-90`}
+        className={`relative rounded-lg overflow-hidden bg-[var(--surface)] ${src ? "cursor-zoom-in" : ""} transition-opacity hover-hover:hover:opacity-90`}
         onClick={() => src && openLightbox?.(alt, src)}
       >
         {src ? (
@@ -353,7 +358,7 @@ export function TwoImages({
       {images.map((img, i) => (
         <figure key={i}>
           <div
-            className={`relative rounded-lg overflow-hidden bg-[var(--surface)] ${img.src ? "cursor-zoom-in" : ""} transition-opacity hover:opacity-90`}
+            className={`relative rounded-lg overflow-hidden bg-[var(--surface)] ${img.src ? "cursor-zoom-in" : ""} transition-opacity hover-hover:hover:opacity-90`}
             onClick={() => img.src && openLightbox?.(img.alt, img.src)}
           >
             {img.src ? (
