@@ -10,10 +10,12 @@ export default function ThemeToggle() {
 
   useEffect(() => {
     setMounted(true);
-    const stored = localStorage.getItem("theme") as Theme | null;
+    const stored = sessionStorage.getItem("theme") as Theme | null;
     if (stored) {
       setTheme(stored);
       applyTheme(stored);
+    } else {
+      applyTheme("system");
     }
   }, []);
 
@@ -30,7 +32,11 @@ export default function ThemeToggle() {
 
   const selectTheme = (newTheme: Theme) => {
     setTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
+    if (newTheme === "system") {
+      sessionStorage.removeItem("theme");
+    } else {
+      sessionStorage.setItem("theme", newTheme);
+    }
     applyTheme(newTheme);
   };
 

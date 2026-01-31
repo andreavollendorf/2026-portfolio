@@ -150,21 +150,22 @@ export function CaseStudyLayout({
 
         {/* Top Navigation */}
         <nav
-          className={`sticky top-0 z-50 backdrop-blur-md transition-transform duration-300 ${
+          className={`sticky top-0 z-50 backdrop-blur-md transition-transform duration-300 relative ${
             navVisible ? "translate-y-0" : "-translate-y-full"
           }`}
           style={{ backgroundColor: "color-mix(in srgb, var(--background) 80%, transparent)" }}
         >
-          <div className="flex items-center justify-between py-5 px-6 lg:px-8">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 text-[14px] text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
-            >
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M5.5 4L1.5 8M1.5 8L5.5 12M1.5 8H10C11.3807 8 12.5 6.88071 12.5 5.5V5.5C12.5 4.11929 11.3807 3 10 3H8.5" stroke="currentColor"/>
-              </svg>
-              <span>Index</span>
-            </Link>
+          <Link
+            href="/"
+            className="absolute left-6 lg:left-8 top-1/2 -translate-y-1/2 inline-flex items-center gap-2 text-[14px] text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5.5 4L1.5 8M1.5 8L5.5 12M1.5 8H10C11.3807 8 12.5 6.88071 12.5 5.5V5.5C12.5 4.11929 11.3807 3 10 3H8.5" stroke="currentColor"/>
+            </svg>
+            <span>Index</span>
+          </Link>
+          <div className="flex items-center justify-between py-5 px-6 max-w-[1200px] mx-auto">
+            <div />
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               className={`text-[14px] font-medium transition-all duration-300 ${
@@ -180,8 +181,8 @@ export function CaseStudyLayout({
         </nav>
 
         {/* Sticky Left Nav */}
-        <aside className="hidden lg:block fixed left-8 top-32 w-36">
-          <ul className="space-y-3">
+        <aside className="hidden lg:block fixed left-8 top-[11.5rem] w-36">
+          <ul className="space-y-1">
             {sections.map((section) => (
               <li key={section.id}>
                 <a
