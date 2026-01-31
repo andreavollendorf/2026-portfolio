@@ -47,7 +47,7 @@ export default function ProofServesPage() {
           ]}
         />
       }
-      nextProject={{ slug: "pokergpt", title: "The world's first AI poker coach" }}
+      nextProject={{ slug: "easy-a", title: "EasyA" }}
     >
       {/* ── Why It Mattered ──────────────────────────────────────────── */}
 

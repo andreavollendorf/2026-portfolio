@@ -131,7 +131,7 @@ export default function ThemeToggle() {
           `}
           role="radio"
           aria-checked={theme === option.value}
-          aria-label={option.value}
+          aria-label={`${option.value.charAt(0).toUpperCase()}${option.value.slice(1)} theme`}
         >
           {option.icon}
         </button>

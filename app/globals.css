@@ -138,6 +138,12 @@ input, textarea, select { font-size: 16px; }
   .btn-hover:hover { filter: brightness(1.05); }
   .link-hover:hover { color: var(--foreground); }
   .surface-hover:hover { background-color: var(--surface); }
+
+  /* Spring hover animations — only on pointer devices */
+  .group:hover .spring-hover-left { animation: spring-up-left 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+  .group:hover .spring-hover-right { animation: spring-up-right 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) 0.04s forwards; }
+  .group:hover .spring-hover-right-card { animation: spring-up-right-card 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+  .group:hover .spring-hover-left-logo { animation: spring-up-left-logo 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) 0.04s forwards; }
 }
 
 /* Theme-aware visibility — use CSS variables instead of dark: modifier */

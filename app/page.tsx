@@ -25,9 +25,7 @@ const projects = [
     company: "PROOF",
     year: "2025",
     coverDate: "November 2025",
-    coverImages: [
-      { src: "/images/proof-serves/hero-light.png", srcDark: "/images/proof-serves/hero-dark.png" },
-    ],
+    coverImages: [{ src: "/images/proof-serves/hero-light.png" }],
   },
   {
     slug: "easy-a",
@@ -91,7 +89,7 @@ export default function Home() {
       {/* Navigation */}
       <nav aria-label="Main navigation">
         <div className="flex items-center justify-between px-6 py-5 max-w-[1200px] mx-auto">
-            <Link href="/" className="text-[15px] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--accent)] outline-none rounded-sm">
+            <Link href="/" className="text-[15px] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm">
               Andrea Vollendorf
             </Link>
             <ThemeToggle />
@@ -114,8 +112,10 @@ I specialize in regulated, edge-case-heavy workflows, shaping messy requirements
               <Link
                 key={link.label}
                 href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
                 className={`
-                  relative inline-flex items-center justify-center h-8 px-4 py-1.5 rounded-lg text-[13px] font-medium btn-hover active:scale-[0.98] transition-[filter,transform] duration-150 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--accent)] outline-none
+                  relative inline-flex items-center justify-center h-8 px-4 py-1.5 rounded-lg text-[13px] font-medium btn-hover active:scale-[0.98] transition-[filter,transform] duration-150 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none
                   ${link.label === "LinkedIn" || link.label === "Resume" ? "group" : ""}
                 `}
                 style={{
@@ -130,14 +130,14 @@ I specialize in regulated, edge-case-heavy workflows, shaping messy requirements
                     <img
                       src="/linkedin-profile.webp"
                       alt=""
-                      className="absolute bottom-0 left-1/2 w-[160px] opacity-0 group-hover:animate-[spring-up-left_0.35s_cubic-bezier(0.34,1.56,0.64,1)_forwards] group-focus-visible:animate-[spring-up-left_0.35s_cubic-bezier(0.34,1.56,0.64,1)_forwards]"
+                      className="absolute bottom-0 left-1/2 w-[160px] opacity-0 spring-hover-left group-focus-visible:animate-[spring-up-left_0.35s_cubic-bezier(0.34,1.56,0.64,1)_forwards]"
                       style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.1))' }}
                     />
                     {/* LinkedIn logo */}
                     <img
                       src="/linkedin-logo.webp"
                       alt=""
-                      className="absolute bottom-0 left-1/2 w-[70px] opacity-0 group-hover:animate-[spring-up-right_0.35s_cubic-bezier(0.34,1.56,0.64,1)_0.04s_forwards] group-focus-visible:animate-[spring-up-right_0.35s_cubic-bezier(0.34,1.56,0.64,1)_0.04s_forwards]"
+                      className="absolute bottom-0 left-1/2 w-[70px] opacity-0 spring-hover-right group-focus-visible:animate-[spring-up-right_0.35s_cubic-bezier(0.34,1.56,0.64,1)_0.04s_forwards]"
                       style={{ filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.08))' }}
                     />
                   </div>
@@ -148,14 +148,14 @@ I specialize in regulated, edge-case-heavy workflows, shaping messy requirements
                     <img
                       src="/resume-preview.webp"
                       alt=""
-                      className="absolute bottom-0 left-1/2 w-[160px] opacity-0 group-hover:animate-[spring-up-right-card_0.35s_cubic-bezier(0.34,1.56,0.64,1)_forwards] group-focus-visible:animate-[spring-up-right-card_0.35s_cubic-bezier(0.34,1.56,0.64,1)_forwards]"
+                      className="absolute bottom-0 left-1/2 w-[160px] opacity-0 spring-hover-right-card group-focus-visible:animate-[spring-up-right-card_0.35s_cubic-bezier(0.34,1.56,0.64,1)_forwards]"
                       style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.1))' }}
                     />
                     {/* Dropbox logo - on the left, on top */}
                     <img
                       src="/dropbox-logo.webp"
                       alt=""
-                      className="absolute bottom-0 left-1/2 w-[70px] opacity-0 group-hover:animate-[spring-up-left-logo_0.35s_cubic-bezier(0.34,1.56,0.64,1)_0.04s_forwards] group-focus-visible:animate-[spring-up-left-logo_0.35s_cubic-bezier(0.34,1.56,0.64,1)_0.04s_forwards]"
+                      className="absolute bottom-0 left-1/2 w-[70px] opacity-0 spring-hover-left-logo group-focus-visible:animate-[spring-up-left-logo_0.35s_cubic-bezier(0.34,1.56,0.64,1)_0.04s_forwards]"
                       style={{ filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.08))' }}
                     />
                   </div>
@@ -182,13 +182,11 @@ I specialize in regulated, edge-case-heavy workflows, shaping messy requirements
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 text-[13px] text-[var(--muted)]">
           <p>
             Built with{" "}
-            <Link href="https://nextjs.org" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--accent)] outline-none rounded-sm" target="_blank" rel="noopener noreferrer">Next.js</Link>
+            <Link href="https://nextjs.org" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm" target="_blank" rel="noopener noreferrer">Next.js</Link>
             ,{" "}
-            <Link href="https://react.dev" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--accent)] outline-none rounded-sm" target="_blank" rel="noopener noreferrer">React</Link>
-            ,{" "}
-            <Link href="https://agentation.dev/" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--accent)] outline-none rounded-sm" target="_blank" rel="noopener noreferrer">Agentation</Link>
+            <Link href="https://agentation.dev/" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm" target="_blank" rel="noopener noreferrer">Agentation</Link>
             {" & "}
-            <Link href="https://claude.ai/code" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--accent)] outline-none rounded-sm" target="_blank" rel="noopener noreferrer">Claude Code</Link>
+            <Link href="https://claude.ai/code" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm" target="_blank" rel="noopener noreferrer">Claude Code</Link>
           </p>
           <p>
             Made in Maine

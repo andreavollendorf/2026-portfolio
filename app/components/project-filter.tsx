@@ -60,7 +60,7 @@ export default function ProjectFilterCarousel({
                   onClick={() => switchFilter(tab.slug)}
                   className={`
                     shrink-0 h-8 px-3.5 rounded-lg text-[13px] transition-colors duration-150
-                    focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--accent)] outline-none
+                    focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none
                     ${
                       isActive
                         ? "bg-[var(--surface)] font-medium text-[var(--foreground)]"

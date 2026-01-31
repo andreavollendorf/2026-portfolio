@@ -91,8 +91,10 @@ export default function ProjectCarousel({
     el.style.transform = `translate3d(-${posRef.current}px, 0, 0)`;
   }, [copies]);
 
+  const visibleRef = useRef(false);
+
   const animate = useCallback(() => {
-    if (stoppedRef.current) return;
+    if (stoppedRef.current || !visibleRef.current) return;
 
     posRef.current += 0.55;
     applyTransform();
@@ -105,14 +107,31 @@ export default function ProjectCarousel({
     applyTransform();
   }, [activeFilter, applyTransform]);
 
+  // Start/stop animation based on viewport visibility
   useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (mq.matches) return;
 
-    if (!stoppedRef.current) {
-      rafRef.current = requestAnimationFrame(animate);
-      return () => cancelAnimationFrame(rafRef.current);
-    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        visibleRef.current = entry.isIntersecting;
+        if (entry.isIntersecting && !stoppedRef.current) {
+          rafRef.current = requestAnimationFrame(animate);
+        } else {
+          cancelAnimationFrame(rafRef.current);
+        }
+      },
+      { threshold: 0 }
+    );
+
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(rafRef.current);
+    };
   }, [animate]);
 
   const stopForever = useCallback(() => {
@@ -224,7 +243,7 @@ export default function ProjectCarousel({
             key={`${card.projectSlug}-${card.image.src}-${i}`}
             href={`/case-study/${card.projectSlug}`}
             aria-label={`${card.projectTitle} — ${card.projectDescription}`}
-            className="mr-5 shrink-0 group focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--accent)] outline-none"
+            className="mr-5 shrink-0 group focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none"
             onFocus={stopForever}
             onClick={handleClick}
             draggable={false}
