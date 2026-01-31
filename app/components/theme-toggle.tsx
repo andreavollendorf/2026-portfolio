@@ -1,25 +1,37 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useCallback, useSyncExternalStore } from "react";
 
 type Theme = "system" | "light" | "dark";
 
+// External store for theme — backed by sessionStorage
+const themeListeners = new Set<() => void>();
+
+function subscribeTheme(callback: () => void) {
+  themeListeners.add(callback);
+  return () => { themeListeners.delete(callback); };
+}
+
+function getThemeSnapshot(): Theme {
+  try {
+    return (sessionStorage.getItem("theme") as Theme) || "system";
+  } catch {
+    return "system";
+  }
+}
+
+function getThemeServerSnapshot(): Theme {
+  return "system";
+}
+
+// Mounted detection — false on server, true on client
+const emptySubscribe = () => () => {};
+
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>("system");
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
+  const theme = useSyncExternalStore(subscribeTheme, getThemeSnapshot, getThemeServerSnapshot);
 
-  useEffect(() => {
-    setMounted(true);
-    const stored = sessionStorage.getItem("theme") as Theme | null;
-    if (stored) {
-      setTheme(stored);
-      applyTheme(stored);
-    } else {
-      applyTheme("system");
-    }
-  }, []);
-
-  const applyTheme = (newTheme: Theme) => {
+  const applyTheme = useCallback((newTheme: Theme) => {
     const root = document.documentElement;
 
     // Disable transitions during theme switch to prevent flash
@@ -38,17 +50,22 @@ export default function ThemeToggle() {
         root.classList.remove("no-transitions");
       });
     });
-  };
+  }, []);
 
-  const selectTheme = (newTheme: Theme) => {
-    setTheme(newTheme);
+  // Apply theme on mount and when theme changes
+  useEffect(() => {
+    applyTheme(theme);
+  }, [theme, applyTheme]);
+
+  const selectTheme = useCallback((newTheme: Theme) => {
     if (newTheme === "system") {
       sessionStorage.removeItem("theme");
     } else {
       sessionStorage.setItem("theme", newTheme);
     }
     applyTheme(newTheme);
-  };
+    themeListeners.forEach(cb => cb());
+  }, [applyTheme]);
 
   // Listen for system theme changes
   useEffect(() => {
@@ -59,7 +76,7 @@ export default function ThemeToggle() {
 
     mediaQuery.addEventListener("change", handler);
     return () => mediaQuery.removeEventListener("change", handler);
-  }, [theme]);
+  }, [theme, applyTheme]);
 
   if (!mounted) {
     return <div className="h-8 w-[140px]" />;
@@ -106,10 +123,10 @@ export default function ThemeToggle() {
           key={option.value}
           onClick={() => selectTheme(option.value)}
           className={`
-            relative flex items-center justify-center w-8 h-6 rounded-md transition-[background-color,color,box-shadow] duration-150 before:absolute before:inset-x-0 before:inset-y-[-10px] before:content-['']
+            relative flex items-center justify-center w-8 h-6 rounded-md transition-[background-color,color,box-shadow] duration-150 before:absolute before:inset-[-10px] before:content-['']
             ${theme === option.value
               ? "bg-[var(--background)] text-[var(--foreground)] shadow-sm"
-              : "text-[var(--muted)] hover:text-[var(--foreground)]"
+              : "text-[var(--muted)] link-hover"
             }
           `}
           role="radio"

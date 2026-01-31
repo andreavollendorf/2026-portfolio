@@ -1,5 +1,6 @@
 import Link from "next/link";
 import ThemeToggle from "./components/theme-toggle";
+import ProjectCarousel from "./components/project-carousel";
 
 
 const socialLinks = [
@@ -9,22 +10,33 @@ const socialLinks = [
 
 const projects = [
   {
-    slug: "proof-serves",
-    title: "Proof Serves",
-    description: "Client experience redesign",
-    company: "PROOF",
-    year: "2025",
-    span: "col-span-2 row-span-2",
-    coverDate: "November 2025",
-  },
-  {
     slug: "theoremreach",
     title: "Theorem Reach",
     description: "Strategy breakdown tool",
     company: "TheoremReach",
     year: "2021",
-    span: "col-span-2 row-span-1",
     coverDate: "September 2021",
+    coverImages: [{ src: "/images/theoremreach/hero-light.png" }],
+  },
+  {
+    slug: "proof-serves",
+    title: "Proof Serves",
+    description: "Client experience redesign",
+    company: "PROOF",
+    year: "2025",
+    coverDate: "November 2025",
+    coverImages: [
+      { src: "/images/proof-serves/hero-light.png", srcDark: "/images/proof-serves/hero-dark.png" },
+    ],
+  },
+  {
+    slug: "easy-a",
+    title: "EasyA",
+    description: "Web3 education app",
+    company: "EasyA",
+    year: "2023",
+    coverDate: "2023",
+    coverImages: [{ src: "/images/easy-a/hero.png" }],
   },
   {
     slug: "proof-ops",
@@ -32,8 +44,8 @@ const projects = [
     description: "Operations task management",
     company: "Proof",
     year: "2025",
-    span: "col-span-2 row-span-2",
     coverDate: "2025",
+    coverImages: [{ src: "/images/proof-ops/hero-light.png" }],
   },
   {
     slug: "userwise",
@@ -41,8 +53,8 @@ const projects = [
     description: "Liveops platform",
     company: "Userwise",
     year: "2021",
-    span: "col-span-1 row-span-2",
     coverDate: "2021",
+    coverImages: [{ src: "/images/userwise/hero-light.png" }],
   },
   {
     slug: "ikigai",
@@ -50,35 +62,17 @@ const projects = [
     description: "Generative AI platform",
     company: "Ikigai",
     year: "2021",
-    span: "col-span-1 row-span-2",
     coverDate: "2021",
-  },
-  {
-    slug: "unfold",
-    title: "Unfold",
-    description: "Creative tools",
-    company: "UNFOLD",
-    year: "2023",
-    span: "col-span-2 row-span-1",
-    coverDate: "2023",
-  },
-  {
-    slug: "design-systems",
-    title: "Design Systems",
-    description: "Design system development",
-    company: "Proof",
-    year: "2024",
-    span: "col-span-2 row-span-2",
-    coverDate: "2024",
+    coverImages: [{ src: "/images/ikigai/hero.png" }],
   },
   {
     slug: "treecard",
     title: "Treecard Banking",
-    description: "0→1 banking flows",
+    description: "0\u21921 banking flows",
     company: "Treecard",
     year: "2022",
-    span: "col-span-1 row-span-2",
     coverDate: "2022",
+    coverImages: [{ src: "/images/treecard/hero.png" }],
   },
   {
     slug: "storymaster",
@@ -86,8 +80,8 @@ const projects = [
     description: "AI-driven language learning app",
     company: "Storymaster",
     year: "2022",
-    span: "col-span-1 row-span-2",
     coverDate: "2022",
+    coverImages: [{ src: "/images/storymaster/hero.png" }],
   },
 ];
 
@@ -95,9 +89,9 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* Navigation */}
-      <nav>
+      <nav aria-label="Main navigation">
         <div className="flex items-center justify-between px-6 py-5 max-w-[1200px] mx-auto">
-            <Link href="/" className="text-[15px]">
+            <Link href="/" className="text-[15px] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--accent)] outline-none rounded-sm">
               Andrea Vollendorf
             </Link>
             <ThemeToggle />
@@ -108,12 +102,12 @@ export default function Home() {
       <header className="px-6 pt-16 pb-24 max-w-[1200px] mx-auto">
         <div className="max-w-[720px]">
           <h1 className="text-[32px] sm:text-[40px] leading-[1.2] tracking-[-0.02em] font-medium mb-8">
-          Designing systems that scale.
+          Designing structure for complex work.
           </h1>
           <p className="text-[16px] leading-[1.7] text-[var(--muted)] mb-12">
-          I’m Andrea, a product designer based in coastal Maine, with 14+ years of experience turning complexity into clarity.
+          I’m Andrea, a product designer based in coastal Maine, with 14+ years of experience designing highly constrained, nuanced systems with strong UX judgment and a high bar for craft.
 
-I believe good design should make work feel lighter. Clear structure, thoughtful defaults, and calm interfaces reduce stress and help people move forward with confidence. 
+I specialize in regulated, edge-case-heavy workflows, shaping messy requirements into intentional, durable interfaces that hold up in the real world.
           </p>
           <div className="flex gap-3 text-[14px]">
             {socialLinks.map((link) => (
@@ -121,7 +115,7 @@ I believe good design should make work feel lighter. Clear structure, thoughtful
                 key={link.label}
                 href={link.href}
                 className={`
-                  relative inline-flex items-center justify-center h-8 px-4 py-1.5 rounded-lg text-[13px] font-medium hover:brightness-105 active:scale-[0.97] transition-[filter,transform] duration-150 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--accent)] outline-none
+                  relative inline-flex items-center justify-center h-8 px-4 py-1.5 rounded-lg text-[13px] font-medium btn-hover active:scale-[0.98] transition-[filter,transform] duration-150 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--accent)] outline-none
                   ${link.label === "LinkedIn" || link.label === "Resume" ? "group" : ""}
                 `}
                 style={{
@@ -131,7 +125,7 @@ I believe good design should make work feel lighter. Clear structure, thoughtful
                 }}
               >
                 {link.label === "LinkedIn" && (
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 pointer-events-none w-[200px] h-[120px]">
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 pointer-events-none select-none w-[200px] h-[120px]">
                     {/* LinkedIn profile card */}
                     <img
                       src="/linkedin-profile.webp"
@@ -149,7 +143,7 @@ I believe good design should make work feel lighter. Clear structure, thoughtful
                   </div>
                 )}
                 {link.label === "Resume" && (
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 pointer-events-none w-[200px] h-[120px]">
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 pointer-events-none select-none w-[200px] h-[120px]">
                     {/* Resume preview - on the right */}
                     <img
                       src="/resume-preview.webp"
@@ -174,46 +168,13 @@ I believe good design should make work feel lighter. Clear structure, thoughtful
       </header>
 
       {/* Projects */}
-      <section id="projects" className="px-6 pb-32 max-w-[1200px] mx-auto">
-        <h2 className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-8 font-normal">
-          Selected Work
-        </h2>
-        <div className="projects-grid">
-          {projects.map((project) => (
-            <Link
-              key={project.slug}
-              href={`/case-study/${project.slug}`}
-              className={`group ${project.span} rounded-xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--accent)] outline-none`}
-            >
-              <article className="relative h-full rounded-xl overflow-hidden bg-white dark:bg-[var(--surface)] shadow-[0_0_0_1px_var(--border)] transition-[transform,box-shadow] duration-200 will-change-transform hover-hover:hover:scale-[1.01] active:scale-[0.98] flex flex-col" style={{ transitionTimingFunction: 'var(--ease-out-quart)' }}>
-                {project.slug === "proof-serves" ? (
-                  <div className="flex flex-col h-full p-3 gap-3">
-                    <div className="flex-1 overflow-hidden rounded-lg shadow-[0_0_0_1px_var(--border)] bg-white dark:bg-[var(--surface)]">
-                      <img
-                        src="/images/proof-serves/hero-light.png"
-                        alt=""
-                        className="w-full h-full object-cover dark:hidden"
-                      />
-                      <img
-                        src="/images/proof-serves/hero-dark.png"
-                        alt=""
-                        className="w-full h-full object-cover hidden dark:block"
-                      />
-                    </div>
-                    <span className="block w-full text-center text-[13px] font-medium text-[var(--foreground)] py-2 rounded-lg bg-[var(--background)] shadow-[0_0_0_1px_var(--border)] group-hover:bg-[var(--surface)] transition-colors">
-                      View case study
-                    </span>
-                  </div>
-                ) : (
-                  <div className="flex flex-col justify-end h-full p-5">
-                    <span className="text-[13px] font-medium text-[var(--foreground)]">{project.title}</span>
-                    <span className="text-[11px] text-[var(--muted)] mt-1">{project.coverDate || project.year}</span>
-                  </div>
-                )}
-              </article>
-            </Link>
-          ))}
+      <section id="projects" className="pb-32">
+        <div className="px-6 max-w-[1200px] mx-auto">
+          <h2 className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-8 font-normal">
+            Selected Work
+          </h2>
         </div>
+        <ProjectCarousel projects={projects} />
       </section>
 
       {/* Footer */}
@@ -221,13 +182,13 @@ I believe good design should make work feel lighter. Clear structure, thoughtful
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 text-[13px] text-[var(--muted)]">
           <p>
             Built with{" "}
-            <Link href="https://nextjs.org" className="hover:text-[var(--foreground)] transition-colors" target="_blank" rel="noopener noreferrer">Next.js</Link>
+            <Link href="https://nextjs.org" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--accent)] outline-none rounded-sm" target="_blank" rel="noopener noreferrer">Next.js</Link>
             ,{" "}
-            <Link href="https://react.dev" className="hover:text-[var(--foreground)] transition-colors" target="_blank" rel="noopener noreferrer">React</Link>
+            <Link href="https://react.dev" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--accent)] outline-none rounded-sm" target="_blank" rel="noopener noreferrer">React</Link>
             ,{" "}
-            <Link href="https://agentation.dev/" className="hover:text-[var(--foreground)] transition-colors" target="_blank" rel="noopener noreferrer">Agentation</Link>
+            <Link href="https://agentation.dev/" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--accent)] outline-none rounded-sm" target="_blank" rel="noopener noreferrer">Agentation</Link>
             {" & "}
-            <Link href="https://claude.ai/code" className="hover:text-[var(--foreground)] transition-colors" target="_blank" rel="noopener noreferrer">Claude Code</Link>
+            <Link href="https://claude.ai/code" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--accent)] outline-none rounded-sm" target="_blank" rel="noopener noreferrer">Claude Code</Link>
           </p>
           <p>
             Made in Maine
