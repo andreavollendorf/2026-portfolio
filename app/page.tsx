@@ -127,7 +127,7 @@ I believe good design should make work feel lighter. Clear structure, thoughtful
                 style={{
                   background: "linear-gradient(#ffdd73 0%, #ffbe25 100%)",
                   color: "#171717",
-                  boxShadow: "inset 0 0 1px 1px #ffffff24, 0 0 0 1px #00000014, 0 2px 2px #0000000a, 0 0 0 1px #ffbe25",
+                  boxShadow: "inset 0 0 1px 1px rgba(255,255,255,0.14), 0 0 0 1px rgba(0,0,0,0.08), 0 2px 2px rgba(0,0,0,0.04), 0 0 0 1px #ffbe25",
                 }}
               >
                 {link.label === "LinkedIn" && (
@@ -136,14 +136,14 @@ I believe good design should make work feel lighter. Clear structure, thoughtful
                     <img
                       src="/linkedin-profile.webp"
                       alt=""
-                      className="absolute bottom-0 left-1/2 w-[160px] opacity-0 group-hover:animate-[spring-up-left_0.35s_cubic-bezier(0.34,1.56,0.64,1)_forwards]"
+                      className="absolute bottom-0 left-1/2 w-[160px] opacity-0 group-hover:animate-[spring-up-left_0.35s_cubic-bezier(0.34,1.56,0.64,1)_forwards] group-focus-visible:animate-[spring-up-left_0.35s_cubic-bezier(0.34,1.56,0.64,1)_forwards]"
                       style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.1))' }}
                     />
                     {/* LinkedIn logo */}
                     <img
                       src="/linkedin-logo.webp"
                       alt=""
-                      className="absolute bottom-0 left-1/2 w-[70px] opacity-0 group-hover:animate-[spring-up-right_0.35s_cubic-bezier(0.34,1.56,0.64,1)_0.04s_forwards]"
+                      className="absolute bottom-0 left-1/2 w-[70px] opacity-0 group-hover:animate-[spring-up-right_0.35s_cubic-bezier(0.34,1.56,0.64,1)_0.04s_forwards] group-focus-visible:animate-[spring-up-right_0.35s_cubic-bezier(0.34,1.56,0.64,1)_0.04s_forwards]"
                       style={{ filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.08))' }}
                     />
                   </div>
@@ -154,14 +154,14 @@ I believe good design should make work feel lighter. Clear structure, thoughtful
                     <img
                       src="/resume-preview.webp"
                       alt=""
-                      className="absolute bottom-0 left-1/2 w-[160px] opacity-0 group-hover:animate-[spring-up-right-card_0.35s_cubic-bezier(0.34,1.56,0.64,1)_forwards]"
+                      className="absolute bottom-0 left-1/2 w-[160px] opacity-0 group-hover:animate-[spring-up-right-card_0.35s_cubic-bezier(0.34,1.56,0.64,1)_forwards] group-focus-visible:animate-[spring-up-right-card_0.35s_cubic-bezier(0.34,1.56,0.64,1)_forwards]"
                       style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.1))' }}
                     />
                     {/* Dropbox logo - on the left, on top */}
                     <img
                       src="/dropbox-logo.webp"
                       alt=""
-                      className="absolute bottom-0 left-1/2 w-[70px] opacity-0 group-hover:animate-[spring-up-left-logo_0.35s_cubic-bezier(0.34,1.56,0.64,1)_0.04s_forwards]"
+                      className="absolute bottom-0 left-1/2 w-[70px] opacity-0 group-hover:animate-[spring-up-left-logo_0.35s_cubic-bezier(0.34,1.56,0.64,1)_0.04s_forwards] group-focus-visible:animate-[spring-up-left-logo_0.35s_cubic-bezier(0.34,1.56,0.64,1)_0.04s_forwards]"
                       style={{ filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.08))' }}
                     />
                   </div>
@@ -185,9 +185,31 @@ I believe good design should make work feel lighter. Clear structure, thoughtful
               href={`/case-study/${project.slug}`}
               className={`group ${project.span} rounded-xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--accent)] outline-none`}
             >
-              <article className="relative h-full rounded-xl overflow-hidden bg-white shadow-[0_0_0_1px_#00000014,0px_2px_2px_#0000000a] transition-[transform,box-shadow] duration-200 will-change-transform hover-hover:hover:scale-[1.01] active:scale-[0.98] flex flex-col justify-end p-5" style={{ transitionTimingFunction: 'var(--ease-out-quart)' }}>
-                <span className="text-[13px] font-medium">{project.title}</span>
-                <span className="text-[11px] text-[var(--muted)] mt-1">{project.coverDate || project.year}</span>
+              <article className="relative h-full rounded-xl overflow-hidden bg-white dark:bg-[var(--surface)] shadow-[0_0_0_1px_var(--border)] transition-[transform,box-shadow] duration-200 will-change-transform hover-hover:hover:scale-[1.01] active:scale-[0.98] flex flex-col" style={{ transitionTimingFunction: 'var(--ease-out-quart)' }}>
+                {project.slug === "proof-serves" ? (
+                  <div className="flex flex-col h-full p-3 gap-3">
+                    <div className="flex-1 overflow-hidden rounded-lg shadow-[0_0_0_1px_var(--border)] bg-white dark:bg-[var(--surface)]">
+                      <img
+                        src="/images/proof-serves/hero-light.png"
+                        alt=""
+                        className="w-full h-full object-cover dark:hidden"
+                      />
+                      <img
+                        src="/images/proof-serves/hero-dark.png"
+                        alt=""
+                        className="w-full h-full object-cover hidden dark:block"
+                      />
+                    </div>
+                    <span className="block w-full text-center text-[13px] font-medium text-[var(--foreground)] py-2 rounded-lg bg-[var(--background)] shadow-[0_0_0_1px_var(--border)] group-hover:bg-[var(--surface)] transition-colors">
+                      View case study
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex flex-col justify-end h-full p-5">
+                    <span className="text-[13px] font-medium text-[var(--foreground)]">{project.title}</span>
+                    <span className="text-[11px] text-[var(--muted)] mt-1">{project.coverDate || project.year}</span>
+                  </div>
+                )}
               </article>
             </Link>
           ))}
