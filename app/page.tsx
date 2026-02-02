@@ -13,7 +13,7 @@ const projects = [
     company: "EasyA",
     year: "2023",
     coverDate: "2023",
-    coverImages: [{ src: "/images/easy-a/hero.png" }],
+    coverImages: [{ src: "/images/easy-a/hero.png" }, { src: "/images/easy-a/hero-2.png" }],
   },
   
   {
@@ -33,7 +33,7 @@ const projects = [
     company: "TheoremReach",
     year: "2021",
     coverDate: "September 2021",
-    coverImages: [{ src: "/images/theoremreach/hero-light.png" }],
+    coverImages: [{ src: "/images/theoremreach/hero-light.png" }, { src: "/images/theoremreach/hero-2.png" }],
   },
   {
     slug: "proof-ops",
@@ -72,6 +72,16 @@ const projects = [
     year: "2022",
     coverDate: "2022",
     coverImages: [{ src: "/images/storymaster/hero.png" }],
+  },
+  {
+    slug: "proof-ops",
+    title: "Proof Ops",
+    description: "Operations task management",
+    company: "Proof",
+    year: "2025",
+    coverDate: "2025",
+    coverImages: [{ src: "/images/proof-ops/hero-2.png" }],
+    hasCaseStudy: true,
   },
 ];
 
