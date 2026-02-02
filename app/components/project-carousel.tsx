@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 
 export interface CoverImage {
@@ -63,6 +63,11 @@ export default function ProjectCarousel({
   const dragStartXRef = useRef(0);
   const dragStartOffsetRef = useRef(0);
   const didDragRef = useRef(false);
+  const [isTouch, setIsTouch] = useState(false);
+
+  useEffect(() => {
+    setIsTouch(window.matchMedia("(hover: none)").matches);
+  }, []);
 
   const cursorPosRef = useRef<HTMLDivElement>(null);
   const cursorFadeRef = useRef<HTMLDivElement>(null);
@@ -270,7 +275,7 @@ export default function ProjectCarousel({
   return (
     <div
       ref={outerRef}
-      className="overflow-hidden scrollbar-hide select-none relative"
+      className={`${isTouch ? "overflow-x-auto" : "overflow-hidden"} scrollbar-hide select-none relative`}
       role="region"
       aria-roledescription="carousel"
       aria-label="Selected work"
@@ -306,9 +311,14 @@ export default function ProjectCarousel({
       <div
         ref={trackRef}
         className="flex items-start gap-5"
-        style={{ width: "max-content", willChange: "transform" }}
+        style={{
+          width: "max-content",
+          ...(isTouch
+            ? { paddingLeft: "1.5rem", paddingRight: "1.5rem" }
+            : { willChange: "transform" }),
+        }}
       >
-        {[...cards, ...cards, ...cards].map((card, i) => {
+        {(isTouch ? cards : [...cards, ...cards, ...cards]).map((card, i) => {
           const imageContent = (
             <div className="h-[360px] sm:h-[480px] rounded-xl bg-[var(--surface)] overflow-hidden p-[40px] flex items-center justify-center">
               <img
