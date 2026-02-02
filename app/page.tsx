@@ -52,7 +52,7 @@ const projects = [
     company: "Treecard",
     year: "2022",
     coverDate: "2022",
-    coverImages: [{ src: "/images/treecard/hero.png" }],
+    coverImages: [{ src: "/images/treecard/hero.png" }, { src: "/images/treecard/hero-2.png" }],
   },
   {
     slug: "ikigai",
@@ -71,7 +71,7 @@ const projects = [
     company: "Storymaster",
     year: "2022",
     coverDate: "2022",
-    coverImages: [{ src: "/images/storymaster/hero.png" }],
+    coverImages: [{ src: "/images/storymaster/hero.png" }, { src: "/images/storymaster/hero-2.png" }],
   },
   {
     slug: "proof-ops",
