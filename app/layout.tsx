@@ -32,14 +32,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=sessionStorage.getItem("theme");var d=t==="dark"||(t!=="light"&&matchMedia("(prefers-color-scheme:dark)").matches);if(d)document.documentElement.classList.add("dark")}catch(e){}})()`,
-          }}
-        />
-      </head>
+    <html lang="en">
+      <head />
       <body className={`${earlySans.variable} ${geistMono.variable} antialiased`}>
         {children}
         {process.env.NODE_ENV === "development" && <Agentation />}

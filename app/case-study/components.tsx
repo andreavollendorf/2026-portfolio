@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useState, useCallback, useRef, createContext, useContext } from "react";
-import ThemeToggle from "../components/theme-toggle";
 import WorkDropdown from "../components/work-dropdown";
 import MobileMenu from "../components/mobile-menu";
 import { caseStudies } from "../data/case-studies";
@@ -52,7 +51,7 @@ function Lightbox({
       onAnimationEnd={() => { if (isClosing) onClose(); }}
     >
       <button
-        className="absolute top-6 right-6 p-[10px] -m-[10px] text-white/60 link-hover transition-colors"
+        className="absolute top-6 right-6 p-[10px] -m-[10px] text-white/60 link-hover transition-colors focus-visible:ring-2 focus-visible:ring-white/60 outline-none rounded-sm"
         onClick={handleClose}
         aria-label="Close lightbox"
       >
@@ -61,13 +60,13 @@ function Lightbox({
         </svg>
       </button>
       <div
-        className={`relative max-w-[90vw] max-h-[90vh] bg-[var(--surface)] rounded-lg overflow-hidden ${
+        className={`relative max-w-[90vw] max-h-[90vh] bg-white rounded-lg overflow-hidden px-6 pt-10 pb-6 ${
           isClosing ? "animate-[scale-out_150ms_ease-in_forwards]" : "animate-[scale-in_200ms_ease-out]"
         }`}
         onClick={(e) => e.stopPropagation()}
       >
         {src ? (
-          <img src={src} alt={alt} className="max-w-full max-h-[90vh] object-contain" />
+          <img src={src} alt={alt} className="max-w-full max-h-[80vh] object-contain mx-auto block" />
         ) : (
           <div className="w-[80vw] h-[60vh] flex items-center justify-center text-[var(--muted)]">
             {alt}
@@ -174,9 +173,9 @@ export function CaseStudyLayout({
         >
           <Link
             href="/"
-            className="absolute left-6 lg:left-8 top-1/2 -translate-y-1/2 inline-flex items-center gap-2 text-[14px] text-[var(--muted)] link-hover transition-colors"
+            className="absolute left-6 lg:left-8 top-1/2 -translate-y-1/2 inline-flex items-center gap-2 text-[14px] text-[var(--muted)] link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm"
           >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M5.5 4L1.5 8M1.5 8L5.5 12M1.5 8H10C11.3807 8 12.5 6.88071 12.5 5.5V5.5C12.5 4.11929 11.3807 3 10 3H8.5" stroke="currentColor"/>
             </svg>
             <span>Index</span>
@@ -186,7 +185,7 @@ export function CaseStudyLayout({
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               aria-label="Scroll to top"
-              className={`hidden sm:block text-[14px] font-medium transition-[opacity,transform] duration-200 ${
+              className={`hidden sm:block text-[14px] font-medium transition-[opacity,transform] duration-200 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm ${
                 showTitle
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 -translate-y-2 pointer-events-none"
@@ -197,8 +196,10 @@ export function CaseStudyLayout({
             </button>
             {/* Desktop: hover dropdown + theme toggle */}
             <div className="hidden sm:flex items-center gap-4">
+              <Link href="/about" className="text-[13px] font-medium text-[var(--muted)] link-hover transition-colors h-8 px-2 flex items-center rounded-md focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none">
+                About
+              </Link>
               <WorkDropdown caseStudies={caseStudies} />
-              <ThemeToggle />
             </div>
             {/* Mobile: hamburger menu */}
             <div className="sm:hidden">
@@ -214,7 +215,7 @@ export function CaseStudyLayout({
               <li key={section.id}>
                 <a
                   href={`#${section.id}`}
-                  className={`text-[13px] block py-1 transition-[color,opacity,transform,font-weight] duration-300 ${
+                  className={`text-[13px] block py-1 transition-[color,opacity,transform,font-weight] duration-300 focus-visible:ring-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm ${
                     activeSection === section.id
                       ? "text-[var(--foreground)] font-medium translate-x-1.5 opacity-100"
                       : "text-[var(--muted)] link-hover opacity-60 hover:opacity-100"
@@ -229,9 +230,9 @@ export function CaseStudyLayout({
         </aside>
 
         {/* Main Content */}
-        <main className="max-w-[680px] mx-auto px-6 pt-28 pb-20">
+        <main className="max-w-[740px] mx-auto px-6 pt-8 sm:pt-20 pb-16">
           {/* Hero */}
-          <header className="pb-16">
+          <header className="pb-12">
             <div className="text-[12px] text-[var(--muted)] mb-8">
               {breadcrumb}
             </div>
@@ -240,7 +241,7 @@ export function CaseStudyLayout({
               {title}
             </h1>
 
-            <p className="text-[16px] leading-relaxed text-[var(--muted)] mb-10">
+            <p className="text-[16px] leading-relaxed text-[var(--muted)] mb-8">
               {description}
             </p>
 
@@ -269,18 +270,18 @@ export function CaseStudyLayout({
           {children}
 
           {/* Footer Navigation */}
-          <footer className="py-12 mt-8 border-t border-[var(--border)]">
+          <footer className="py-10 mt-4 border-t border-[var(--border)]">
             <div className="flex items-center justify-between">
               <Link
                 href="/"
-                className="text-[14px] text-[var(--muted)] link-hover transition-colors"
+                className="text-[14px] text-[var(--muted)] link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm"
               >
                 ← All projects
               </Link>
               {nextProject && (
                 <Link
                   href={`/case-study/${nextProject.slug}`}
-                  className="text-[14px] text-[var(--muted)] link-hover transition-colors"
+                  className="text-[14px] text-[var(--muted)] link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm"
                 >
                   Next project →
                 </Link>
@@ -309,7 +310,7 @@ export function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} className="scroll-mt-24 py-20">
+    <section id={id} className="scroll-mt-24 py-14">
       <div className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-5">
         {sectionTitle}
       </div>
@@ -340,17 +341,31 @@ export function ImageBlock({
   alt,
   caption,
   src,
+  contained,
+  flush,
+  maxWidth,
 }: {
   src?: string;
   alt: string;
   caption?: string;
+  contained?: boolean;
+  flush?: boolean;
+  maxWidth?: string;
 }) {
   const openLightbox = useContext(LightboxContext);
 
+  const isWhiteBox = contained || flush;
+  const containerClass = isWhiteBox
+    ? `flex items-center justify-center rounded-xl bg-white ${flush ? "" : `px-3 pt-6 pb-4 sm:px-6 sm:pt-12 sm:pb-8 sm:h-[380px]`}`
+    : "bg-[var(--surface)]";
+
   return (
-    <figure className="my-10">
+    <figure className="my-8">
       <div
-        className={`relative rounded-lg overflow-hidden bg-[var(--surface)] ${src ? "cursor-zoom-in" : ""} transition-opacity img-hover`}
+        className={`relative rounded-lg overflow-hidden ${containerClass} ${src ? "cursor-zoom-in" : ""} transition-opacity img-hover`}
+        style={{
+          ...(isWhiteBox ? { border: "1px solid #ebebeb" } : {}),
+        }}
         {...(src ? {
           role: "button",
           tabIndex: 0,
@@ -359,7 +374,7 @@ export function ImageBlock({
         } : {})}
       >
         {src ? (
-          <img src={src} alt={alt} loading="lazy" decoding="async" className="w-full block" />
+          <img src={src} alt={alt} loading="lazy" decoding="async" className={`block ${flush ? "w-full" : isWhiteBox ? "max-h-full object-contain" : "w-full"}`} style={maxWidth ? { maxWidth } : undefined} />
         ) : (
           <div className="aspect-[16/10] flex items-center justify-center text-[var(--muted)] text-sm">
             {alt}
@@ -383,7 +398,7 @@ export function TwoImages({
   const openLightbox = useContext(LightboxContext);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-10">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-8">
       {images.map((img, i) => (
         <figure key={i}>
           <div
@@ -492,7 +507,7 @@ export function LearningItem({ title, children }: { title: string; children: Rea
 
 export function Stats({ stats }: { stats: { value: string; label: string }[] }) {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-8 my-10">
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-8 my-8">
       {stats.map((stat, i) => (
         <div key={i}>
           <div className="text-[28px] font-medium tracking-[-0.02em] mb-1 tabular-nums">
@@ -515,7 +530,7 @@ export function Quote({
   attribution: string;
 }) {
   return (
-    <blockquote className="my-10 border-l-2 border-[var(--border)] pl-6 py-1">
+    <blockquote className="my-8 border-l-2 border-[var(--border)] pl-6 py-1">
       <p className="text-[15px] leading-[1.75] italic text-[var(--foreground)]">
         &ldquo;{children}&rdquo;
       </p>
@@ -533,7 +548,7 @@ export function ImageCarousel({
 }) {
   return (
     <div
-      className="my-10 -mx-6 overflow-x-auto scrollbar-hide"
+      className="my-8 -mx-6 overflow-x-auto scrollbar-hide"
       role="region"
       aria-label="Image carousel"
       tabIndex={0}
@@ -549,6 +564,40 @@ export function ImageCarousel({
         ))}
       </div>
     </div>
+  );
+}
+
+export function VideoBlock({
+  src,
+  poster,
+  alt,
+  caption,
+}: {
+  src: string;
+  poster?: string;
+  alt: string;
+  caption?: string;
+}) {
+  return (
+    <figure className="my-8">
+      <div className="flex justify-center px-6 py-8 rounded-xl bg-white" style={{ border: "1px solid #ebebeb" }}>
+        <video
+          src={src}
+          poster={poster}
+          autoPlay
+          loop
+          muted
+          playsInline
+          aria-label={alt}
+          className="w-full block rounded-lg"
+        />
+      </div>
+      {caption && (
+        <figcaption className="text-[13px] text-[var(--muted)] mt-3 text-center">
+          {caption}
+        </figcaption>
+      )}
+    </figure>
   );
 }
 

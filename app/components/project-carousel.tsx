@@ -5,7 +5,6 @@ import Link from "next/link";
 
 export interface CoverImage {
   src: string;
-  srcDark?: string;
   alt?: string;
 }
 
@@ -297,18 +296,8 @@ export default function ProjectCarousel({
                 loading={i < 3 ? "eager" : "lazy"}
                 decoding="async"
                 draggable={false}
-                className={`h-full w-auto ${card.image.srcDark ? "light-only" : ""}`}
+                className="h-full w-auto"
               />
-              {card.image.srcDark && (
-                <img
-                  src={card.image.srcDark}
-                  alt={card.image.alt || `${card.projectTitle} — ${card.projectDescription}`}
-                  loading={i < 3 ? "eager" : "lazy"}
-                  decoding="async"
-                  draggable={false}
-                  className="h-full w-auto dark-only"
-                />
-              )}
             </div>
           );
 
@@ -333,7 +322,7 @@ export default function ProjectCarousel({
                 key={`${card.projectSlug}-${card.image.src}-${i}`}
                 href={`/case-study/${card.projectSlug}`}
                 aria-label={`${card.projectTitle} — ${card.projectDescription}`}
-                className="mr-5 last:mr-0 shrink-0 group focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none cursor-none"
+                className="mr-5 last:mr-0 shrink-0 group focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none cursor-pointer [@supports(cursor:none)]:cursor-none"
                 onClick={handleClick}
                 onMouseMove={onCardMouseMove}
                 onMouseEnter={onCardMouseEnter}
@@ -350,7 +339,6 @@ export default function ProjectCarousel({
             <div
               key={`${card.projectSlug}-${card.image.src}-${i}`}
               className="mr-5 last:mr-0 shrink-0 group"
-              aria-label={`${card.projectTitle} — ${card.projectDescription}`}
               draggable={false}
             >
               {imageContent}

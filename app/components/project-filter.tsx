@@ -77,11 +77,13 @@ export default function ProjectFilterCarousel({
       </div>
 
       {/* Carousel */}
-      <ProjectCarousel
-        projects={projects}
-        activeFilter={activeFilter}
-        transitioning={transitioning}
-      />
+      <div role="tabpanel" aria-label={activeFilter === "all" ? "All projects" : `${activeFilter} project`}>
+        <ProjectCarousel
+          projects={projects}
+          activeFilter={activeFilter}
+          transitioning={transitioning}
+        />
+      </div>
     </>
   );
 }

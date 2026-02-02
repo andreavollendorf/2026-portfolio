@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
+import { studyConfig } from "./work-dropdown";
 
 interface CaseStudyLink {
   slug: string;
@@ -125,6 +126,9 @@ export default function MobileMenu({
       {mounted && createPortal(
         <div
           ref={overlayRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation menu"
           className="fixed inset-0"
           style={{
             zIndex: 49,
@@ -141,26 +145,44 @@ export default function MobileMenu({
               transform: "translateY(-12px)",
             }}
           >
-            <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-4 font-normal">
-              Case Studies
-            </p>
+            <Link
+              href="/about"
+              onClick={close}
+              className="block text-[18px] font-medium text-[var(--foreground)] px-4 py-3 -mx-4 mb-4 rounded-xl active:bg-[var(--surface)] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
+            >
+              About
+            </Link>
 
-            <div className="flex flex-col gap-1">
-              {caseStudies.map((study) => (
-                <Link
-                  key={study.slug}
-                  href={`/case-study/${study.slug}`}
-                  onClick={close}
-                  className="block rounded-xl px-4 py-4 -mx-4 active:bg-[var(--surface)] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
-                >
-                  <span className="block text-[18px] font-medium text-[var(--foreground)]">
-                    {study.title}
-                  </span>
-                  <span className="block text-[14px] text-[var(--muted)] mt-0.5">
-                    {study.description}
-                  </span>
-                </Link>
-              ))}
+            <div className="pt-4 border-t border-[var(--border)]">
+              <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-4 font-normal">
+                Case Studies
+              </p>
+
+              <div className="flex flex-col gap-1">
+                {caseStudies.map((study) => {
+                  const config = studyConfig[study.slug];
+                  return (
+                    <Link
+                      key={study.slug}
+                      href={`/case-study/${study.slug}`}
+                      onClick={close}
+                      className="group flex items-center gap-4 rounded-xl px-4 py-4 -mx-4 active:bg-[var(--surface)] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
+                    >
+                      <div className="w-14 h-14 rounded-xl bg-white border border-[var(--border)] flex-shrink-0 flex items-center justify-center">
+                        {config && <config.Icon colored />}
+                      </div>
+                      <div>
+                        <span className="block text-[18px] font-medium text-[var(--foreground)]">
+                          {study.title}
+                        </span>
+                        <span className="block text-[14px] text-[var(--muted)] mt-0.5">
+                          {study.description}
+                        </span>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>,

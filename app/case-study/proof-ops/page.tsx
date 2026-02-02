@@ -5,6 +5,7 @@ import {
   Section,
   Paragraph,
   ImageBlock,
+  VideoBlock,
 } from "../components";
 
 const IMG = "/images/proof-ops";
@@ -31,6 +32,13 @@ export default function ProofOpsPage() {
       ]}
       sections={sections}
       nextProject={{ slug: "proof-serves", title: "Proof Serves" }}
+      heroContent={
+        <VideoBlock
+          src={`${IMG}/ops-teams.mp4`}
+          poster={`${IMG}/cover.webp`}
+          alt="Proof Ops team management interface"
+        />
+      }
     >
       {/* ── Context ──────────────────────────────────────────────── */}
 
@@ -66,8 +74,9 @@ export default function ProofOpsPage() {
           threads, and people&apos;s heads.
         </Paragraph>
         <ImageBlock
-          src={`${IMG}/rules.png`}
-          alt="Layers of complex rules and regulations that need to be managed"
+          src={`${IMG}/complexity.png`}
+          alt="Layers of legal complexity — federal law, state law, county rules, court jurisdiction, judge and client preferences"
+          contained
         />
       </Section>
 
@@ -133,6 +142,7 @@ export default function ProofOpsPage() {
           src={`${IMG}/old-dashboard.png`}
           alt="The old dashboard that ops was working out of"
           caption="The old dashboard — a choose-your-own-adventure with no ownership."
+          contained
         />
       </Section>
 
@@ -158,11 +168,14 @@ export default function ProofOpsPage() {
           concept of these distinctions. A job needing dispatch looked the same as a
           job needing affidavit review. The only way to know was to open it and look.
         </Paragraph>
-        <ImageBlock
-          src={`${IMG}/lifecycle.png`}
-          alt="Complete job lifecycle map revealing 10+ distinct task types and routing gaps"
-          caption="Complete job lifecycle map revealing 10+ distinct task types and routing gaps."
-        />
+        <div className="[&_figure>div]:!h-auto">
+          <ImageBlock
+            src={`${IMG}/lifecycle.png`}
+            alt="Complete job lifecycle map revealing 10+ distinct task types and routing gaps"
+            caption="Complete job lifecycle map revealing 10+ distinct task types and routing gaps."
+            flush
+          />
+        </div>
       </Section>
 
       {/* ── Architecture ─────────────────────────────────────────── */}
@@ -178,12 +191,25 @@ export default function ProofOpsPage() {
           Platform clients map regionally. Dispatch handles exceptions across all
           teams.
         </Paragraph>
+        <ImageBlock
+          src={`${IMG}/teams.png`}
+          alt="Team type combobox with Enterprise, Platform, and Dispatch options"
+          contained
+        />
 
         <h3 className="text-[18px] font-medium mt-6 mb-2">Roles create specialization</h3>
         <Paragraph>
           10 distinct roles, mapped from the lifecycle work. Each has clear
           responsibilities, required skills, and measurable outputs.
         </Paragraph>
+        <div className="[&_figure>div]:pt-10">
+          <ImageBlock
+            src={`${IMG}/roles.png`}
+            alt="Role assignments — QA Coordinator, QA Specialist, and Service Specialist with team member tags"
+            flush
+            maxWidth="85%"
+          />
+        </div>
 
         <h3 className="text-[18px] font-medium mt-6 mb-2">Routing logic creates predictability</h3>
         <Paragraph>
@@ -191,10 +217,13 @@ export default function ProofOpsPage() {
           prioritizes continuity (same person on a client&apos;s work) while
           ensuring coverage.
         </Paragraph>
-        <ImageBlock
-          src={`${IMG}/architecture.png`}
-          alt="Three-layer system architecture: teams, roles, and routing logic"
-        />
+        <div className="[&_figure>div]:pt-12">
+          <ImageBlock
+            src={`${IMG}/tasks.png`}
+            alt="Task routing — active tasks with affidavit preparation checklist and assignment"
+            flush
+          />
+        </div>
       </Section>
 
       {/* ── Documentation ────────────────────────────────────────── */}
@@ -214,11 +243,14 @@ export default function ProofOpsPage() {
           This document became the single source of truth for the build and
           survives today as institutional knowledge.
         </Paragraph>
-        <ImageBlock
-          src={`${IMG}/documentation.png`}
-          alt="Internal documentation for cross-functional reference on how to handle tasks"
-          caption="Internal documentation for cross-functional reference on how to handle tasks."
-        />
+        <div className="[&_figure>div]:pt-12">
+          <ImageBlock
+            src={`${IMG}/documentation.png`}
+            alt="Internal documentation for cross-functional reference on how to handle tasks"
+            caption="Internal documentation for cross-functional reference on how to handle tasks."
+            flush
+          />
+        </div>
       </Section>
 
       {/* ── Outcome ──────────────────────────────────────────────── */}
@@ -258,9 +290,10 @@ export default function ProofOpsPage() {
         </div>
 
         <ImageBlock
-          src={`${IMG}/tasks-dashboard.png`}
+          src={`${IMG}/dashboard.png`}
           alt="The new tasks dashboard for operations teams at Proof"
           caption="The new tasks dashboard for operations teams @ Proof."
+          contained
         />
 
         <Paragraph>

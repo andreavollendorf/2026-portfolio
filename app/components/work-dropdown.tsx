@@ -9,27 +9,22 @@ export interface CaseStudyPreview {
   description: string;
 }
 
-function ServesIcon() {
+function ServesIcon({ colored = false }: { colored?: boolean }) {
   return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="-translate-y-px">
-      <g clipPath="url(#serves-clip)">
-        <circle cx="11.653" cy="5.633" r="5.633" className="fill-[#E1E3E8] transition-[fill] duration-150 group-hover:fill-[#C2E5FF]" />
-        <path d="M18.265 24c0-.804-.158-1.6-.466-2.343a6.143 6.143 0 0 0-5.656-3.779 6.143 6.143 0 0 0-6.122 5.779v.343h12.244Z" className="fill-[#E1E3E8] transition-[fill] duration-150 group-hover:fill-[#C2E5FF]" />
-        <path d="M23.061 24a11.02 11.02 0 0 0-22.04 0h5.51a5.51 5.51 0 0 1 11.02 0h5.51Z" className="fill-[#8790A1] transition-[fill] duration-150 group-hover:fill-[#0090FF]" />
-      </g>
-      <defs>
-        <clipPath id="serves-clip"><rect width="24" height="24" fill="white" /></clipPath>
-      </defs>
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="12" cy="6" r="6" className={colored ? "fill-[#C2E5FF]" : "fill-[#E1E3E8] transition-[fill] duration-150 group-hover:fill-[#C2E5FF]"} />
+      <path d="M18 24c0-.788-.155-1.568-.456-2.296A6 6 0 0 0 12 18a6 6 0 0 0-5.544 3.704A5.97 5.97 0 0 0 6 24h12Z" className={colored ? "fill-[#C2E5FF]" : "fill-[#E1E3E8] transition-[fill] duration-150 group-hover:fill-[#C2E5FF]"} />
+      <path d="M23 24a11 11 0 0 0-22 0h5.5a5.5 5.5 0 0 1 11 0H23Z" className={colored ? "fill-[#0090FF]" : "fill-[#8790A1] transition-[fill] duration-150 group-hover:fill-[#0090FF]"} />
     </svg>
   );
 }
 
-function TasksIcon() {
+function TasksIcon({ colored = false }: { colored?: boolean }) {
   return (
-    <svg width="28" height="28" viewBox="-0.5 -0.5 25 25" fill="none" aria-hidden="true">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <g clipPath="url(#tasks-clip)">
-        <path d="M6 18h6c0 3.314-2.686 6-6 6s-6-2.686-6-6 2.686-6 6-6v6Zm12-6c3.314 0 6 2.686 6 6s-2.686 6-6 6-6-2.686-6-6h6V12Zm-6-6c0 3.314 2.686 6 6 6-3.314 0-6 2.686-6 6 0-3.314-2.686-6-6-6 3.314 0 6-2.686 6-6ZM6 0c3.314 0 6 2.686 6 6H6v6c-3.314 0-6-2.686-6-6s2.686-6 6-6Zm12 0c3.314 0 6 2.686 6 6s-2.686 6-6 6V6h-6c0-3.314 2.686-6 6-6Z" className="fill-[#E1E3E8] transition-[fill] duration-150 group-hover:fill-[#FFD19A]" />
-        <path d="M12 6c0 3.314 2.686 6 6 6-3.314 0-6 2.686-6 6 0-3.314-2.686-6-6-6 3.314 0 6-2.686 6-6Z" className="fill-[#8790A1] transition-[fill] duration-150 group-hover:fill-[#F76B15]" />
+        <path d="M6 18h6c0 3.314-2.686 6-6 6s-6-2.686-6-6 2.686-6 6-6v6Zm12-6c3.314 0 6 2.686 6 6s-2.686 6-6 6-6-2.686-6-6h6V12Zm-6-6c0 3.314 2.686 6 6 6-3.314 0-6 2.686-6 6 0-3.314-2.686-6-6-6 3.314 0 6-2.686 6-6ZM6 0c3.314 0 6 2.686 6 6H6v6c-3.314 0-6-2.686-6-6s2.686-6 6-6Zm12 0c3.314 0 6 2.686 6 6s-2.686 6-6 6V6h-6c0-3.314 2.686-6 6-6Z" className={colored ? "fill-[#FFD19A]" : "fill-[#E1E3E8] transition-[fill] duration-150 group-hover:fill-[#FFD19A]"} />
+        <path d="M12 6c0 3.314 2.686 6 6 6-3.314 0-6 2.686-6 6 0-3.314-2.686-6-6-6 3.314 0 6-2.686 6-6Z" className={colored ? "fill-[#F76B15]" : "fill-[#8790A1] transition-[fill] duration-150 group-hover:fill-[#F76B15]"} />
       </g>
       <defs>
         <clipPath id="tasks-clip"><rect width="24" height="24" fill="white" /></clipPath>
@@ -38,9 +33,9 @@ function TasksIcon() {
   );
 }
 
-const studyConfig: Record<string, { icon: React.ReactNode }> = {
-  "proof-serves": { icon: <ServesIcon /> },
-  "proof-ops": { icon: <TasksIcon /> },
+export const studyConfig: Record<string, { Icon: React.FC<{ colored?: boolean }> }> = {
+  "proof-serves": { Icon: ServesIcon },
+  "proof-ops": { Icon: TasksIcon },
 };
 
 // ease-out-quart — user-initiated enter/exit
@@ -193,6 +188,7 @@ export default function WorkDropdown({
           strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
+          aria-hidden="true"
           className="transition-transform duration-200"
           style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)" }}
         >
@@ -227,7 +223,7 @@ export default function WorkDropdown({
               onClick={hideMenu}
             >
               <div className="w-14 h-14 rounded-xl bg-white border border-[var(--border)] flex-shrink-0 flex items-center justify-center">
-                {config?.icon}
+                {config && <config.Icon />}
               </div>
               <div>
                 <span className="block text-[14px] font-medium text-[var(--foreground)]">

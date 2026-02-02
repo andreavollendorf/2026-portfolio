@@ -5,13 +5,179 @@ import {
   Section,
   Paragraph,
   ImageBlock,
-  ImageCarousel,
   Stats,
   Quote,
   TeamMember,
 } from "../components";
+import { useState, useRef, useEffect, useCallback } from "react";
 
 const IMG = "/images/proof-serves";
+const CANVAS = `${IMG}/canvas`;
+
+/* ── Chat Research Canvas ─────────────────────────────────────────── */
+
+type Sticker = {
+  src: string;
+  x: number;
+  y: number;
+  width: number;
+  zIndex: number;
+};
+
+const defaultStickers: Sticker[] = [
+  { src: `${CANVAS}/card-pink.png`,   x: 2.8,  y: 4.5,  width: 20, zIndex: 6 },
+  { src: `${CANVAS}/card-blue.png`,   x: 3.1,  y: 58.9, width: 20, zIndex: 6 },
+  { src: `${CANVAS}/card-green.png`,  x: 74.4, y: 4.3,  width: 20, zIndex: 6 },
+  { src: `${CANVAS}/card-yellow.png`, x: 74.5, y: 59.1, width: 20, zIndex: 6 },
+  { src: `${CANVAS}/claude.png`,      x: 29.1, y: 15.2, width: 14, zIndex: 5 },
+  { src: `${CANVAS}/popsql.png`,      x: 57,   y: 61,   width: 12, zIndex: 4 },
+  { src: `${CANVAS}/chart.png`,       x: 42.9, y: 67.6, width: 20, zIndex: 3 },
+  { src: `${CANVAS}/chart2.png`,      x: 23,   y: 44,   width: 48, zIndex: 3 },
+  { src: `${CANVAS}/chart3.png`,      x: 18.7, y: 23.5, width: 20, zIndex: 2 },
+  { src: `${CANVAS}/chart4.png`,      x: 50.9, y: 30.9, width: 26, zIndex: 2 },
+  { src: `${CANVAS}/chart5.png`,      x: 41.9, y: 5,    width: 24, zIndex: 1 },
+];
+
+function ChatResearchCanvas() {
+  const [positions, setPositions] = useState<Record<number, { x: number; y: number }>>(() =>
+    Object.fromEntries(defaultStickers.map((s, i) => [i, { x: s.x, y: s.y }]))
+  );
+  const [zIndices, setZIndices] = useState<Record<number, number>>(() =>
+    Object.fromEntries(defaultStickers.map((s, i) => [i, s.zIndex]))
+  );
+  const [activeIdx, setActiveIdx] = useState<number | null>(null);
+  const offsetRef = useRef({ x: 0, y: 0 });
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const topZ = useRef(Math.max(...defaultStickers.map((s) => s.zIndex)));
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const [hasWiggled, setHasWiggled] = useState(false);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  useEffect(() => {
+    if (!canvasRef.current || reducedMotion || hasWiggled) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          setHasWiggled(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.4 }
+    );
+    observer.observe(canvasRef.current);
+    return () => observer.disconnect();
+  }, [reducedMotion, hasWiggled]);
+
+  const handlePointerDown = useCallback(
+    (e: React.PointerEvent, idx: number) => {
+      if (reducedMotion) return;
+      e.preventDefault();
+      setInView(false);
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      offsetRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+      topZ.current += 1;
+      setZIndices((prev) => ({ ...prev, [idx]: topZ.current }));
+      setActiveIdx(idx);
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    },
+    [reducedMotion]
+  );
+
+  const handlePointerMove = useCallback(
+    (e: React.PointerEvent) => {
+      if (activeIdx === null || !canvasRef.current) return;
+      const canvas = canvasRef.current.getBoundingClientRect();
+      const x = ((e.clientX - canvas.left - offsetRef.current.x) / canvas.width) * 100;
+      const y = ((e.clientY - canvas.top - offsetRef.current.y) / canvas.height) * 100;
+      setPositions((prev) => ({ ...prev, [activeIdx]: { x, y } }));
+    },
+    [activeIdx]
+  );
+
+  const handlePointerUp = useCallback(() => {
+    setActiveIdx(null);
+  }, []);
+
+  return (
+    <figure className="my-8">
+      <style>{`
+        @keyframes sticker-wiggle {
+          0%, 100% { transform: rotate(0deg); }
+          20% { transform: rotate(-2.5deg); }
+          40% { transform: rotate(2deg); }
+          60% { transform: rotate(-1.5deg); }
+          80% { transform: rotate(1deg); }
+        }
+      `}</style>
+      <div
+        className="rounded-xl overflow-hidden"
+        style={{ border: "1px solid #ebebeb", userSelect: "none" }}
+      >
+        {/* Header bar */}
+        <img
+          src={`${CANVAS}/header.png`}
+          alt=""
+          role="presentation"
+          className="w-full block"
+          draggable={false}
+        />
+
+        {/* Dot-grid canvas */}
+        <div
+          ref={canvasRef}
+          aria-description="Interactive canvas — drag stickers to rearrange"
+          className="relative h-[260px] sm:h-[380px]"
+          style={{
+            backgroundColor: "#f5f5f5",
+            backgroundImage: "radial-gradient(circle, #d0d0d0 1px, transparent 1px)",
+            backgroundSize: "24px 24px",
+            touchAction: "none",
+          }}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerLeave={handlePointerUp}
+        >
+          {defaultStickers.map((sticker, idx) => {
+            const pos = positions[idx] ?? { x: sticker.x, y: sticker.y };
+            return (
+              <img
+                key={idx}
+                src={sticker.src}
+                alt=""
+                draggable={false}
+                className="absolute block"
+                style={{
+                  left: `${pos.x}%`,
+                  top: `${pos.y}%`,
+                  width: `${sticker.width}%`,
+                  zIndex: zIndices[idx] ?? sticker.zIndex,
+                  filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.10))",
+                  cursor: reducedMotion ? "default" : activeIdx === idx ? "grabbing" : "grab",
+                  animation: inView && activeIdx !== idx
+                    ? `sticker-wiggle 0.5s ease-in-out ${idx * 0.06}s both`
+                    : "none",
+                }}
+                onPointerDown={(e) => handlePointerDown(e, idx)}
+              />
+            );
+          })}
+        </div>
+      </div>
+      <figcaption className="text-[13px] text-[var(--muted)] mt-3 text-center">
+        Used Claude to analyze chat threads at scale.
+      </figcaption>
+    </figure>
+  );
+}
 
 const sections = [
   { id: "why-it-mattered", label: "Why it mattered" },
@@ -37,15 +203,13 @@ export default function ProofServesPage() {
       ]}
       sections={sections}
       heroContent={
-        <ImageCarousel
-          images={[
-            { src: `${IMG}/carousel-1.png`, alt: "Redesigned serve experience" },
-            { src: `${IMG}/carousel-2.png`, alt: "Job tracker view" },
-            { src: `${IMG}/carousel-3.png`, alt: "Unified history" },
-            { src: `${IMG}/carousel-4.png`, alt: "Address intelligence" },
-            { src: `${IMG}/carousel-5.png`, alt: "Serves table" },
-          ]}
-        />
+        <div className="[&_figure>div]:pb-0">
+          <ImageBlock
+            src={`${IMG}/overview.png`}
+            alt="Redesigned serve overview page"
+            contained
+          />
+        </div>
       }
       nextProject={{ slug: "proof-ops", title: "Proof Ops" }}
     >
@@ -85,6 +249,7 @@ export default function ProofServesPage() {
           src={`${IMG}/before.png`}
           alt="The old job details page before the redesign"
           caption="The &ldquo;old&rdquo; job details page before the redesign"
+          contained
         />
       </Section>
 
@@ -105,11 +270,7 @@ export default function ProofServesPage() {
           The problem wasn&apos;t the chat experience. It was that we weren&apos;t telling
           clients what they needed to know.
         </Paragraph>
-        <ImageBlock
-          src={`${IMG}/research.png`}
-          alt="Chat thread analysis using Claude"
-          caption="Used Claude to analyze chat threads at scale."
-        />
+        <ChatResearchCanvas />
         <Quote attribution="Paralegal, mid-sized family law firm">
           People are dealing with some of the most traumatic experiences they&apos;ll ever
           have. A divorce, a child custody dispute, somebody&apos;s taken off with the kid.
@@ -135,21 +296,27 @@ export default function ProofServesPage() {
         <Paragraph>
           That&apos;s not a product experience. That&apos;s a breakdown of trust.
         </Paragraph>
-        <ImageBlock
-          src={`${IMG}/structure.png`}
-          alt="Old model vs new model comparison"
-          caption="Old model (left) vs new model (right)"
-        />
+        <div className="[&_figure>div]:px-3 [&_figure>div]:pt-6 [&_figure>div]:pb-4">
+          <ImageBlock
+            src={`${IMG}/structure.png`}
+            alt="Old model vs new model comparison"
+            caption="Old model (left) vs new model (right)"
+            contained
+          />
+        </div>
         <Paragraph>
           &ldquo;Jobs&rdquo; were an internal concept that made sense for ops but meant
           nothing to clients. We needed a new mental model: one serve, one story, regardless
           of how many reassignments happened behind the scenes. The serve became the container.
         </Paragraph>
-        <ImageBlock
-          src={`${IMG}/data-model.png`}
-          alt="The new data model for serves"
-          caption="The new data model for serves"
-        />
+        <div className="[&_figure>div]:px-16 [&_figure>div]:pt-14 [&_figure>div]:pb-10">
+          <ImageBlock
+            src={`${IMG}/data-model.png`}
+            alt="The new data model for serves"
+            caption="The new data model for serves"
+            contained
+          />
+        </div>
       </Section>
 
       {/* ── Solution ─────────────────────────────────────────────────── */}
@@ -167,10 +334,13 @@ export default function ProofServesPage() {
           at risk) and explains why. Attempts count in aggregate across the full serve. Risk
           surfaces early, not after failure.
         </Paragraph>
-        <ImageBlock
-          src={`${IMG}/tracker.png`}
-          alt="Job tracker showing health indicators"
-        />
+        <div className="[&_figure>div]:pb-0 [&_figure>div]:items-end">
+          <ImageBlock
+            src={`${IMG}/tracker.png`}
+            alt="Job tracker showing health indicators"
+            contained
+          />
+        </div>
 
         {/* Unified History */}
         <h3 className="text-[18px] font-medium mt-6 mb-2">Unified history</h3>
@@ -178,10 +348,13 @@ export default function ProofServesPage() {
           Reassignments no longer reset the conversation. A single timeline preserves all
           attempts, chats, and documents regardless of how many times the serve changes hands.
         </Paragraph>
-        <ImageBlock
-          src={`${IMG}/history.png`}
-          alt="Unified history timeline"
-        />
+        <div className="[&_figure>div]:pb-0 [&_figure>div]:items-end">
+          <ImageBlock
+            src={`${IMG}/history.png`}
+            alt="Unified history timeline"
+            contained
+          />
+        </div>
 
         {/* Address Intelligence */}
         <h3 className="text-[18px] font-medium mt-6 mb-2">Address intelligence</h3>
@@ -189,10 +362,13 @@ export default function ProofServesPage() {
           Many failed attempts came from address quality issues. We integrated Melissa Data to
           validate addresses proactively and surface risks before dispatch.
         </Paragraph>
-        <ImageBlock
-          src={`${IMG}/address.png`}
-          alt="Address intelligence validation"
-        />
+        <div className="[&_figure>div]:pb-0 [&_figure>div]:pr-0 [&_figure>div]:justify-end [&_figure>div]:items-end">
+          <ImageBlock
+            src={`${IMG}/address.png`}
+            alt="Address intelligence validation"
+            contained
+          />
+        </div>
       </Section>
 
       {/* ── Enabling Ops ─────────────────────────────────────────────── */}
@@ -214,6 +390,7 @@ export default function ProofServesPage() {
           src={`${IMG}/ops.png`}
           alt="Ops-facing global job/serve selector"
           caption="Ops-facing global job/serve selector, with additional context on hover"
+          contained
         />
         <Quote attribution="VP of Operations">
           Thank you for listening to our feedback and keeping the workflow very similar
@@ -269,11 +446,14 @@ export default function ProofServesPage() {
           </TeamMember>
         </div>
 
-        <ImageBlock
-          src={`${IMG}/iteration.png`}
-          alt="Pages of design iteration"
-          caption="Just one of many pages from months of iteration."
-        />
+        <div className="[&_figure>div]:!h-auto">
+          <ImageBlock
+            src={`${IMG}/iteration.png`}
+            alt="Pages of design iteration"
+            caption="Just one of many pages from months of iteration."
+            flush
+          />
+        </div>
       </Section>
 
       {/* ── Takeaway ─────────────────────────────────────────────────── */}
@@ -292,6 +472,7 @@ export default function ProofServesPage() {
           src={`${IMG}/serve-table.png`}
           alt="New Serves table built with AG Grid"
           caption="New Serves table built with AG Grid"
+          contained
         />
       </Section>
     </CaseStudyLayout>

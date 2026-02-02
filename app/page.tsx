@@ -1,15 +1,9 @@
 import Link from "next/link";
-import ThemeToggle from "./components/theme-toggle";
 import WorkDropdown from "./components/work-dropdown";
 import MobileMenu from "./components/mobile-menu";
 import ProjectCarousel from "./components/project-carousel";
 import { caseStudies } from "./data/case-studies";
 
-
-const socialLinks = [
-  { label: "LinkedIn", href: "https://linkedin.com/in/andrea-vollendorf" },
-  { label: "Resume", href: "https://www.dropbox.com/scl/fi/s15ylrn1qsom928kebdj4/andrea-vollendorf-resume.pdf?" },
-];
 
 const projects = [
   {
@@ -90,8 +84,10 @@ export default function Home() {
             </Link>
             {/* Desktop: hover dropdown + theme toggle */}
             <div className="hidden sm:flex items-center gap-4">
+              <Link href="/about" className="text-[13px] font-medium text-[var(--muted)] link-hover transition-colors h-8 px-2 flex items-center rounded-md focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none">
+                About
+              </Link>
               <WorkDropdown caseStudies={caseStudies} />
-              <ThemeToggle />
             </div>
             {/* Mobile: hamburger menu */}
             <div className="sm:hidden">
@@ -101,73 +97,16 @@ export default function Home() {
       </nav>
 
       {/* Hero */}
-      <header className="px-6 pt-16 pb-24 mx-auto">
+      <header className="px-6 pt-8 pb-8 sm:pt-16 sm:pb-24 mx-auto">
         <div className="max-w-[720px]">
           <h1 className="text-[32px] sm:text-[40px] leading-[1.2] tracking-[-0.02em] font-medium mb-8">
           Designing structure for complex work.
           </h1>
-          <p className="text-[16px] leading-[1.7] text-[var(--muted)] mb-12">
+          <p className="text-[16px] leading-[1.7] text-[var(--muted)] mb-6 sm:mb-12">
           I’m Andrea, a product designer based in coastal Maine, with 14+ years of experience designing highly constrained, nuanced systems with strong UX judgment and a high bar for craft.
 
 I specialize in regulated, edge-case-heavy workflows, shaping messy requirements into intentional, durable interfaces that hold up in the real world.
           </p>
-          <div className="flex gap-3 text-[14px]">
-            {socialLinks.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`
-                  relative inline-flex items-center justify-center h-8 px-4 py-1.5 rounded-lg text-[13px] font-medium btn-hover active:scale-[0.98] transition-transform duration-150 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none
-                  ${link.label === "LinkedIn" || link.label === "Resume" ? "group" : ""}
-                `}
-                style={{
-                  background: "linear-gradient(#ffdd73 0%, #ffbe25 100%)",
-                  color: "#171717",
-                  boxShadow: "inset 0 0 1px 1px rgba(255,255,255,0.14), 0 0 0 1px rgba(0,0,0,0.08), 0 2px 2px rgba(0,0,0,0.04), 0 0 0 1px #ffbe25",
-                }}
-              >
-                {link.label === "LinkedIn" && (
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 pointer-events-none select-none w-[200px] h-[120px]">
-                    {/* LinkedIn profile card */}
-                    <img
-                      src="/linkedin-profile.webp"
-                      alt=""
-                      className="absolute bottom-0 left-1/2 w-[160px] opacity-0 spring-hover-left"
-                      style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.1))' }}
-                    />
-                    {/* LinkedIn logo */}
-                    <img
-                      src="/linkedin-logo.webp"
-                      alt=""
-                      className="absolute bottom-0 left-1/2 w-[70px] opacity-0 spring-hover-right"
-                      style={{ filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.08))' }}
-                    />
-                  </div>
-                )}
-                {link.label === "Resume" && (
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 pointer-events-none select-none w-[200px] h-[120px]">
-                    {/* Resume preview - on the right */}
-                    <img
-                      src="/resume-preview.webp"
-                      alt=""
-                      className="absolute bottom-0 left-1/2 w-[160px] opacity-0 spring-hover-right-card"
-                      style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.1))' }}
-                    />
-                    {/* Dropbox logo - on the left, on top */}
-                    <img
-                      src="/dropbox-logo.webp"
-                      alt=""
-                      className="absolute bottom-0 left-1/2 w-[70px] opacity-0 spring-hover-left-logo"
-                      style={{ filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.08))' }}
-                    />
-                  </div>
-                )}
-                {link.label}
-              </Link>
-            ))}
-          </div>
         </div>
       </header>
 
@@ -192,9 +131,10 @@ I specialize in regulated, edge-case-heavy workflows, shaping messy requirements
             {" & "}
             <Link href="https://claude.ai/code" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm" target="_blank" rel="noopener noreferrer">Claude Code</Link>
           </p>
-          <p>
-            Made in Maine
-          </p>
+          <div className="flex items-center gap-4">
+            <Link href="https://linkedin.com/in/andrea-vollendorf" target="_blank" rel="noopener noreferrer" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm">LinkedIn</Link>
+            <Link href="https://www.dropbox.com/scl/fi/s15ylrn1qsom928kebdj4/andrea-vollendorf-resume.pdf?" target="_blank" rel="noopener noreferrer" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm">Resume</Link>
+          </div>
         </div>
       </footer>
     </div>
