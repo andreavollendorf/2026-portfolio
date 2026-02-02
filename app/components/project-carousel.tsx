@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 
 export interface CoverImage {
@@ -61,13 +61,10 @@ export default function ProjectCarousel({
   const stoppedRef = useRef(false);
   const draggingRef = useRef(false);
   const dragStartXRef = useRef(0);
+  const dragStartYRef = useRef(0);
   const dragStartOffsetRef = useRef(0);
   const didDragRef = useRef(false);
-  const [isTouch, setIsTouch] = useState(false);
-
-  useEffect(() => {
-    setIsTouch(window.matchMedia("(hover: none)").matches);
-  }, []);
+  const dragLockedRef = useRef<"horizontal" | "vertical" | null>(null);
 
   const cursorPosRef = useRef<HTMLDivElement>(null);
   const cursorFadeRef = useRef<HTMLDivElement>(null);
@@ -119,10 +116,8 @@ export default function ProjectCarousel({
     if (!track) return;
     const lw = loopWidthRef.current;
     if (lw > 0) {
-      // Keep offset in [0, lw) — seamless because content repeats every lw
       offsetRef.current = ((offsetRef.current % lw) + lw) % lw;
     }
-    // Shift by -lw so set B is the baseline; sets A and C act as buffers
     track.style.transform = `translateX(${-(offsetRef.current + lw)}px)`;
   }, []);
 
@@ -150,13 +145,12 @@ export default function ProjectCarousel({
     applyOffset();
   }, [activeFilter, applyOffset]);
 
-  // Auto-scroll loop
+  // Auto-scroll loop (all devices)
   useEffect(() => {
     const track = trackRef.current;
     const outer = outerRef.current;
     if (!track || !outer) return;
 
-    if (window.matchMedia("(hover: none)").matches) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let visible = false;
@@ -189,7 +183,7 @@ export default function ProjectCarousel({
     };
   }, [applyOffset]);
 
-  // Wheel handler
+  // Wheel handler (desktop only)
   useEffect(() => {
     const el = outerRef.current;
     if (!el) return;
@@ -209,19 +203,21 @@ export default function ProjectCarousel({
     return () => el.removeEventListener("wheel", handleWheel);
   }, [applyOffset]);
 
-  // Drag handler
+  // Drag/swipe handler (all devices)
   useEffect(() => {
     const el = outerRef.current;
     if (!el) return;
-    if (window.matchMedia("(hover: none)").matches) return;
 
+    const isDesktop = !window.matchMedia("(hover: none)").matches;
     let pointerId = -1;
 
     const onPointerDown = (e: PointerEvent) => {
       if (e.button !== 0) return;
       draggingRef.current = true;
       didDragRef.current = false;
+      dragLockedRef.current = null;
       dragStartXRef.current = e.clientX;
+      dragStartYRef.current = e.clientY;
       dragStartOffsetRef.current = offsetRef.current;
       pointerId = e.pointerId;
       stoppedRef.current = true;
@@ -230,11 +226,27 @@ export default function ProjectCarousel({
     const onPointerMove = (e: PointerEvent) => {
       if (!draggingRef.current) return;
       const dx = dragStartXRef.current - e.clientX;
-      if (!didDragRef.current && Math.abs(dx) > 5) {
+      const dy = dragStartYRef.current - e.clientY;
+
+      // Determine swipe direction on first significant movement
+      if (!dragLockedRef.current && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
+        dragLockedRef.current =
+          Math.abs(dx) >= Math.abs(dy) ? "horizontal" : "vertical";
+      }
+
+      // If vertical swipe on touch, bail out and let the page scroll
+      if (dragLockedRef.current === "vertical") {
+        draggingRef.current = false;
+        stoppedRef.current = false;
+        return;
+      }
+
+      if (dragLockedRef.current === "horizontal" && !didDragRef.current) {
         didDragRef.current = true;
         el.setPointerCapture(pointerId);
-        el.style.cursor = "grabbing";
+        if (isDesktop) el.style.cursor = "grabbing";
       }
+
       if (didDragRef.current) {
         offsetRef.current = dragStartOffsetRef.current + dx;
         applyOffset();
@@ -244,6 +256,7 @@ export default function ProjectCarousel({
     const onPointerUp = () => {
       if (!draggingRef.current) return;
       draggingRef.current = false;
+      dragLockedRef.current = null;
       if (didDragRef.current && pointerId !== -1) {
         try {
           el.releasePointerCapture(pointerId);
@@ -275,22 +288,23 @@ export default function ProjectCarousel({
   return (
     <div
       ref={outerRef}
-      className={`${isTouch ? "overflow-x-auto" : "overflow-hidden"} scrollbar-hide select-none relative`}
+      className="overflow-hidden scrollbar-hide select-none relative"
       role="region"
       aria-roledescription="carousel"
       aria-label="Selected work"
       onMouseEnter={() => { pausedRef.current = true; }}
       onMouseLeave={() => { pausedRef.current = false; }}
       style={{
+        touchAction: "pan-y",
         opacity: transitioning ? 0 : 1,
         transition: "opacity 150ms ease",
       }}
     >
-      {/* Custom cursor */}
+      {/* Custom cursor — desktop only */}
       <div
         ref={cursorPosRef}
         aria-hidden
-        className="absolute top-0 left-0 z-50 pointer-events-none"
+        className="absolute top-0 left-0 z-50 pointer-events-none hidden [@media(hover:hover)]:block"
         style={{ willChange: "transform" }}
       >
         <div
@@ -311,14 +325,9 @@ export default function ProjectCarousel({
       <div
         ref={trackRef}
         className="flex items-start gap-5"
-        style={{
-          width: "max-content",
-          ...(isTouch
-            ? { paddingLeft: "1.5rem", paddingRight: "1.5rem" }
-            : { willChange: "transform" }),
-        }}
+        style={{ width: "max-content", willChange: "transform" }}
       >
-        {(isTouch ? cards : [...cards, ...cards, ...cards]).map((card, i) => {
+        {[...cards, ...cards, ...cards].map((card, i) => {
           const imageContent = (
             <div className="h-[360px] sm:h-[480px] rounded-xl bg-[var(--surface)] overflow-hidden p-[40px] flex items-center justify-center">
               <img
