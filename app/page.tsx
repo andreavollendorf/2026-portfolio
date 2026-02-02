@@ -1,6 +1,9 @@
 import Link from "next/link";
 import ThemeToggle from "./components/theme-toggle";
+import WorkDropdown from "./components/work-dropdown";
+import MobileMenu from "./components/mobile-menu";
 import ProjectCarousel from "./components/project-carousel";
+import { caseStudies } from "./data/case-studies";
 
 
 const socialLinks = [
@@ -26,6 +29,7 @@ const projects = [
     year: "2025",
     coverDate: "November 2025",
     coverImages: [{ src: "/images/proof-serves/hero-light.png" }],
+    hasCaseStudy: true,
   },
   {
     slug: "easy-a",
@@ -44,15 +48,7 @@ const projects = [
     year: "2025",
     coverDate: "2025",
     coverImages: [{ src: "/images/proof-ops/hero-light.png" }],
-  },
-  {
-    slug: "userwise",
-    title: "Userwise",
-    description: "Liveops platform",
-    company: "Userwise",
-    year: "2021",
-    coverDate: "2021",
-    coverImages: [{ src: "/images/userwise/hero-light.png" }],
+    hasCaseStudy: true,
   },
   {
     slug: "ikigai",
@@ -87,12 +83,20 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* Navigation */}
-      <nav aria-label="Main navigation">
+      <nav aria-label="Main navigation" className="relative z-[var(--z-nav)]">
         <div className="flex items-center justify-between px-6 py-5 max-w-[1200px] mx-auto">
             <Link href="/" className="text-[15px] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm">
               Andrea Vollendorf
             </Link>
-            <ThemeToggle />
+            {/* Desktop: hover dropdown + theme toggle */}
+            <div className="hidden sm:flex items-center gap-4">
+              <WorkDropdown caseStudies={caseStudies} />
+              <ThemeToggle />
+            </div>
+            {/* Mobile: hamburger menu */}
+            <div className="sm:hidden">
+              <MobileMenu caseStudies={caseStudies} />
+            </div>
           </div>
       </nav>
 
@@ -115,7 +119,7 @@ I specialize in regulated, edge-case-heavy workflows, shaping messy requirements
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`
-                  relative inline-flex items-center justify-center h-8 px-4 py-1.5 rounded-lg text-[13px] font-medium btn-hover active:scale-[0.98] transition-[filter,transform] duration-150 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none
+                  relative inline-flex items-center justify-center h-8 px-4 py-1.5 rounded-lg text-[13px] font-medium btn-hover active:scale-[0.98] transition-transform duration-150 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none
                   ${link.label === "LinkedIn" || link.label === "Resume" ? "group" : ""}
                 `}
                 style={{
@@ -130,14 +134,14 @@ I specialize in regulated, edge-case-heavy workflows, shaping messy requirements
                     <img
                       src="/linkedin-profile.webp"
                       alt=""
-                      className="absolute bottom-0 left-1/2 w-[160px] opacity-0 spring-hover-left group-focus-visible:animate-[spring-up-left_0.35s_cubic-bezier(0.34,1.56,0.64,1)_forwards]"
+                      className="absolute bottom-0 left-1/2 w-[160px] opacity-0 spring-hover-left"
                       style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.1))' }}
                     />
                     {/* LinkedIn logo */}
                     <img
                       src="/linkedin-logo.webp"
                       alt=""
-                      className="absolute bottom-0 left-1/2 w-[70px] opacity-0 spring-hover-right group-focus-visible:animate-[spring-up-right_0.35s_cubic-bezier(0.34,1.56,0.64,1)_0.04s_forwards]"
+                      className="absolute bottom-0 left-1/2 w-[70px] opacity-0 spring-hover-right"
                       style={{ filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.08))' }}
                     />
                   </div>
@@ -148,14 +152,14 @@ I specialize in regulated, edge-case-heavy workflows, shaping messy requirements
                     <img
                       src="/resume-preview.webp"
                       alt=""
-                      className="absolute bottom-0 left-1/2 w-[160px] opacity-0 spring-hover-right-card group-focus-visible:animate-[spring-up-right-card_0.35s_cubic-bezier(0.34,1.56,0.64,1)_forwards]"
+                      className="absolute bottom-0 left-1/2 w-[160px] opacity-0 spring-hover-right-card"
                       style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.1))' }}
                     />
                     {/* Dropbox logo - on the left, on top */}
                     <img
                       src="/dropbox-logo.webp"
                       alt=""
-                      className="absolute bottom-0 left-1/2 w-[70px] opacity-0 spring-hover-left-logo group-focus-visible:animate-[spring-up-left-logo_0.35s_cubic-bezier(0.34,1.56,0.64,1)_0.04s_forwards]"
+                      className="absolute bottom-0 left-1/2 w-[70px] opacity-0 spring-hover-left-logo"
                       style={{ filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.08))' }}
                     />
                   </div>

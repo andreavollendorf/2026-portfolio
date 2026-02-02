@@ -47,7 +47,7 @@ export default function ProofServesPage() {
           ]}
         />
       }
-      nextProject={{ slug: "easy-a", title: "EasyA" }}
+      nextProject={{ slug: "proof-ops", title: "Proof Ops" }}
     >
       {/* ── Why It Mattered ──────────────────────────────────────────── */}
 

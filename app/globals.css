@@ -135,15 +135,67 @@ input, textarea, select { font-size: 16px; }
 @media (hover: hover) and (pointer: fine) {
   .card-hover:hover { transform: scale(1.01); }
   .img-hover:hover { opacity: 0.9; }
-  .btn-hover:hover { filter: brightness(1.05); }
+  .btn-hover:hover { transform: scale(1.02); }
   .link-hover:hover { color: var(--foreground); }
   .surface-hover:hover { background-color: var(--surface); }
 
-  /* Spring hover animations — only on pointer devices */
-  .group:hover .spring-hover-left { animation: spring-up-left 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
-  .group:hover .spring-hover-right { animation: spring-up-right 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) 0.04s forwards; }
-  .group:hover .spring-hover-right-card { animation: spring-up-right-card 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
-  .group:hover .spring-hover-left-logo { animation: spring-up-left-logo 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) 0.04s forwards; }
+  /* Spring hover — interruptible transitions (enter: spring, exit: ease-out-quart) */
+  .group:hover .spring-hover-left,
+  .group:focus-visible .spring-hover-left {
+    opacity: 1;
+    transform: translateX(-45%) translateY(0) scale(1) rotate(-6deg);
+    transition: opacity 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .group:hover .spring-hover-right,
+  .group:focus-visible .spring-hover-right {
+    opacity: 1;
+    transform: translateX(30%) translateY(0) scale(1) rotate(6deg);
+    transition: opacity 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition-delay: 0.04s;
+  }
+  .group:hover .spring-hover-right-card,
+  .group:focus-visible .spring-hover-right-card {
+    opacity: 1;
+    transform: translateX(-30%) translateY(0) scale(1) rotate(6deg);
+    transition: opacity 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .group:hover .spring-hover-left-logo,
+  .group:focus-visible .spring-hover-left-logo {
+    opacity: 1;
+    transform: translateX(-80%) translateY(0) scale(1) rotate(-6deg);
+    transition: opacity 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition-delay: 0.04s;
+  }
+}
+
+/* Spring hover — default (hidden) states with faster exit transitions */
+.spring-hover-left {
+  opacity: 0;
+  transform: translateX(-45%) translateY(12px) scale(0.95) rotate(-6deg);
+  transition: opacity 0.2s cubic-bezier(0.165, 0.84, 0.44, 1),
+              transform 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+.spring-hover-right {
+  opacity: 0;
+  transform: translateX(30%) translateY(12px) scale(0.95) rotate(6deg);
+  transition: opacity 0.2s cubic-bezier(0.165, 0.84, 0.44, 1),
+              transform 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+.spring-hover-right-card {
+  opacity: 0;
+  transform: translateX(-30%) translateY(12px) scale(0.95) rotate(6deg);
+  transition: opacity 0.2s cubic-bezier(0.165, 0.84, 0.44, 1),
+              transform 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+.spring-hover-left-logo {
+  opacity: 0;
+  transform: translateX(-80%) translateY(12px) scale(0.95) rotate(-6deg);
+  transition: opacity 0.2s cubic-bezier(0.165, 0.84, 0.44, 1),
+              transform 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 /* Theme-aware visibility — use CSS variables instead of dark: modifier */
@@ -157,68 +209,6 @@ input, textarea, select { font-size: 16px; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
-  }
-}
-
-/* Bouncy spring animation for LinkedIn hover */
-@keyframes spring-up-left {
-  0% {
-    opacity: 0;
-    transform: translateX(-45%) translateY(12px) scale(0.85) rotate(-6deg);
-  }
-  60% {
-    opacity: 1;
-    transform: translateX(-45%) translateY(-3px) scale(1.02) rotate(-6.5deg);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(-45%) translateY(0) scale(1) rotate(-6deg);
-  }
-}
-
-@keyframes spring-up-right {
-  0% {
-    opacity: 0;
-    transform: translateX(30%) translateY(12px) scale(0.85) rotate(6deg);
-  }
-  60% {
-    opacity: 1;
-    transform: translateX(30%) translateY(-3px) scale(1.02) rotate(6.5deg);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(30%) translateY(0) scale(1) rotate(6deg);
-  }
-}
-
-/* Resume hover - mirrored (logo on left) */
-@keyframes spring-up-left-logo {
-  0% {
-    opacity: 0;
-    transform: translateX(-80%) translateY(12px) scale(0.85) rotate(-6deg);
-  }
-  60% {
-    opacity: 1;
-    transform: translateX(-80%) translateY(-3px) scale(1.02) rotate(-6.5deg);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(-80%) translateY(0) scale(1) rotate(-6deg);
-  }
-}
-
-@keyframes spring-up-right-card {
-  0% {
-    opacity: 0;
-    transform: translateX(-30%) translateY(12px) scale(0.85) rotate(6deg);
-  }
-  60% {
-    opacity: 1;
-    transform: translateX(-30%) translateY(-3px) scale(1.02) rotate(6.5deg);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(-30%) translateY(0) scale(1) rotate(6deg);
   }
 }
 

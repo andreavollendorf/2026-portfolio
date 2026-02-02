@@ -123,9 +123,9 @@ export default function ThemeToggle() {
           key={option.value}
           onClick={() => selectTheme(option.value)}
           className={`
-            relative flex items-center justify-center w-8 h-6 rounded-md transition-[background-color,color,box-shadow] duration-150 before:absolute before:inset-[-10px] before:content-['']
+            relative flex items-center justify-center w-8 h-6 rounded-md transition-colors duration-150 before:absolute before:inset-[-10px] before:content-['']
             ${theme === option.value
-              ? "bg-[var(--background)] text-[var(--foreground)] shadow-sm"
+              ? "text-[var(--foreground)]"
               : "text-[var(--muted)] link-hover"
             }
           `}
@@ -133,7 +133,12 @@ export default function ThemeToggle() {
           aria-checked={theme === option.value}
           aria-label={`${option.value.charAt(0).toUpperCase()}${option.value.slice(1)} theme`}
         >
-          {option.icon}
+          <span
+            className={`absolute inset-0 rounded-md bg-[var(--background)] shadow-sm transition-opacity duration-150 ${
+              theme === option.value ? "opacity-100" : "opacity-0"
+            }`}
+          />
+          <span className="relative">{option.icon}</span>
         </button>
       ))}
     </div>

@@ -3,6 +3,9 @@
 import Link from "next/link";
 import { useEffect, useState, useCallback, useRef, createContext, useContext } from "react";
 import ThemeToggle from "../components/theme-toggle";
+import WorkDropdown from "../components/work-dropdown";
+import MobileMenu from "../components/mobile-menu";
+import { caseStudies } from "../data/case-studies";
 
 // ── Lightbox Context ────────────────────────────────────────────────
 
@@ -183,7 +186,7 @@ export function CaseStudyLayout({
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               aria-label="Scroll to top"
-              className={`hidden sm:block text-[14px] font-medium transition-[opacity,transform] duration-300 ${
+              className={`hidden sm:block text-[14px] font-medium transition-[opacity,transform] duration-200 ${
                 showTitle
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 -translate-y-2 pointer-events-none"
@@ -192,7 +195,15 @@ export function CaseStudyLayout({
             >
               {title.replace(/\.$/, "")}
             </button>
-            <ThemeToggle />
+            {/* Desktop: hover dropdown + theme toggle */}
+            <div className="hidden sm:flex items-center gap-4">
+              <WorkDropdown caseStudies={caseStudies} />
+              <ThemeToggle />
+            </div>
+            {/* Mobile: hamburger menu */}
+            <div className="sm:hidden">
+              <MobileMenu caseStudies={caseStudies} />
+            </div>
           </div>
         </nav>
 
