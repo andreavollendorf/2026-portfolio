@@ -65,6 +65,10 @@ export default function ProjectCarousel({
   const dragStartOffsetRef = useRef(0);
   const didDragRef = useRef(false);
   const dragLockedRef = useRef<"horizontal" | "vertical" | null>(null);
+  const velocityRef = useRef(0);
+  const lastMoveTimeRef = useRef(0);
+  const lastMoveXRef = useRef(0);
+  const momentumRafRef = useRef<number>(0);
 
   const cursorPosRef = useRef<HTMLDivElement>(null);
   const cursorFadeRef = useRef<HTMLDivElement>(null);
@@ -203,6 +207,20 @@ export default function ProjectCarousel({
     return () => el.removeEventListener("wheel", handleWheel);
   }, [applyOffset]);
 
+  // Momentum glide after swipe release
+  const startMomentum = useCallback(() => {
+    cancelAnimationFrame(momentumRafRef.current);
+    const friction = 0.95;
+    const glide = () => {
+      if (Math.abs(velocityRef.current) < 0.5) return;
+      velocityRef.current *= friction;
+      offsetRef.current += velocityRef.current;
+      applyOffset();
+      momentumRafRef.current = requestAnimationFrame(glide);
+    };
+    momentumRafRef.current = requestAnimationFrame(glide);
+  }, [applyOffset]);
+
   // Drag/swipe handler (all devices)
   useEffect(() => {
     const el = outerRef.current;
@@ -213,12 +231,16 @@ export default function ProjectCarousel({
 
     const onPointerDown = (e: PointerEvent) => {
       if (e.button !== 0) return;
+      cancelAnimationFrame(momentumRafRef.current);
       draggingRef.current = true;
       didDragRef.current = false;
       dragLockedRef.current = null;
       dragStartXRef.current = e.clientX;
       dragStartYRef.current = e.clientY;
       dragStartOffsetRef.current = offsetRef.current;
+      velocityRef.current = 0;
+      lastMoveXRef.current = e.clientX;
+      lastMoveTimeRef.current = Date.now();
       pointerId = e.pointerId;
       stoppedRef.current = true;
     };
@@ -248,6 +270,15 @@ export default function ProjectCarousel({
       }
 
       if (didDragRef.current) {
+        // Track velocity from recent movement
+        const now = Date.now();
+        const dt = now - lastMoveTimeRef.current;
+        if (dt > 0) {
+          velocityRef.current = (lastMoveXRef.current - e.clientX) / dt * 16;
+        }
+        lastMoveXRef.current = e.clientX;
+        lastMoveTimeRef.current = now;
+
         offsetRef.current = dragStartOffsetRef.current + dx;
         applyOffset();
       }
@@ -261,6 +292,7 @@ export default function ProjectCarousel({
         try {
           el.releasePointerCapture(pointerId);
         } catch {}
+        startMomentum();
       }
       el.style.cursor = "";
       pointerId = -1;
@@ -276,8 +308,9 @@ export default function ProjectCarousel({
       el.removeEventListener("pointermove", onPointerMove);
       el.removeEventListener("pointerup", onPointerUp);
       el.removeEventListener("pointercancel", onPointerUp);
+      cancelAnimationFrame(momentumRafRef.current);
     };
-  }, [applyOffset]);
+  }, [applyOffset, startMomentum]);
 
   const handleClick = useCallback((e: React.MouseEvent) => {
     if (didDragRef.current) {
