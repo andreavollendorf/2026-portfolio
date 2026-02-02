@@ -7,14 +7,15 @@ import { caseStudies } from "./data/case-studies";
 
 const projects = [
   {
-    slug: "theoremreach",
-    title: "Theorem Reach",
-    description: "Strategy breakdown tool",
-    company: "TheoremReach",
-    year: "2021",
-    coverDate: "September 2021",
-    coverImages: [{ src: "/images/theoremreach/hero-light.png" }],
+    slug: "easy-a",
+    title: "EasyA",
+    description: "Web3 education app",
+    company: "EasyA",
+    year: "2023",
+    coverDate: "2023",
+    coverImages: [{ src: "/images/easy-a/hero.png" }],
   },
+  
   {
     slug: "proof-serves",
     title: "Proof Serves",
@@ -26,13 +27,13 @@ const projects = [
     hasCaseStudy: true,
   },
   {
-    slug: "easy-a",
-    title: "EasyA",
-    description: "Web3 education app",
-    company: "EasyA",
-    year: "2023",
-    coverDate: "2023",
-    coverImages: [{ src: "/images/easy-a/hero.png" }],
+    slug: "theoremreach",
+    title: "Theorem Reach",
+    description: "Strategy breakdown tool",
+    company: "TheoremReach",
+    year: "2021",
+    coverDate: "September 2021",
+    coverImages: [{ src: "/images/theoremreach/hero-light.png" }],
   },
   {
     slug: "proof-ops",
@@ -45,15 +46,6 @@ const projects = [
     hasCaseStudy: true,
   },
   {
-    slug: "ikigai",
-    title: "Ikigai",
-    description: "Generative AI platform",
-    company: "Ikigai",
-    year: "2021",
-    coverDate: "2021",
-    coverImages: [{ src: "/images/ikigai/hero.png" }],
-  },
-  {
     slug: "treecard",
     title: "Treecard Banking",
     description: "0\u21921 banking flows",
@@ -62,6 +54,16 @@ const projects = [
     coverDate: "2022",
     coverImages: [{ src: "/images/treecard/hero.png" }],
   },
+  {
+    slug: "ikigai",
+    title: "Ikigai",
+    description: "Generative AI platform",
+    company: "Ikigai",
+    year: "2021",
+    coverDate: "2021",
+    coverImages: [{ src: "/images/ikigai/hero.png" }],
+  },
+  
   {
     slug: "storymaster",
     title: "Storymaster",
