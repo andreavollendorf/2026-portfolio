@@ -1,11 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
+import { Geist_Mono } from "next/font/google";
 import { Agentation } from "agentation";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const earlySans = localFont({
+  src: "../public/fonts/EarlySans-Variable.otf",
+  variable: "--font-early-sans",
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
@@ -38,7 +40,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${earlySans.variable} ${geistMono.variable} antialiased`}>
         {children}
         {process.env.NODE_ENV === "development" && <Agentation />}
       </body>

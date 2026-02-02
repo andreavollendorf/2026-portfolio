@@ -284,7 +284,7 @@ export default function ProjectCarousel({
         className="flex items-start"
         style={{
           width: "max-content",
-          paddingLeft: "max(1.5rem, calc((100vw - 1200px) / 2 + 1.5rem))",
+          paddingLeft: "1.5rem",
           paddingRight: "1.5rem",
         }}
       >

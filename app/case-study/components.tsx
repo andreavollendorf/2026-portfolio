@@ -181,7 +181,7 @@ export function CaseStudyLayout({
             </svg>
             <span>Index</span>
           </Link>
-          <div className="flex items-center justify-between py-5 px-6 max-w-[1200px] mx-auto">
+          <div className="flex items-center justify-between py-5 px-6">
             <div />
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
