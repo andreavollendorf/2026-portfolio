@@ -57,7 +57,6 @@ export default function ProjectCarousel({
   const rafRef = useRef<number>(0);
   const offsetRef = useRef(0);
   const loopWidthRef = useRef(0);
-  const pausedRef = useRef(false);
   const stoppedRef = useRef(false);
   const draggingRef = useRef(false);
   const dragStartXRef = useRef(0);
@@ -195,7 +194,8 @@ export default function ProjectCarousel({
     let visible = false;
 
     const animate = () => {
-      if (stoppedRef.current || pausedRef.current || !visible) {
+      if (stoppedRef.current) return;
+      if (!visible) {
         rafRef.current = requestAnimationFrame(animate);
         return;
       }
@@ -380,8 +380,7 @@ export default function ProjectCarousel({
       role="region"
       aria-roledescription="carousel"
       aria-label="Selected work"
-      onMouseEnter={() => { pausedRef.current = true; }}
-      onMouseLeave={() => { pausedRef.current = false; }}
+      onMouseEnter={() => { stoppedRef.current = true; }}
       style={{
         touchAction: "pan-y pinch-zoom",
         opacity: transitioning || !ready ? 0 : 1,
