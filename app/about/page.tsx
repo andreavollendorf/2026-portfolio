@@ -69,7 +69,7 @@ export default function AboutPage() {
       </nav>
 
       {/* Main Content */}
-      <main className="max-w-[740px] mx-auto px-6 pt-8 sm:pt-20 pb-16">
+      <main className="max-w-[800px] mx-auto px-6 pt-8 sm:pt-20 pb-16">
         {/* Hero — image floated right, text fills around it */}
         <section className="pb-14 overflow-hidden">
           <img
@@ -77,7 +77,7 @@ export default function AboutPage() {
             alt="Andrea Vollendorf"
             className="hidden sm:block float-right ml-8 mb-4 w-[38%] rounded-xl object-cover"
           />
-          <h1 className="text-[22px] sm:text-[26px] font-medium leading-[1.3] tracking-[-0.01em] mb-6">
+          <h1 className="text-[22px] sm:text-[26px] font-medium leading-[1.3] tracking-[-0.01em] mb-6 [text-wrap:pretty]">
             I&apos;ve spent my career helping teams untangle complex systems and build products people can actually trust.
           </h1>
           <img

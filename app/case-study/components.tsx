@@ -209,7 +209,7 @@ export function CaseStudyLayout({
         </nav>
 
         {/* Sticky Left Nav */}
-        <aside className="hidden lg:block fixed left-8 top-[11.5rem] w-36">
+        <aside className="hidden xl:block fixed left-8 top-[11.5rem] w-36">
           <ul className="space-y-1">
             {sections.map((section) => (
               <li key={section.id}>
@@ -230,10 +230,10 @@ export function CaseStudyLayout({
         </aside>
 
         {/* Main Content */}
-        <main className="max-w-[740px] mx-auto px-6 pt-8 sm:pt-20 pb-16">
+        <main className="max-w-[800px] mx-auto px-6 pt-8 sm:pt-20 pb-16">
           {/* Hero */}
-          <header className="pb-12">
-            <div className="text-[12px] text-[var(--muted)] mb-8">
+          <header className="pb-10">
+            <div className="text-[12px] text-[var(--muted)] mb-6">
               {breadcrumb}
             </div>
 
@@ -289,6 +289,24 @@ export function CaseStudyLayout({
             </div>
           </footer>
         </main>
+
+        {/* Site Footer */}
+        <footer className="px-6 py-12 border-t border-[var(--border)] mx-auto">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 text-[13px] text-[var(--muted)]">
+            <p>
+              Built with{" "}
+              <Link href="https://nextjs.org" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm" target="_blank" rel="noopener noreferrer">Next.js</Link>
+              ,{" "}
+              <Link href="https://agentation.dev/" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm" target="_blank" rel="noopener noreferrer">Agentation</Link>
+              {" & "}
+              <Link href="https://claude.ai/code" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm" target="_blank" rel="noopener noreferrer">Claude Code</Link>
+            </p>
+            <div className="flex items-center gap-4">
+              <Link href="https://linkedin.com/in/andrea-vollendorf" target="_blank" rel="noopener noreferrer" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm">LinkedIn</Link>
+              <Link href="https://www.dropbox.com/scl/fi/s15ylrn1qsom928kebdj4/andrea-vollendorf-resume.pdf?" target="_blank" rel="noopener noreferrer" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm">Resume</Link>
+            </div>
+          </div>
+        </footer>
       </div>
     </LightboxContext.Provider>
   );
@@ -310,7 +328,7 @@ export function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} className="scroll-mt-24 py-14">
+    <section id={id} className="scroll-mt-24 py-10">
       <div className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-5 font-mono">
         {sectionTitle}
       </div>

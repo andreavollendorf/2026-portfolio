@@ -46,12 +46,11 @@
   box-sizing: border-box;
 }
 
-h1, h2, h3 { text-wrap: balance; }
-
 @layer base {
+  h1, h2, h3 { text-wrap: balance; }
   h1, h2 { font-family: var(--font-mackinac), serif; }
+  p { text-wrap: pretty; }
 }
-p { text-wrap: pretty; }
 
 html {
   scroll-behavior: smooth;

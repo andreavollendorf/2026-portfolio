@@ -109,12 +109,12 @@ export default function Home() {
       </nav>
 
       {/* Hero */}
-      <header className="px-6 pt-8 pb-8 sm:pt-16 sm:pb-24 mx-auto">
+      <header className="px-6 pt-8 pb-8 sm:pt-16 sm:pb-14 mx-auto">
         <div className="max-w-[720px]">
           <h1 className="text-[32px] sm:text-[40px] leading-[1.2] tracking-[-0.02em] font-medium mb-8">
           Designing structure for complex work.
           </h1>
-          <p className="text-[16px] leading-[1.7] text-[var(--muted)] mb-6 sm:mb-12">
+          <p className="text-[16px] leading-[1.7] text-[var(--muted)] mb-6 sm:mb-8">
           I’m Andrea, a product designer based in coastal Maine, with 14+ years of experience designing highly constrained, nuanced systems with strong UX judgment and a high bar for craft.
 
 I specialize in regulated, edge-case-heavy workflows, shaping messy requirements into intentional, durable interfaces that hold up in the real world.
@@ -123,7 +123,7 @@ I specialize in regulated, edge-case-heavy workflows, shaping messy requirements
       </header>
 
       {/* Projects */}
-      <section id="projects" className="pb-32">
+      <section id="projects" className="pb-20">
         <div className="px-6 mx-auto">
           <h2 className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-8 font-normal font-mono">
             Selected Work
