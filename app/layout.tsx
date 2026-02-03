@@ -1,15 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import localFont from "next/font/local";
-import { Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { Analytics } from "@vercel/analytics/next";
 import { Agentation } from "agentation";
 import "./globals.css";
 
-const earlySans = localFont({
-  src: "../public/fonts/EarlySans-Variable.otf",
-  variable: "--font-early-sans",
-  display: "swap",
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
@@ -91,7 +89,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${earlySans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
         {process.env.NODE_ENV === "development" && <Agentation />}

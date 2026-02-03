@@ -33,7 +33,7 @@
   --color-border: var(--border);
   --color-surface: var(--surface);
   --color-surface-hover: var(--surface-hover);
-  --font-sans: var(--font-early-sans);
+  --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
@@ -55,7 +55,7 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-early-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   line-height: 1.6;
   padding-bottom: env(safe-area-inset-bottom, 0);
