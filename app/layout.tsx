@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { Analytics } from "@vercel/analytics/next";
 import { Agentation } from "agentation";
@@ -13,6 +14,12 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const mackinac = localFont({
+  src: "./fonts/P22MackinacProBook.ttf",
+  variable: "--font-mackinac",
+  display: "swap",
 });
 
 const BASE_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
@@ -89,7 +96,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${mackinac.variable} antialiased`}
       >
         {children}
         {process.env.NODE_ENV === "development" && <Agentation />}

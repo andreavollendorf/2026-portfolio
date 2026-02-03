@@ -154,7 +154,7 @@ export default function MobileMenu({
             </Link>
 
             <div className="pt-4 border-t border-[var(--border)]">
-              <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-4 font-normal">
+              <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-4 font-normal font-mono">
                 Case Studies
               </p>
 

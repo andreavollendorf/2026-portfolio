@@ -110,7 +110,7 @@ export default function AboutPage() {
 
         {/* More about me */}
         <section className="py-14">
-          <h2 className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-8 font-normal">
+          <h2 className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-8 font-normal font-mono">
             More about me
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -142,7 +142,7 @@ export default function AboutPage() {
 
         {/* My toolkit */}
         <section className="py-14">
-          <h2 className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-8 font-normal">
+          <h2 className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-8 font-normal font-mono">
             My toolkit
           </h2>
           <div className="grid grid-cols-4 sm:grid-cols-8 gap-4">
@@ -164,7 +164,7 @@ export default function AboutPage() {
 
         {/* Volunteering */}
         <section className="py-14">
-          <h2 className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-8 font-normal">
+          <h2 className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-8 font-normal font-mono">
             Volunteering
           </h2>
           <div className="space-y-0">

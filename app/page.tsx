@@ -125,7 +125,7 @@ I specialize in regulated, edge-case-heavy workflows, shaping messy requirements
       {/* Projects */}
       <section id="projects" className="pb-32">
         <div className="px-6 mx-auto">
-          <h2 className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-8 font-normal">
+          <h2 className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-8 font-normal font-mono">
             Selected Work
           </h2>
         </div>

@@ -404,7 +404,7 @@ export default function ProjectCarousel({
               "opacity 150ms cubic-bezier(0.165,0.84,0.44,1), transform 150ms cubic-bezier(0.165,0.84,0.44,1)",
           }}
         >
-          <span className="block -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--foreground)] text-[var(--background)] text-[12px] font-medium px-4 py-2 whitespace-nowrap shadow-lg">
+          <span className="block -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--foreground)] text-[var(--background)] text-[11px] font-mono uppercase tracking-[0.08em] px-4 py-2 whitespace-nowrap shadow-lg">
             View Case Study
           </span>
         </div>

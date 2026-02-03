@@ -249,7 +249,7 @@ export function CaseStudyLayout({
             <div className="grid grid-cols-2 gap-x-12 gap-y-6 text-[13px]">
               {meta.map((item) => (
                 <div key={item.label}>
-                  <div className="text-[11px] uppercase tracking-[0.08em] text-[var(--muted)] mb-2">
+                  <div className="text-[11px] uppercase tracking-[0.08em] text-[var(--muted)] mb-2 font-mono">
                     {item.label}
                   </div>
                   <div className="whitespace-pre-line leading-relaxed">{item.value}</div>
@@ -311,7 +311,7 @@ export function Section({
 }) {
   return (
     <section id={id} className="scroll-mt-24 py-14">
-      <div className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-5">
+      <div className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-5 font-mono">
         {sectionTitle}
       </div>
       {chapterTitle && (
@@ -356,16 +356,14 @@ export function ImageBlock({
 
   const isWhiteBox = contained || flush;
   const containerClass = isWhiteBox
-    ? `flex items-center justify-center rounded-xl bg-white ${flush ? "" : `px-3 pt-6 pb-4 sm:px-6 sm:pt-12 sm:pb-8 sm:h-[380px]`}`
+    ? `flex items-center justify-center rounded-xl bg-[var(--surface)] ${flush ? "" : `px-3 pt-4 pb-4 sm:px-6 sm:pt-8 sm:pb-8 sm:h-[380px]`}`
     : "bg-[var(--surface)]";
 
   return (
     <figure className="my-8">
       <div
         className={`relative rounded-lg overflow-hidden ${containerClass} ${src ? "cursor-zoom-in" : ""} transition-opacity img-hover`}
-        style={{
-          ...(isWhiteBox ? { border: "1px solid #ebebeb" } : {}),
-        }}
+        style={{}}
         {...(src ? {
           role: "button",
           tabIndex: 0,
@@ -432,7 +430,7 @@ export function TwoImages({
 export function KeyGaps({ gaps }: { gaps: { description: string }[] }) {
   return (
     <div className="my-8">
-      <div className="text-[11px] uppercase tracking-[0.1em] text-[var(--muted)] mb-4">
+      <div className="text-[11px] uppercase tracking-[0.1em] text-[var(--muted)] mb-4 font-mono">
         Key Gaps
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
@@ -457,7 +455,7 @@ export function WhatWorked({
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 my-8">
       <div>
-        <div className="text-[11px] uppercase tracking-[0.1em] text-emerald-600 mb-4">
+        <div className="text-[11px] uppercase tracking-[0.1em] text-emerald-600 mb-4 font-mono">
           What Worked
         </div>
         <ul className="space-y-3">
@@ -470,7 +468,7 @@ export function WhatWorked({
         </ul>
       </div>
       <div>
-        <div className="text-[11px] uppercase tracking-[0.1em] text-rose-500 mb-4">
+        <div className="text-[11px] uppercase tracking-[0.1em] text-rose-500 mb-4 font-mono">
           What Didn&apos;t
         </div>
         <ul className="space-y-3">
@@ -580,7 +578,7 @@ export function VideoBlock({
 }) {
   return (
     <figure className="my-8">
-      <div className="flex justify-center px-6 py-8 rounded-xl bg-white" style={{ border: "1px solid #ebebeb" }}>
+      <div className="flex justify-center px-6 py-8 rounded-xl bg-[var(--surface)]">
         <video
           src={src}
           poster={poster}
