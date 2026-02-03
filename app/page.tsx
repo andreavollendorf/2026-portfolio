@@ -145,7 +145,7 @@ I specialize in regulated, edge-case-heavy workflows, shaping messy requirements
           </p>
           <div className="flex items-center gap-4">
             <Link href="https://linkedin.com/in/andrea-vollendorf" target="_blank" rel="noopener noreferrer" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm">LinkedIn</Link>
-            <Link href="https://www.dropbox.com/scl/fi/s15ylrn1qsom928kebdj4/andrea-vollendorf-resume.pdf?" target="_blank" rel="noopener noreferrer" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm">Resume</Link>
+            <Link href="/Andrea-Vollendorf-Resume-2026.pdf" target="_blank" rel="noopener noreferrer" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm">Resume</Link>
           </div>
         </div>
       </footer>
