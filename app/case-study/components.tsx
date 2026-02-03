@@ -51,7 +51,7 @@ function Lightbox({
       onAnimationEnd={() => { if (isClosing) onClose(); }}
     >
       <button
-        className="absolute top-6 right-6 p-[10px] -m-[10px] text-white/60 link-hover transition-colors focus-visible:ring-2 focus-visible:ring-white/60 outline-none rounded-sm"
+        className="absolute top-4 right-4 p-3 text-white/60 hover:text-white transition-colors focus-visible:ring-2 focus-visible:ring-white/60 outline-none rounded-sm"
         onClick={handleClose}
         aria-label="Close lightbox"
       >

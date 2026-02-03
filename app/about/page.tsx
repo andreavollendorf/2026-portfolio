@@ -117,9 +117,9 @@ export default function AboutPage() {
             {[
               { src: "/images/about/maine.webp", caption: "I live in beautiful coastal Maine and love a good hike." },
               { src: "/images/about/yogurt.avif", caption: "Loaded yogurt bowls are my current hyper-fixation." },
-              { src: "/images/about/disney.avif", caption: "I'm not a Disney adult...I'm just an adult who really enjoys going to Disney." },
+              { src: "/images/about/disney.avif", caption: "I\u2019m not a Disney adult\u2026I\u2019m just an adult who really enjoys going to Disney." },
             ].map((img) => (
-              <figure key={img.src} className="transition-transform duration-300 ease-out hover:-translate-y-1">
+              <figure key={img.src} className="transition-transform duration-300 ease-out [@media(hover:hover)]:hover:-translate-y-1">
                 <div className="rounded-lg overflow-hidden bg-[var(--surface)]">
                   <img
                     src={img.src}
