@@ -523,7 +523,7 @@ export function LearningItem({ title, children }: { title: string; children: Rea
 
 export function Stats({ stats }: { stats: { value: string; label: string }[] }) {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-8 my-8">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-8 my-8">
       {stats.map((stat, i) => (
         <div key={i}>
           <div className="text-[28px] font-medium tracking-[-0.02em] mb-1 tabular-nums">
