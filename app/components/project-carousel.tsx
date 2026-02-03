@@ -225,7 +225,6 @@ export default function ProjectCarousel({
       }
       velocityRef.current *= friction;
       offsetRef.current += velocityRef.current;
-      wrapOffset();
       applyOffset();
       momentumRafRef.current = requestAnimationFrame(glide);
     };
