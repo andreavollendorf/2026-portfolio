@@ -231,6 +231,17 @@ export default function ProjectCarousel({
 
     const onPointerDown = (e: PointerEvent) => {
       if (e.button !== 0) return;
+      // If a second finger comes down, cancel the drag (pinch gesture)
+      if (pointerId !== -1 && e.pointerId !== pointerId) {
+        draggingRef.current = false;
+        stoppedRef.current = false;
+        if (didDragRef.current) {
+          try { el.releasePointerCapture(pointerId); } catch {}
+        }
+        el.style.cursor = "";
+        pointerId = -1;
+        return;
+      }
       cancelAnimationFrame(momentumRafRef.current);
       draggingRef.current = true;
       didDragRef.current = false;
@@ -246,7 +257,7 @@ export default function ProjectCarousel({
     };
 
     const onPointerMove = (e: PointerEvent) => {
-      if (!draggingRef.current) return;
+      if (!draggingRef.current || e.pointerId !== pointerId) return;
       const dx = dragStartXRef.current - e.clientX;
       const dy = dragStartYRef.current - e.clientY;
 

@@ -96,8 +96,11 @@ function ChatResearchCanvas() {
     (e: React.PointerEvent) => {
       if (activeIdx === null || !canvasRef.current) return;
       const canvas = canvasRef.current.getBoundingClientRect();
-      const x = ((e.clientX - canvas.left - offsetRef.current.x) / canvas.width) * 100;
-      const y = ((e.clientY - canvas.top - offsetRef.current.y) / canvas.height) * 100;
+      const rawX = ((e.clientX - canvas.left - offsetRef.current.x) / canvas.width) * 100;
+      const rawY = ((e.clientY - canvas.top - offsetRef.current.y) / canvas.height) * 100;
+      const stickerW = defaultStickers[activeIdx].width;
+      const x = Math.max(-stickerW * 0.5, Math.min(100 - stickerW * 0.5, rawX));
+      const y = Math.max(-10, Math.min(95, rawY));
       setPositions((prev) => ({ ...prev, [activeIdx]: { x, y } }));
     },
     [activeIdx]
@@ -135,7 +138,7 @@ function ChatResearchCanvas() {
         <div
           ref={canvasRef}
           aria-description="Interactive canvas — drag stickers to rearrange"
-          className="relative h-[260px] sm:h-[380px]"
+          className="relative overflow-hidden h-[260px] sm:h-[380px]"
           style={{
             backgroundColor: "#f5f5f5",
             backgroundImage: "radial-gradient(circle, #d0d0d0 1px, transparent 1px)",
