@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
 import Link from "next/link";
 
 export interface CoverImage {
@@ -69,6 +69,8 @@ export default function ProjectCarousel({
   const lastMoveTimeRef = useRef(0);
   const lastMoveXRef = useRef(0);
   const momentumRafRef = useRef<number>(0);
+
+  const [ready, setReady] = useState(false);
 
   const cursorPosRef = useRef<HTMLDivElement>(null);
   const cursorFadeRef = useRef<HTMLDivElement>(null);
@@ -145,6 +147,35 @@ export default function ProjectCarousel({
     const ro = new ResizeObserver(measure);
     ro.observe(track);
     return () => ro.disconnect();
+  }, [cardCount]);
+
+  // Wait for first set of images to load before revealing
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track || cardCount === 0) return;
+
+    // Only need the first set of images (not duplicates)
+    const imgs = Array.from(track.querySelectorAll("img")).slice(0, cardCount);
+    const allLoaded = imgs.every((img) => img.complete && img.naturalWidth > 0);
+    if (allLoaded) {
+      setReady(true);
+      return;
+    }
+
+    let loaded = imgs.filter((img) => img.complete && img.naturalWidth > 0).length;
+    const check = () => {
+      loaded++;
+      if (loaded >= imgs.length) setReady(true);
+    };
+    imgs.forEach((img) => {
+      if (img.complete && img.naturalWidth > 0) return;
+      img.addEventListener("load", check, { once: true });
+      img.addEventListener("error", check, { once: true });
+    });
+
+    // Fallback: reveal after 2s even if some images are slow
+    const timer = setTimeout(() => setReady(true), 2000);
+    return () => clearTimeout(timer);
   }, [cardCount]);
 
   // Reset on filter change
@@ -353,8 +384,8 @@ export default function ProjectCarousel({
       onMouseLeave={() => { pausedRef.current = false; }}
       style={{
         touchAction: "pan-y pinch-zoom",
-        opacity: transitioning ? 0 : 1,
-        transition: "opacity 150ms ease",
+        opacity: transitioning || !ready ? 0 : 1,
+        transition: "opacity 300ms ease",
       }}
     >
       {/* Custom cursor — desktop only */}
