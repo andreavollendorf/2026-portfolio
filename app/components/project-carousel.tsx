@@ -115,13 +115,17 @@ export default function ProjectCarousel({
   const cards = flattenToCards(filtered);
   const cardCount = cards.length;
 
-  const applyOffset = useCallback(() => {
-    const track = trackRef.current;
-    if (!track) return;
+  const wrapOffset = useCallback(() => {
     const lw = loopWidthRef.current;
     if (lw > 0) {
       offsetRef.current = ((offsetRef.current % lw) + lw) % lw;
     }
+  }, []);
+
+  const applyOffset = useCallback(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const lw = loopWidthRef.current;
     track.style.transform = `translateX(${-(offsetRef.current + lw)}px)`;
   }, []);
 
@@ -166,6 +170,7 @@ export default function ProjectCarousel({
       }
 
       offsetRef.current += 0.55;
+      wrapOffset();
       applyOffset();
       rafRef.current = requestAnimationFrame(animate);
     };
@@ -185,7 +190,7 @@ export default function ProjectCarousel({
       observer.disconnect();
       cancelAnimationFrame(rafRef.current);
     };
-  }, [applyOffset]);
+  }, [applyOffset, wrapOffset]);
 
   // Wheel handler (desktop only)
   useEffect(() => {
@@ -200,26 +205,32 @@ export default function ProjectCarousel({
       e.preventDefault();
       stoppedRef.current = true;
       offsetRef.current += delta;
+      wrapOffset();
       applyOffset();
     };
 
     el.addEventListener("wheel", handleWheel, { passive: false });
     return () => el.removeEventListener("wheel", handleWheel);
-  }, [applyOffset]);
+  }, [applyOffset, wrapOffset]);
 
   // Momentum glide after swipe release
   const startMomentum = useCallback(() => {
     cancelAnimationFrame(momentumRafRef.current);
     const friction = 0.95;
     const glide = () => {
-      if (Math.abs(velocityRef.current) < 0.5) return;
+      if (Math.abs(velocityRef.current) < 0.5) {
+        wrapOffset();
+        applyOffset();
+        return;
+      }
       velocityRef.current *= friction;
       offsetRef.current += velocityRef.current;
+      wrapOffset();
       applyOffset();
       momentumRafRef.current = requestAnimationFrame(glide);
     };
     momentumRafRef.current = requestAnimationFrame(glide);
-  }, [applyOffset]);
+  }, [applyOffset, wrapOffset]);
 
   // Drag/swipe handler (all devices)
   useEffect(() => {
@@ -304,6 +315,9 @@ export default function ProjectCarousel({
           el.releasePointerCapture(pointerId);
         } catch {}
         startMomentum();
+      } else {
+        wrapOffset();
+        applyOffset();
       }
       el.style.cursor = "";
       pointerId = -1;
@@ -339,7 +353,7 @@ export default function ProjectCarousel({
       onMouseEnter={() => { pausedRef.current = true; }}
       onMouseLeave={() => { pausedRef.current = false; }}
       style={{
-        touchAction: "pan-y",
+        touchAction: "pan-y pinch-zoom",
         opacity: transitioning ? 0 : 1,
         transition: "opacity 150ms ease",
       }}
