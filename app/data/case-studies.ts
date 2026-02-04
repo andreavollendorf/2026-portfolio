@@ -9,4 +9,9 @@ export const caseStudies = [
     title: "Proof Ops",
     description: "Operations task management",
   },
+  {
+    slug: "userwise",
+    title: "Userwise",
+    description: "Player retention tools",
+  },
 ];

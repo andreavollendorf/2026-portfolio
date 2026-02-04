@@ -43,6 +43,7 @@ const projects = [
     year: "2021",
     coverDate: "2021",
     coverImages: [{ src: "/images/userwise/hero.png" }],
+    hasCaseStudy: true,
   },
   {
     slug: "theoremreach",
