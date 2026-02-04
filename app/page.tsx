@@ -46,6 +46,15 @@ const projects = [
     hasCaseStudy: true,
   },
   {
+    slug: "userwise",
+    title: "Userwise",
+    description: "Campaign content builder",
+    company: "Userwise",
+    year: "2021",
+    coverDate: "2021",
+    coverImages: [{ src: "/images/userwise/hero.png" }],
+  },
+  {
     slug: "treecard",
     title: "Treecard Banking",
     description: "0\u21921 banking flows",
