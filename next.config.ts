@@ -7,6 +7,16 @@ const nextConfig: NextConfig = {
       destination: "/case-study/proof-serves",
       permanent: true,
     },
+    {
+      source: "/proof-ops",
+      destination: "/case-study/proof-ops",
+      permanent: true,
+    },
+    {
+      source: "/userwise",
+      destination: "/case-study/userwise",
+      permanent: true,
+    },
   ],
   headers: async () => [
     {
