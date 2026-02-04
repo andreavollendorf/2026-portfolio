@@ -1,6 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  redirects: async () => [
+    {
+      source: "/proof",
+      destination: "/case-study/proof-serves",
+      permanent: true,
+    },
+  ],
   headers: async () => [
     {
       source: "/(.*)",
