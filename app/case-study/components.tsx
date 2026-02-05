@@ -381,7 +381,7 @@ export function ImageBlock({
     <figure className="my-8">
       <div
         className={`relative rounded-lg overflow-hidden ${containerClass} ${src ? "cursor-zoom-in" : ""} transition-opacity img-hover`}
-        style={{}}
+        style={{ boxShadow: "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px inset" }}
         {...(src ? {
           role: "button",
           tabIndex: 0,

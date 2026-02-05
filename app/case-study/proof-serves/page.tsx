@@ -206,13 +206,10 @@ export default function ProofServesPage() {
       ]}
       sections={sections}
       heroContent={
-        <div className="[&_figure>div]:pb-0">
-          <ImageBlock
-            src={`${IMG}/overview.png`}
-            alt="Redesigned serve overview page"
-            contained
-          />
-        </div>
+        <ImageBlock
+          src={`${IMG}/serves-hero.png`}
+          alt="Redesigned serve overview page"
+        />
       }
       nextProject={{ slug: "proof-ops", title: "Proof Ops" }}
     >
@@ -472,10 +469,9 @@ export default function ProofServesPage() {
           scalable foundation for retention.
         </Paragraph>
         <ImageBlock
-          src={`${IMG}/serve-table.png`}
+          src={`${IMG}/serves.png`}
           alt="New Serves table built with AG Grid"
           caption="New Serves table built with AG Grid"
-          contained
         />
       </Section>
     </CaseStudyLayout>
