@@ -32,10 +32,8 @@ export default function UserwisePage() {
       nextProject={{ slug: "proof-ops", title: "Proof Ops" }}
       heroContent={
         <ImageBlock
-          src={`${IMG}/slot.png`}
-          alt="A filled out Slot on the new Shops feature"
-          caption="A filled out &ldquo;Slot&rdquo; on the new &ldquo;Shops&rdquo; feature."
-          contained
+          src={`${IMG}/userwise-hero.png`}
+          alt="Userwise campaign scheduling interface"
         />
       }
     >
