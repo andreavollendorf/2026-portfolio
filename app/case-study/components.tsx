@@ -6,6 +6,36 @@ import WorkDropdown from "../components/work-dropdown";
 import MobileMenu from "../components/mobile-menu";
 import { caseStudies } from "../data/case-studies";
 
+// ── Section Glyph Map ───────────────────────────────────────────────
+
+const SECTION_GLYPHS: Record<string, string> = {
+  overview: "\u25CA",       // ◊ lozenge
+  problem: "\u25B2",        // ▲ triangle
+  approach: "\u2197",       // ↗ northeast arrow
+  solution: "\u221A",       // √ square root
+  outcome: "\u2211",        // ∑ summation
+  outcomes: "\u2211",       // ∑ summation
+  context: "\u25CA",        // ◊ lozenge
+  reality: "\u2022",        // • bullet
+  mapping: "\u2206",        // ∆ delta
+  architecture: "\u220F",   // ∏ pi product
+  documentation: "\u00A7",  // § section sign
+  "why-it-mattered": "\u2192", // → arrow
+  "where-we-started": "\u25CA", // ◊ lozenge
+  research: "\u221E",       // ∞ infinity
+  reframe: "\u21A9",        // ↩ hook arrow
+  ops: "\u21E5",            // ⇥ tab arrow
+  collaboration: "\u2194",  // ↔ bidirectional
+  takeaway: "\u21AA",       // ↪ rightwards arrow with hook
+  challenge: "\u00D7",      // × multiplication
+  process: "\u2193",        // ↓ down arrow
+  designed: "\u25CA",       // ◊ lozenge
+  result: "\u2192",         // → arrow
+  iteration: "\u2202",      // ∂ partial
+  "next-steps": "\u2197",   // ↗ northeast arrow
+  learnings: "\u221E",      // ∞ infinity
+};
+
 // ── Lightbox Context ────────────────────────────────────────────────
 
 const LightboxContext = createContext<
@@ -120,7 +150,7 @@ export function CaseStudyLayout({
         });
       },
       {
-        rootMargin: "-80px 0px -60% 0px",
+        rootMargin: "-80px 0px -50% 0px",
         threshold: 0,
       }
     );
@@ -209,23 +239,47 @@ export function CaseStudyLayout({
         </nav>
 
         {/* Sticky Left Nav */}
-        <aside className="hidden xl:block fixed left-8 top-[11.5rem] w-36">
+        <aside className="hidden xl:block fixed left-8 top-[11.5rem] w-44">
           <ul className="space-y-1">
-            {sections.map((section) => (
-              <li key={section.id}>
-                <a
-                  href={`#${section.id}`}
-                  className={`text-[13px] block py-1 transition-[color,opacity,transform,font-weight] duration-300 focus-visible:ring-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm ${
-                    activeSection === section.id
-                      ? "text-[var(--foreground)] font-medium translate-x-1.5 opacity-100"
-                      : "text-[var(--muted)] link-hover opacity-60 hover:opacity-100"
-                  }`}
-                  style={{ transitionTimingFunction: 'var(--ease-out-expo)' }}
-                >
-                  {section.label}
-                </a>
-              </li>
-            ))}
+            {sections.map((section) => {
+              const isActive = activeSection === section.id;
+              const glyph = SECTION_GLYPHS[section.id];
+              return (
+                <li key={section.id}>
+                  <a
+                    href={`#${section.id}`}
+                    className={`text-[13px] flex items-center gap-3 py-1 transition-[color,opacity,font-weight] duration-300 focus-visible:ring-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm ${
+                      isActive
+                        ? "text-[var(--foreground)] font-medium opacity-100"
+                        : "text-[var(--muted)] link-hover opacity-60 hover:opacity-100"
+                    }`}
+                    style={{ transitionTimingFunction: 'var(--ease-out-expo)' }}
+                  >
+                    <span
+                      className="relative shrink-0"
+                      style={{ width: 20, height: 20 }}
+                    >
+                      {glyph && (
+                        <span
+                          className="absolute inset-0 flex items-center justify-center"
+                          style={{
+                            fontFamily: "var(--font-geist-pixel-square)",
+                            fontSize: 20,
+                            lineHeight: 1,
+                            opacity: isActive ? 1 : 0,
+                            transform: isActive ? "scale(1)" : "scale(0.8)",
+                            transition: "opacity 0.3s ease, transform 0.3s ease",
+                          }}
+                        >
+                          {glyph}
+                        </span>
+                      )}
+                    </span>
+                    {section.label}
+                  </a>
+                </li>
+              );
+            })}
           </ul>
         </aside>
 
