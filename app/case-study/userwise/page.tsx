@@ -53,9 +53,8 @@ export default function UserwisePage() {
           workflows that feel approachable, even for non-technical teams.
         </Paragraph>
         <ImageBlock
-          src={`${IMG}/slots.png`}
-          alt="Shops feature showing slots grid with pricing and segment details"
-          contained
+          src={`${IMG}/slot.png`}
+          alt="Slot configuration with basic settings, content pricing, and trigger rules"
         />
       </Section>
 
@@ -100,7 +99,6 @@ export default function UserwisePage() {
           src={`${IMG}/wire.png`}
           alt="Early wireframing explorations for the platform"
           caption="Early wireframing."
-          contained
         />
       </Section>
 
@@ -121,7 +119,6 @@ export default function UserwisePage() {
         <ImageBlock
           src={`${IMG}/campaign.png`}
           alt="Campaign scheduling and management interface"
-          contained
         />
 
         <h3 className="text-[18px] font-medium mt-6 mb-2">Shops</h3>
@@ -134,7 +131,6 @@ export default function UserwisePage() {
         <ImageBlock
           src={`${IMG}/shops.png`}
           alt="In-game shop configuration interface with offers and pricing"
-          contained
         />
 
         <h3 className="text-[18px] font-medium mt-6 mb-2">Version history</h3>
@@ -147,7 +143,6 @@ export default function UserwisePage() {
         <ImageBlock
           src={`${IMG}/version-history.png`}
           alt="Version history interface showing change tracking and rollback"
-          contained
         />
 
         <h3 className="text-[18px] font-medium mt-6 mb-2">JSON upload</h3>
@@ -160,7 +155,6 @@ export default function UserwisePage() {
         <ImageBlock
           src={`${IMG}/json.png`}
           alt="JSON upload interface with validation and error handling"
-          contained
         />
 
         <Quote attribution="Co-founder @ Userwise">
@@ -188,7 +182,6 @@ export default function UserwisePage() {
           src={`${IMG}/result.png`}
           alt="Campaigns root view for Schedule or Triggered campaigns"
           caption="Campaigns (root) for &ldquo;Schedule&rdquo; or &ldquo;Triggered.&rdquo;"
-          contained
         />
 
         <Quote attribution="Head of Product @ Userwise">
