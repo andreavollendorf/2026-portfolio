@@ -94,7 +94,7 @@ export default function GlyphsPage() {
 
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
-      <div className="mx-auto max-w-5xl px-6 py-16">
+      <div className="mx-auto max-w-5xl px-6 lg:px-20 py-16">
         <header className="mb-12">
           <h1 className="mb-2 text-3xl font-medium tracking-tight">
             Geist Pixel

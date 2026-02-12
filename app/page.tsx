@@ -131,13 +131,10 @@ export default function Home() {
       <header className="px-6 lg:px-20 pt-8 pb-8 sm:pt-16 sm:pb-14 mx-auto">
         <div className="max-w-[720px]">
           <h1 className="text-[32px] sm:text-[40px] leading-[1.2] tracking-[-0.02em] font-medium mb-8">
-          Designing structure for complex work.
+          Complex systems tend to fail the people who need them most.
           </h1>
           <p className="text-[16px] leading-[1.7] text-[var(--muted)] mb-6 sm:mb-8">
-          I’m Andrea, a product designer based in coastal Maine, with 14+ years of experience designing highly constrained, nuanced systems with strong UX judgment and a high bar for craft.
-
-I specialize in regulated, edge-case-heavy workflows, shaping messy requirements into intentional, durable interfaces that hold up in the real world.
-          </p>
+          I'm Andrea, a product designer on the coast of Maine. I've spent 14 years designing for the complex, regulated, invisible stuff - the systems that sit between people and the things they actually need. I bring strong craft and clear judgment to work that usually doesn't get either. </p>
         </div>
       </header>
 

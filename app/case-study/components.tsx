@@ -203,14 +203,14 @@ export function CaseStudyLayout({
         >
           <Link
             href="/"
-            className="absolute left-6 lg:left-8 top-1/2 -translate-y-1/2 inline-flex items-center gap-2 text-[14px] text-[var(--muted)] link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm"
+            className="absolute left-6 lg:left-20 top-1/2 -translate-y-1/2 inline-flex items-center gap-2 text-[14px] text-[var(--muted)] link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm"
           >
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M5.5 4L1.5 8M1.5 8L5.5 12M1.5 8H10C11.3807 8 12.5 6.88071 12.5 5.5V5.5C12.5 4.11929 11.3807 3 10 3H8.5" stroke="currentColor"/>
             </svg>
             <span>Index</span>
           </Link>
-          <div className="flex items-center justify-between py-5 px-6">
+          <div className="flex items-center justify-between py-5 px-6 lg:px-20">
             <div />
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
@@ -345,7 +345,7 @@ export function CaseStudyLayout({
         </main>
 
         {/* Site Footer */}
-        <footer className="px-6 py-12 border-t border-[var(--border)] mx-auto">
+        <footer className="px-6 lg:px-20 py-12 border-t border-[var(--border)] mx-auto">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 text-[13px] text-[var(--muted)]">
             <p>
               Built with{" "}
