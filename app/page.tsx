@@ -109,7 +109,7 @@ export default function Home() {
     <div className="min-h-screen">
       {/* Navigation */}
       <nav aria-label="Main navigation" className="relative z-[var(--z-nav)]">
-        <div className="flex items-center justify-between px-6 py-5 mx-auto">
+        <div className="flex items-center justify-between px-6 lg:px-20 py-5 mx-auto">
             <Link href="/" className="text-[15px] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm">
               Andrea Vollendorf
             </Link>
@@ -128,7 +128,7 @@ export default function Home() {
       </nav>
 
       {/* Hero */}
-      <header className="px-6 pt-8 pb-8 sm:pt-16 sm:pb-14 mx-auto">
+      <header className="px-6 lg:px-20 pt-8 pb-8 sm:pt-16 sm:pb-14 mx-auto">
         <div className="max-w-[720px]">
           <h1 className="text-[32px] sm:text-[40px] leading-[1.2] tracking-[-0.02em] font-medium mb-8">
           Designing structure for complex work.
@@ -143,7 +143,7 @@ I specialize in regulated, edge-case-heavy workflows, shaping messy requirements
 
       {/* Projects */}
       <section id="projects" className="pb-20">
-        <div className="px-6 mx-auto">
+        <div className="px-6 lg:px-20 mx-auto">
           <h2 className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-8 font-normal font-mono">
             Selected Work
           </h2>
@@ -152,7 +152,7 @@ I specialize in regulated, edge-case-heavy workflows, shaping messy requirements
       </section>
 
       {/* Footer */}
-      <footer className="px-6 py-12 border-t border-[var(--border)] mx-auto">
+      <footer className="px-6 lg:px-20 py-12 border-t border-[var(--border)] mx-auto">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 text-[13px] text-[var(--muted)]">
           <p>
             Built with{" "}
