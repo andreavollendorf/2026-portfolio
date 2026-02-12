@@ -20,7 +20,9 @@
   --border-hairline: 1px;
 
   /* Z-index scale */
+  --z-overlay: 40;
   --z-nav: 50;
+  --z-dropdown: 60;
   --z-lightbox: 100;
 }
 

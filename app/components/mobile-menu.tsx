@@ -131,7 +131,7 @@ export default function MobileMenu({
           aria-label="Navigation menu"
           className="fixed inset-0"
           style={{
-            zIndex: 49,
+            zIndex: "var(--z-overlay)",
             opacity: 0,
             pointerEvents: "none",
             background: "var(--background)",

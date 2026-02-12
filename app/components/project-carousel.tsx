@@ -89,6 +89,11 @@ export default function ProjectCarousel({
     if (!pos || !fade || !container) return;
     const rect = container.getBoundingClientRect();
     pos.style.transform = `translate(${e.clientX - rect.left}px, ${e.clientY - rect.top}px)`;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      fade.style.opacity = "1";
+      fade.style.transform = "scale(1)";
+      return;
+    }
     fade.style.transition = "none";
     fade.style.opacity = "0";
     fade.style.transform = "scale(0.1)";
@@ -102,6 +107,10 @@ export default function ProjectCarousel({
   const onCardMouseLeave = useCallback(() => {
     const fade = cursorFadeRef.current;
     if (!fade) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      fade.style.opacity = "0";
+      return;
+    }
     fade.style.transition =
       "opacity 150ms cubic-bezier(0.165,0.84,0.44,1), transform 150ms cubic-bezier(0.165,0.84,0.44,1)";
     fade.style.opacity = "0";
@@ -432,7 +441,7 @@ export default function ProjectCarousel({
           );
 
           const label = (
-            <div className="h-[36px] overflow-hidden">
+            <div className="h-[44px] overflow-hidden">
               <div className="translate-y-[-100%] group-hover:translate-y-0 group-focus-visible:translate-y-0 transition-transform duration-200 ease-[var(--ease-out-quart)] pt-3 flex items-baseline justify-between">
                 <span className="text-[13px] font-medium text-[var(--foreground)]">
                   {card.projectTitle}

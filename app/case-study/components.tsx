@@ -248,9 +248,9 @@ export function CaseStudyLayout({
                 <li key={section.id}>
                   <a
                     href={`#${section.id}`}
-                    className={`text-[13px] flex items-center gap-3 py-1 transition-[color,opacity,font-weight] duration-300 focus-visible:ring-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm ${
+                    className={`text-[13px] flex items-center gap-3 py-1 transition-[color,opacity] duration-300 focus-visible:ring-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm ${
                       isActive
-                        ? "text-[var(--foreground)] font-medium opacity-100"
+                        ? "text-[var(--foreground)] opacity-100"
                         : "text-[var(--muted)] link-hover opacity-60 hover:opacity-100"
                     }`}
                     style={{ transitionTimingFunction: 'var(--ease-out-expo)' }}
