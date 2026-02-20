@@ -90,7 +90,7 @@ function Lightbox({
         </svg>
       </button>
       <div
-        className={`relative max-w-[90vw] max-h-[90vh] bg-white rounded-lg overflow-hidden px-6 pt-10 pb-6 ${
+        className={`relative max-w-[90vw] max-h-[90vh] overflow-hidden ${
           isClosing ? "animate-[scale-out_150ms_ease-in_forwards]" : "animate-[scale-in_200ms_ease-out]"
         }`}
         onClick={(e) => e.stopPropagation()}
@@ -392,7 +392,7 @@ export function Section({
         </h2>
       )}
       {subtitle && (
-        <p className="text-[15px] font-medium text-[var(--foreground)] mb-6">
+        <p className="text-[15px] font-medium text-[var(--foreground)] mb-3">
           {subtitle}
         </p>
       )}

@@ -108,12 +108,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${mackinac.variable} ${GeistPixelSquare.variable} ${GeistPixelGrid.variable} ${GeistPixelCircle.variable} ${GeistPixelTriangle.variable} ${GeistPixelLine.variable} antialiased`}
       >
         {children}
-        {process.env.NODE_ENV === "development" && (
-          <>
-            <Agentation />
-            <DialRoot position="top-right" />
-          </>
-        )}
+        {process.env.NODE_ENV === "development" && <Agentation />}
       </body>
       <Analytics />
       <GoogleAnalytics gaId="G-22T1KDCYY1" />

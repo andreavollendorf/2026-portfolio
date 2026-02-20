@@ -249,7 +249,6 @@ export default function ProofServesPage() {
           src={`${IMG}/before.png`}
           alt="The old job details page before the redesign"
           caption="The &ldquo;old&rdquo; job details page before the redesign"
-          contained
         />
       </Section>
 
@@ -296,27 +295,21 @@ export default function ProofServesPage() {
         <Paragraph>
           That&apos;s not a product experience. That&apos;s a breakdown of trust.
         </Paragraph>
-        <div className="[&_figure>div]:px-3 [&_figure>div]:pt-6 [&_figure>div]:pb-4">
-          <ImageBlock
-            src={`${IMG}/structure.png`}
-            alt="Old model vs new model comparison"
-            caption="Old model (left) vs new model (right)"
-            contained
-          />
-        </div>
+        <ImageBlock
+          src={`${IMG}/structure.png`}
+          alt="Old model vs new model comparison"
+          caption="Old model (left) vs new model (right)"
+        />
         <Paragraph>
           &ldquo;Jobs&rdquo; were an internal concept that made sense for ops but meant
           nothing to clients. We needed a new mental model: one serve, one story, regardless
           of how many reassignments happened behind the scenes. The serve became the container.
         </Paragraph>
-        <div className="[&_figure>div]:px-16 [&_figure>div]:pt-14 [&_figure>div]:pb-10">
-          <ImageBlock
-            src={`${IMG}/data-model.png`}
-            alt="The new data model for serves"
-            caption="The new data model for serves"
-            contained
-          />
-        </div>
+        <ImageBlock
+          src={`${IMG}/data-model.png`}
+          alt="The new data model for serves"
+          caption="The new data model for serves"
+        />
       </Section>
 
       {/* ── Solution ─────────────────────────────────────────────────── */}
@@ -327,7 +320,7 @@ export default function ProofServesPage() {
         chapterTitle="Three experiences that remove uncertainty."
       >
         {/* Job Tracker */}
-        <h3 className="text-[18px] font-medium mt-6 mb-2">Job tracker</h3>
+        <h3 className="text-[15px] font-medium mt-6 mb-2">Job tracker</h3>
         <Paragraph>
           Answers one question: is this progressing the way it should? Instead of binary
           status labels, it surfaces contextual health indicators (on track, needs attention,
@@ -338,12 +331,11 @@ export default function ProofServesPage() {
           <ImageBlock
             src={`${IMG}/tracker.png`}
             alt="Job tracker showing health indicators"
-            contained
           />
         </div>
 
         {/* Unified History */}
-        <h3 className="text-[18px] font-medium mt-6 mb-2">Unified history</h3>
+        <h3 className="text-[15px] font-medium mt-6 mb-2">Unified history</h3>
         <Paragraph>
           Reassignments no longer reset the conversation. A single timeline preserves all
           attempts, chats, and documents regardless of how many times the serve changes hands.
@@ -352,12 +344,11 @@ export default function ProofServesPage() {
           <ImageBlock
             src={`${IMG}/history.png`}
             alt="Unified history timeline"
-            contained
           />
         </div>
 
         {/* Address Intelligence */}
-        <h3 className="text-[18px] font-medium mt-6 mb-2">Address intelligence</h3>
+        <h3 className="text-[15px] font-medium mt-6 mb-2">Address intelligence</h3>
         <Paragraph>
           Many failed attempts came from address quality issues. We integrated Melissa Data to
           validate addresses proactively and surface risks before dispatch.
@@ -366,7 +357,6 @@ export default function ProofServesPage() {
           <ImageBlock
             src={`${IMG}/address.png`}
             alt="Address intelligence validation"
-            contained
           />
         </div>
       </Section>
@@ -390,7 +380,6 @@ export default function ProofServesPage() {
           src={`${IMG}/ops.png`}
           alt="Ops-facing global job/serve selector"
           caption="Ops-facing global job/serve selector, with additional context on hover"
-          contained
         />
         <Quote attribution="VP of Operations">
           Thank you for listening to our feedback and keeping the workflow very similar
