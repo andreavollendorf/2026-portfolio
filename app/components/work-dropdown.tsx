@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect, useCallback, useId } from "react";
 import Link from "next/link";
+import { motion } from "motion/react";
+import { useDialKit } from "dialkit";
 
 export interface CaseStudyPreview {
   slug: string;
@@ -53,7 +55,36 @@ export const studyConfig: Record<string, { Icon: React.FC<{ colored?: boolean }>
   "userwise": { Icon: UserwiseIcon },
 };
 
-// ease-out-quart — user-initiated enter/exit
+/* ─────────────────────────────────────────────────────────
+ * ANIMATION STORYBOARD — Icon Hover Micro-interactions
+ *
+ * Each icon has a unique motion triggered on menu-item hover.
+ *
+ *  Serves   float — lifts y: -offsetY, then settles back
+ *  Tasks    spin  — rotates to +rotation°, then settles back
+ *  Userwise pulse — scales to hoverScale, then settles back
+ *
+ * All share the same spring config and holdDuration:
+ *
+ *    rest   icon at identity transform
+ *   hover   icon animates to target with spring
+ *   +hold   holds at target for holdDuration ms
+ *  settle   eases back to rest (spring)
+ * ───────────────────────────────────────────────────────── */
+
+/* Rest state — all icons return here */
+const REST = { y: 0, rotate: 0, scale: 1 };
+
+/* Per-icon animation targets (defaults, tunable via DialKit) */
+const DEFAULTS = {
+  holdDuration: 150,   // ms to hold at peak before settling
+  spring: { type: "spring" as const, visualDuration: 0.3, bounce: 0.25 },
+  serves:   { offsetY: 6 },      // px the icon floats up
+  tasks:    { rotate: 14 },      // degrees the icon spins
+  userwise: { scale: 1.15 },     // scale factor for pulse
+};
+
+// ease-out-quart — panel enter/exit
 const EASE_OUT_QUART = "cubic-bezier(0.165,0.84,0.44,1)";
 
 export default function WorkDropdown({
@@ -62,16 +93,63 @@ export default function WorkDropdown({
   caseStudies: CaseStudyPreview[];
 }) {
   const [open, setOpen] = useState(false);
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const [settled, setSettled] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const leaveTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const exitTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const settleTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const panelId = useId();
 
+  // DialKit — live controls for tuning each icon's hover animation
+  const params = useDialKit("Icon Hover", {
+    holdDuration: [DEFAULTS.holdDuration, 0, 500],
+    spring: DEFAULTS.spring,
+    serves: {
+      offsetY: [DEFAULTS.serves.offsetY, 0, 20],
+    },
+    tasks: {
+      rotate: [DEFAULTS.tasks.rotate, 0, 45],
+    },
+    userwise: {
+      scale: [DEFAULTS.userwise.scale, 1, 1.5],
+    },
+  });
+
+  // Resolve the active animate target for a given slug
+  const getIconTarget = (slug: string) => {
+    switch (slug) {
+      case "proof-serves": return { ...REST, y: -params.serves.offsetY };
+      case "proof-ops":    return { ...REST, rotate: params.tasks.rotate };
+      case "userwise":     return { ...REST, scale: params.userwise.scale };
+      default:             return REST;
+    }
+  };
+
+  // Hold timer: after hovering, wait holdDuration then settle back
+  useEffect(() => {
+    clearTimeout(settleTimer.current);
+    setSettled(false);
+
+    if (hoveredIdx !== null) {
+      settleTimer.current = setTimeout(() => {
+        setSettled(true);
+      }, params.holdDuration);
+    }
+
+    return () => clearTimeout(settleTimer.current);
+  }, [hoveredIdx, params.holdDuration]);
+
+  // Reset icon hover when dropdown closes
+  useEffect(() => {
+    if (!open) {
+      setHoveredIdx(null);
+      setSettled(false);
+    }
+  }, [open]);
+
   // Ref-driven panel animation — asymmetric enter/exit.
-  // Enter: opacity + translateY, 200ms.
-  // Exit: opacity only, 150ms (faster, no competing movement).
-  // After exit: snap translateY back to start position for next entrance.
   useEffect(() => {
     const panel = panelRef.current;
     if (!panel) return;
@@ -84,11 +162,9 @@ export default function WorkDropdown({
       panel.style.transform = "translateY(0)";
       panel.style.pointerEvents = "auto";
     } else {
-      // Exit: fade only — clean disappearance without the upward jump
       panel.style.transition = `opacity 150ms ${EASE_OUT_QUART}`;
       panel.style.opacity = "0";
       panel.style.pointerEvents = "none";
-      // After fade completes, snap translateY to start position (no transition)
       exitTimer.current = setTimeout(() => {
         panel.style.transition = "none";
         panel.style.transform = "translateY(-8px)";
@@ -103,7 +179,6 @@ export default function WorkDropdown({
     setOpen(true);
   }, []);
 
-  // Keep menu alive without resetting activeIndex (for gap crossing)
   const keepAlive = useCallback(() => {
     clearTimeout(leaveTimer.current);
   }, []);
@@ -113,7 +188,6 @@ export default function WorkDropdown({
     setOpen(false);
   }, []);
 
-  // Small delay on leave to bridge the mt-2 gap
   const scheduleHide = useCallback(() => {
     clearTimeout(leaveTimer.current);
     leaveTimer.current = setTimeout(hideMenu, 100);
@@ -124,13 +198,13 @@ export default function WorkDropdown({
     return () => {
       clearTimeout(leaveTimer.current);
       clearTimeout(exitTimer.current);
+      clearTimeout(settleTimer.current);
     };
   }, []);
 
-  // Close on Escape — return focus to trigger
+  // Close on Escape
   useEffect(() => {
     if (!open) return;
-
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.preventDefault();
@@ -138,7 +212,6 @@ export default function WorkDropdown({
         triggerRef.current?.focus();
       }
     };
-
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [open, hideMenu]);
@@ -146,16 +219,14 @@ export default function WorkDropdown({
   // Close on scroll
   useEffect(() => {
     if (!open) return;
-
     const handleScroll = () => hideMenu();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, [open, hideMenu]);
 
-  // Close on click outside (touch fallback)
+  // Close on click outside
   useEffect(() => {
     if (!open) return;
-
     const handleClick = (e: MouseEvent) => {
       const target = e.target as Node;
       if (
@@ -164,14 +235,12 @@ export default function WorkDropdown({
         hideMenu();
       }
     };
-
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, [open, hideMenu]);
 
   const handleMouseEnter = useCallback(() => {
     if (open) {
-      // Already open — just cancel any pending close, don't reset activeIndex
       keepAlive();
     } else {
       showMenu();
@@ -226,29 +295,41 @@ export default function WorkDropdown({
         }}
       >
         <div className="p-2">
-          {caseStudies.map((study) => {
+          {caseStudies.map((study, i) => {
             const config = studyConfig[study.slug];
+            const isActive = hoveredIdx === i && !settled;
+            const animateProps = isActive
+              ? getIconTarget(study.slug)
+              : REST;
+
             return (
-            <Link
-              key={study.slug}
-              href={`/case-study/${study.slug}`}
-              role="menuitem"
-              tabIndex={open ? 0 : -1}
-              className="group flex items-center gap-3 rounded-lg px-3 py-3 hover:bg-[var(--surface)] focus-visible:bg-[var(--surface)] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
-              onClick={hideMenu}
-            >
-              <div className="w-14 h-14 rounded-xl bg-white border border-[var(--border)] flex-shrink-0 flex items-center justify-center">
-                {config && <config.Icon />}
-              </div>
-              <div>
-                <span className="block text-[14px] font-medium text-[var(--foreground)]">
-                  {study.title}
-                </span>
-                <span className="block text-[12px] text-[var(--muted)] mt-px">
-                  {study.description}
-                </span>
-              </div>
-            </Link>
+              <Link
+                key={study.slug}
+                href={`/case-study/${study.slug}`}
+                role="menuitem"
+                tabIndex={open ? 0 : -1}
+                className="group flex items-center gap-3 rounded-lg px-3 py-3 hover:bg-[var(--surface)] focus-visible:bg-[var(--surface)] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
+                onClick={hideMenu}
+                onMouseEnter={() => setHoveredIdx(i)}
+                onMouseLeave={() => setHoveredIdx(null)}
+              >
+                <div className="w-14 h-14 rounded-xl bg-white border border-[var(--border)] flex-shrink-0 flex items-center justify-center">
+                  <motion.div
+                    animate={animateProps}
+                    transition={params.spring}
+                  >
+                    {config && <config.Icon />}
+                  </motion.div>
+                </div>
+                <div>
+                  <span className="block text-[14px] font-medium text-[var(--foreground)]">
+                    {study.title}
+                  </span>
+                  <span className="block text-[12px] text-[var(--muted)] mt-px">
+                    {study.description}
+                  </span>
+                </div>
+              </Link>
             );
           })}
         </div>

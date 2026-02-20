@@ -11,6 +11,8 @@ import {
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { Analytics } from "@vercel/analytics/next";
 import { Agentation } from "agentation";
+import { DialRoot } from "dialkit";
+import "dialkit/styles.css";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -106,7 +108,12 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${mackinac.variable} ${GeistPixelSquare.variable} ${GeistPixelGrid.variable} ${GeistPixelCircle.variable} ${GeistPixelTriangle.variable} ${GeistPixelLine.variable} antialiased`}
       >
         {children}
-        {process.env.NODE_ENV === "development" && <Agentation />}
+        {process.env.NODE_ENV === "development" && (
+          <>
+            <Agentation />
+            <DialRoot position="top-right" />
+          </>
+        )}
       </body>
       <Analytics />
       <GoogleAnalytics gaId="G-22T1KDCYY1" />
