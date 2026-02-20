@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { studyConfig } from "./work-dropdown";
+import { CONTACT_ITEMS } from "./contact-dropdown";
 
 interface CaseStudyLink {
   slug: string;
@@ -182,6 +183,37 @@ export default function MobileMenu({
                     </Link>
                   );
                 })}
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-[var(--border)]">
+              <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-4 font-normal font-mono">
+                Work With Me
+              </p>
+
+              <div className="flex flex-col gap-1">
+                {CONTACT_ITEMS.map((item) => (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    onClick={close}
+                    target={item.external ? "_blank" : undefined}
+                    rel={item.external ? "noopener noreferrer" : undefined}
+                    className="group flex items-center gap-4 rounded-xl px-4 py-4 -mx-4 active:bg-[var(--surface)] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
+                  >
+                    <div className="w-14 h-14 rounded-xl bg-white border border-[var(--border)] flex-shrink-0 flex items-center justify-center">
+                      <item.Icon colored />
+                    </div>
+                    <div>
+                      <span className="block text-[18px] font-medium text-[var(--foreground)]">
+                        {item.label}
+                      </span>
+                      <span className="block text-[14px] text-[var(--muted)] mt-0.5">
+                        {item.description}
+                      </span>
+                    </div>
+                  </Link>
+                ))}
               </div>
             </div>
           </div>

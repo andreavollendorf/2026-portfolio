@@ -174,8 +174,20 @@ export default function WorkDropdown({
     return () => clearTimeout(exitTimer.current);
   }, [open]);
 
+  // Close when another nav dropdown opens
+  useEffect(() => {
+    const handleOtherOpen = (e: Event) => {
+      if ((e as CustomEvent).detail !== "work") {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("nav-dropdown-open", handleOtherOpen);
+    return () => document.removeEventListener("nav-dropdown-open", handleOtherOpen);
+  }, []);
+
   const showMenu = useCallback(() => {
     clearTimeout(leaveTimer.current);
+    document.dispatchEvent(new CustomEvent("nav-dropdown-open", { detail: "work" }));
     setOpen(true);
   }, []);
 
@@ -260,7 +272,7 @@ export default function WorkDropdown({
         aria-expanded={open}
         aria-haspopup="true"
         aria-controls={panelId}
-        className="text-[13px] font-medium text-[var(--muted)] link-hover transition-colors h-8 px-2 flex items-center gap-1 rounded-md focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none"
+        className="text-[13px] font-medium text-[var(--muted)] link-hover hover:bg-[var(--surface)] transition-colors h-8 px-3 flex items-center gap-1 rounded-full focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none"
       >
         Case Studies
         <svg

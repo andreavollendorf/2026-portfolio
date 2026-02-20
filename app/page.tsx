@@ -1,5 +1,6 @@
 import Link from "next/link";
 import WorkDropdown from "./components/work-dropdown";
+import ContactDropdown from "./components/contact-dropdown";
 import MobileMenu from "./components/mobile-menu";
 import ProjectCarousel from "./components/project-carousel";
 import { caseStudies } from "./data/case-studies";
@@ -115,10 +116,11 @@ export default function Home() {
             </Link>
             {/* Desktop: hover dropdown + theme toggle */}
             <div className="hidden sm:flex items-center gap-4">
-              <Link href="/about" className="text-[13px] font-medium text-[var(--muted)] link-hover transition-colors h-8 px-2 flex items-center rounded-md focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none">
+              <Link href="/about" className="text-[13px] font-medium text-[var(--muted)] link-hover hover:bg-[var(--surface)] transition-colors h-8 px-3 flex items-center rounded-full focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none">
                 About
               </Link>
               <WorkDropdown caseStudies={caseStudies} />
+              <ContactDropdown />
             </div>
             {/* Mobile: hamburger menu */}
             <div className="sm:hidden">

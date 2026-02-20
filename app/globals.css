@@ -71,9 +71,11 @@ body {
   background: rgba(99, 102, 241, 0.2);
 }
 
-a, button {
-  color: inherit;
-  text-decoration: none;
+@layer base {
+  a, button {
+    color: inherit;
+    text-decoration: none;
+  }
 }
 
 /* Prevent double-tap zoom on interactive elements */
