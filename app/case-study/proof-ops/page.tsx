@@ -76,7 +76,6 @@ export default function ProofOpsPage() {
         <ImageBlock
           src={`${IMG}/complexity.png`}
           alt="Layers of legal complexity — federal law, state law, county rules, court jurisdiction, judge and client preferences"
-          contained
         />
       </Section>
 
@@ -142,7 +141,6 @@ export default function ProofOpsPage() {
           src={`${IMG}/old-dashboard.png`}
           alt="The old dashboard that ops was working out of"
           caption="The old dashboard — a choose-your-own-adventure with no ownership."
-          contained
         />
       </Section>
 
@@ -185,7 +183,7 @@ export default function ProofOpsPage() {
         sectionTitle="System Architecture"
         chapterTitle="I designed a three-layer model: Teams, Roles, and Routing Logic."
       >
-        <h3 className="text-[18px] font-medium mt-6 mb-2">Teams create client ownership</h3>
+        <h3 className="text-[15px] font-medium mt-6 mb-2">Teams create client ownership</h3>
         <Paragraph>
           Every client maps to a team. Enterprise clients get dedicated teams.
           Platform clients map regionally. Dispatch handles exceptions across all
@@ -194,10 +192,9 @@ export default function ProofOpsPage() {
         <ImageBlock
           src={`${IMG}/teams.png`}
           alt="Team type combobox with Enterprise, Platform, and Dispatch options"
-          contained
         />
 
-        <h3 className="text-[18px] font-medium mt-6 mb-2">Roles create specialization</h3>
+        <h3 className="text-[15px] font-medium mt-6 mb-2">Roles create specialization</h3>
         <Paragraph>
           10 distinct roles, mapped from the lifecycle work. Each has clear
           responsibilities, required skills, and measurable outputs.
@@ -211,7 +208,7 @@ export default function ProofOpsPage() {
           />
         </div>
 
-        <h3 className="text-[18px] font-medium mt-6 mb-2">Routing logic creates predictability</h3>
+        <h3 className="text-[15px] font-medium mt-6 mb-2">Routing logic creates predictability</h3>
         <Paragraph>
           Tasks find the right person through rules, not luck. The system
           prioritizes continuity (same person on a client&apos;s work) while
@@ -293,7 +290,6 @@ export default function ProofOpsPage() {
           src={`${IMG}/dashboard.png`}
           alt="The new tasks dashboard for operations teams at Proof"
           caption="The new tasks dashboard for operations teams @ Proof."
-          contained
         />
 
         <Paragraph>

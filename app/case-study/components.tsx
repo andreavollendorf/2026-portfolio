@@ -650,7 +650,7 @@ export function VideoBlock({
 }) {
   return (
     <figure className="my-8">
-      <div className="flex justify-center px-6 py-8 rounded-xl bg-[var(--surface)]">
+      <div className="relative flex justify-center px-6 py-8 rounded-xl bg-[#F4F5F7]">
         <video
           src={src}
           poster={poster}
@@ -661,6 +661,7 @@ export function VideoBlock({
           aria-label={alt}
           className="w-full block rounded-lg"
         />
+        <span className="absolute inset-0 rounded-xl pointer-events-none" style={{ boxShadow: "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px inset" }} />
       </div>
       {caption && (
         <figcaption className="text-[13px] text-[var(--muted)] mt-3 text-center">
