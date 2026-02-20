@@ -140,7 +140,7 @@ export default function MobileMenu({
         >
           <div
             ref={contentRef}
-            className="px-6 pt-20"
+            className="px-6 pt-16 pb-8 h-full overflow-y-auto"
             style={{
               opacity: 0,
               transform: "translateY(-12px)",
@@ -149,17 +149,17 @@ export default function MobileMenu({
             <Link
               href="/about"
               onClick={close}
-              className="block text-[18px] font-medium text-[var(--foreground)] px-4 py-3 -mx-4 mb-4 rounded-xl active:bg-[var(--surface)] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
+              className="block text-[16px] font-medium text-[var(--foreground)] px-4 py-2.5 -mx-4 mb-3 rounded-xl active:bg-[var(--surface)] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
             >
               About
             </Link>
 
-            <div className="pt-4 border-t border-[var(--border)]">
-              <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-4 font-normal font-mono">
+            <div className="pt-3 border-t border-[var(--border)]">
+              <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-3 font-normal font-mono">
                 Case Studies
               </p>
 
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col">
                 {caseStudies.map((study) => {
                   const config = studyConfig[study.slug];
                   return (
@@ -167,16 +167,16 @@ export default function MobileMenu({
                       key={study.slug}
                       href={`/case-study/${study.slug}`}
                       onClick={close}
-                      className="group flex items-center gap-4 rounded-xl px-4 py-4 -mx-4 active:bg-[var(--surface)] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
+                      className="group flex items-center gap-3 rounded-xl px-4 py-2.5 -mx-4 active:bg-[var(--surface)] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
                     >
-                      <div className="w-14 h-14 rounded-xl bg-white border border-[var(--border)] flex-shrink-0 flex items-center justify-center">
+                      <div className="w-11 h-11 rounded-lg bg-white border border-[var(--border)] flex-shrink-0 flex items-center justify-center">
                         {config && <config.Icon colored />}
                       </div>
                       <div>
-                        <span className="block text-[18px] font-medium text-[var(--foreground)]">
+                        <span className="block text-[15px] font-medium text-[var(--foreground)]">
                           {study.title}
                         </span>
-                        <span className="block text-[14px] text-[var(--muted)] mt-0.5">
+                        <span className="block text-[13px] text-[var(--muted)]">
                           {study.description}
                         </span>
                       </div>
@@ -186,12 +186,12 @@ export default function MobileMenu({
               </div>
             </div>
 
-            <div className="pt-4 border-t border-[var(--border)]">
-              <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-4 font-normal font-mono">
+            <div className="pt-3 border-t border-[var(--border)]">
+              <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-3 font-normal font-mono">
                 Work With Me
               </p>
 
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col">
                 {CONTACT_ITEMS.map((item) => (
                   <Link
                     key={item.label}
@@ -199,16 +199,16 @@ export default function MobileMenu({
                     onClick={close}
                     target={item.external ? "_blank" : undefined}
                     rel={item.external ? "noopener noreferrer" : undefined}
-                    className="group flex items-center gap-4 rounded-xl px-4 py-4 -mx-4 active:bg-[var(--surface)] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
+                    className="group flex items-center gap-3 rounded-xl px-4 py-2.5 -mx-4 active:bg-[var(--surface)] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
                   >
-                    <div className="w-14 h-14 rounded-xl bg-white border border-[var(--border)] flex-shrink-0 flex items-center justify-center">
+                    <div className="w-11 h-11 rounded-lg bg-white border border-[var(--border)] flex-shrink-0 flex items-center justify-center">
                       <item.Icon colored />
                     </div>
                     <div>
-                      <span className="block text-[18px] font-medium text-[var(--foreground)]">
+                      <span className="block text-[15px] font-medium text-[var(--foreground)]">
                         {item.label}
                       </span>
-                      <span className="block text-[14px] text-[var(--muted)] mt-0.5">
+                      <span className="block text-[13px] text-[var(--muted)]">
                         {item.description}
                       </span>
                     </div>
