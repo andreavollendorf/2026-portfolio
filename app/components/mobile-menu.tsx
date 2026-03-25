@@ -24,6 +24,7 @@ export default function MobileMenu({
   const contentRef = useRef<HTMLDivElement>(null);
   const exitTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- SSR portal gate
   useEffect(() => setMounted(true), []);
 
   const toggle = useCallback(() => setOpen((v) => !v), []);

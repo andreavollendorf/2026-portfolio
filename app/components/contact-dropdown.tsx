@@ -116,7 +116,7 @@ export default function ContactDropdown() {
   // Hold timer: after hovering, wait holdDuration then settle back
   useEffect(() => {
     clearTimeout(settleTimer.current);
-    setSettled(false);
+    setSettled(false); // eslint-disable-line react-hooks/set-state-in-effect -- derived state reset on hover change
 
     if (hoveredIdx !== null) {
       settleTimer.current = setTimeout(() => {
@@ -130,7 +130,7 @@ export default function ContactDropdown() {
   // Reset icon hover when dropdown closes
   useEffect(() => {
     if (!open) {
-      setHoveredIdx(null);
+      setHoveredIdx(null); // eslint-disable-line react-hooks/set-state-in-effect -- state reset on close
       setSettled(false);
     }
   }, [open]);

@@ -9,7 +9,7 @@ import {
   Quote,
   TeamMember,
 } from "../components";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useSyncExternalStore } from "react";
 
 const IMG = "/images/proof-serves";
 const CANVAS = `${IMG}/canvas`;
@@ -49,17 +49,17 @@ function ChatResearchCanvas() {
   const offsetRef = useRef({ x: 0, y: 0 });
   const canvasRef = useRef<HTMLDivElement>(null);
   const topZ = useRef(Math.max(...defaultStickers.map((s) => s.zIndex)));
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const reducedMotion = useSyncExternalStore(
+    (cb) => {
+      const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+      mq.addEventListener("change", cb);
+      return () => mq.removeEventListener("change", cb);
+    },
+    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    () => false,
+  );
   const [hasWiggled, setHasWiggled] = useState(false);
   const [inView, setInView] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReducedMotion(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
 
   useEffect(() => {
     if (!canvasRef.current || reducedMotion || hasWiggled) return;

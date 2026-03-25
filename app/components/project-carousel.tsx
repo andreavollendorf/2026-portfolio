@@ -97,7 +97,7 @@ export default function ProjectCarousel({
     fade.style.transition = "none";
     fade.style.opacity = "0";
     fade.style.transform = "scale(0.1)";
-    fade.offsetHeight;
+    void fade.offsetHeight; // force reflow
     fade.style.transition =
       "opacity 250ms cubic-bezier(0.19,1,0.22,1), transform 250ms cubic-bezier(0.19,1,0.22,1)";
     fade.style.opacity = "1";

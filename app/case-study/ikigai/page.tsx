@@ -4,10 +4,7 @@ import {
   CaseStudyLayout,
   Section,
   Paragraph,
-  ImageBlock,
 } from "../components";
-
-const IMG = "/images/ikigai";
 
 const sections = [
   { id: "overview", label: "Overview" },

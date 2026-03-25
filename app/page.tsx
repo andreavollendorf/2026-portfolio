@@ -136,7 +136,7 @@ export default function Home() {
           Complex systems tend to fail the people who need them most.
           </h1>
           <p className="text-[16px] leading-[1.7] text-[var(--muted)] mb-6 sm:mb-8">
-          I'm Andrea, a product designer on the coast of Maine. I've spent 14 years designing for the complex, regulated, invisible stuff - the systems that sit between people and the things they actually need. I bring strong craft and clear judgment to work that usually doesn't get either. </p>
+          I&apos;m Andrea, a product design leader on the coast of Maine. I&apos;ve spent 14 years designing for the complex, regulated, invisible stuff - the systems that sit between people and the things they actually need. I bring strong craft, clear judgment, and strategic direction to work that usually doesn&apos;t get any of it.</p>
         </div>
       </header>
 
