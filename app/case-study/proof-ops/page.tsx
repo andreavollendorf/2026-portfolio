@@ -17,6 +17,7 @@ const sections = [
   { id: "mapping", label: "Mapping work" },
   { id: "architecture", label: "Architecture" },
   { id: "documentation", label: "Documentation" },
+  { id: "collaboration", label: "Collaboration" },
   { id: "outcome", label: "Outcome" },
 ];
 
@@ -25,9 +26,9 @@ export default function ProofOpsPage() {
     <CaseStudyLayout
       breadcrumb="Proof / Ops"
       title="Designing the systems that transformed how ops specialists serve thousands of law firms."
-      description="Proof's operations team coordinates thousands of serves daily across a distributed network of process servers. I designed a task management system that brought structure, ownership, and visibility to their most complex workflows."
+      description="Proof's operations team coordinates thousands of serves daily across a distributed network of process servers. I designed a task management system that brought structure, ownership, and visibility to their most complex workflows. I led this cross-functional initiative partnering with VP of Operations, Product, and Engineering to design and ship the foundation for scalable ops."
       meta={[
-        { label: "Role", value: "Principal Product Designer" },
+        { label: "Role", value: "Principal Product Designer\n(Player/Coach)" },
         { label: "Timeline", value: "8 weeks\n(Sep–Nov 2024)" },
       ]}
       sections={sections}
@@ -228,17 +229,14 @@ export default function ProofOpsPage() {
       <Section
         id="documentation"
         sectionTitle="Documentation"
-        chapterTitle="Documentation as a design artifact."
+        chapterTitle="Documentation as strategic alignment."
       >
         <Paragraph>
           The complexity here — 10 roles, multiple team types, routing logic with
-          fallbacks — couldn&apos;t live in wireframes. I wrote a comprehensive spec
-          covering every task type: what triggers it, what information surfaces,
-          what actions are available, SLA expectations, escalation paths.
-        </Paragraph>
-        <Paragraph>
-          This document became the single source of truth for the build and
-          survives today as institutional knowledge.
+          fallbacks — required alignment across ops leadership, product, and
+          engineering. I wrote a comprehensive spec that became the single source
+          of truth for the build and survives today as institutional knowledge
+          for onboarding and operations planning.
         </Paragraph>
         <div className="[&_figure>div]:pt-12">
           <ImageBlock
@@ -248,6 +246,27 @@ export default function ProofOpsPage() {
             flush
           />
         </div>
+      </Section>
+
+      {/* ── Collaboration & Execution ─────────────────────────────── */}
+
+      <Section
+        id="collaboration"
+        sectionTitle="Collaboration & Execution"
+        chapterTitle="Navigating competing priorities."
+      >
+        <Paragraph>
+          This project required navigating competing priorities across operations,
+          product, and engineering. I led weekly alignment sessions with the VP of
+          Operations to validate the role model, worked directly with engineers to
+          define routing logic and edge cases, and partnered with the product team
+          to sequence the rollout and plan for adoption.
+        </Paragraph>
+        <Paragraph>
+          I also created the comprehensive documentation that became the shared
+          reference for implementation — bridging the gap between my design
+          thinking and what engineering needed to build.
+        </Paragraph>
       </Section>
 
       {/* ── Outcome ──────────────────────────────────────────────── */}

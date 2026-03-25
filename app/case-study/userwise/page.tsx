@@ -23,7 +23,7 @@ export default function UserwisePage() {
     <CaseStudyLayout
       breadcrumb="Userwise"
       title="Designing player retention tools for mobile game developers."
-      description="Userwise gives mobile game developers powerful tools to retain players. I partnered closely with Maddie (Head of Product) and Tom (Co-founder) to design a LiveOps platform that helps studios retain players without adding operational complexity."
+      description="Userwise gives mobile game developers powerful tools to retain players. I partnered closely with Maddie (Head of Product) and Tom (Co-founder) to design a LiveOps platform that helps studios retain players without adding operational complexity. I was embedded as design partner to founders, translating product vision into shipped features while working directly with engineering."
       meta={[
         { label: "Role", value: "Lead Product Designer\n(Founder Collaboration)" },
         { label: "Timeline", value: "2022–2023" },
@@ -86,14 +86,16 @@ export default function UserwisePage() {
       <Section
         id="process"
         sectionTitle="How I Worked"
-        chapterTitle="Wireframes to production, in close partnership with the founders."
+        chapterTitle="Strategic partnership with founders and product leadership."
       >
         <Paragraph>
-          Working in tight feedback loops with the team (weekly feature planning,
-          user interviews every two weeks), I translated those conversations into
-          UX flows and wireframes. From there, I moved into high-fidelity
-          design, iterating until features were ready for engineering. The pace
-          was fast: weekly check-ins, rapid iteration, tight collaboration.
+          I worked as an embedded design partner, not just a service provider.
+          Weekly planning sessions with the Head of Product and Co-founder meant
+          I was making product decisions — what to build, what to defer, how to
+          sequence features for maximum impact. I conducted user interviews every
+          two weeks to pressure-test direction, then translated those insights
+          into wireframes, high-fidelity designs, and eng-ready specs. The pace
+          was fast, the feedback loops were tight, and the collaboration was real.
         </Paragraph>
         <ImageBlock
           src={`${IMG}/wire.png`}
@@ -177,6 +179,12 @@ export default function UserwisePage() {
           most-played mobile games. The product&apos;s success allowed Userwise
           to expand beyond the platform into full-service game development and
           LiveOps management &mdash; growth enabled by a foundation that worked.
+        </Paragraph>
+        <Paragraph>
+          The longevity of this work reflects the strategic decisions made early:
+          prioritizing clarity over feature breadth, building for non-technical
+          users while preserving power-user capabilities, and designing systems
+          that could compound rather than require constant maintenance.
         </Paragraph>
         <ImageBlock
           src={`${IMG}/result.png`}
