@@ -2,41 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState, useCallback, useRef, createContext, useContext } from "react";
-import WorkDropdown from "../components/work-dropdown";
-import ContactDropdown from "../components/contact-dropdown";
-import MobileMenu from "../components/mobile-menu";
-import { caseStudies } from "../data/case-studies";
+import NavBar from "../components/nav-bar";
 
-// ── Section Glyph Map ───────────────────────────────────────────────
-
-const SECTION_GLYPHS: Record<string, string> = {
-  overview: "\u25CA",       // ◊ lozenge
-  problem: "\u25B2",        // ▲ triangle
-  approach: "\u2197",       // ↗ northeast arrow
-  solution: "\u221A",       // √ square root
-  outcome: "\u2211",        // ∑ summation
-  outcomes: "\u2211",       // ∑ summation
-  context: "\u25CA",        // ◊ lozenge
-  reality: "\u2022",        // • bullet
-  mapping: "\u2206",        // ∆ delta
-  architecture: "\u220F",   // ∏ pi product
-  documentation: "\u00A7",  // § section sign
-  "why-it-mattered": "\u2192", // → arrow
-  "where-we-started": "\u25CA", // ◊ lozenge
-  research: "\u221E",       // ∞ infinity
-  reframe: "\u21A9",        // ↩ hook arrow
-  "one-serve": "\u2206",   // ∆ delta (restructure/change)
-  ops: "\u21E5",            // ⇥ tab arrow
-  collaboration: "\u2194",  // ↔ bidirectional
-  takeaway: "\u21AA",       // ↪ rightwards arrow with hook
-  challenge: "\u00D7",      // × multiplication
-  process: "\u2193",        // ↓ down arrow
-  designed: "\u25CA",       // ◊ lozenge
-  result: "\u2192",         // → arrow
-  iteration: "\u2202",      // ∂ partial
-  "next-steps": "\u2197",   // ↗ northeast arrow
-  learnings: "\u221E",      // ∞ infinity
-};
 
 // ── Lightbox Context ────────────────────────────────────────────────
 
@@ -100,7 +67,7 @@ function Lightbox({
         {src ? (
           <img src={src} alt={alt} className="max-w-full max-h-[80vh] object-contain mx-auto block" />
         ) : (
-          <div className="w-[80vw] h-[60vh] flex items-center justify-center text-[var(--muted)]">
+          <div className="w-[80vw] h-[60vh] flex items-center justify-center text-[rgba(0,0,0,.5)]">
             {alt}
           </div>
         )}
@@ -121,7 +88,7 @@ export function CaseStudyLayout({
 }: {
   breadcrumb: string;
   title: string;
-  description: string;
+  description: React.ReactNode;
   meta: { label: string; value: string }[];
   sections: { id: string; label: string }[];
   nextProject?: { slug: string; title: string };
@@ -129,9 +96,6 @@ export function CaseStudyLayout({
   children: React.ReactNode;
 }) {
   const [activeSection, setActiveSection] = useState<string>(sections[0]?.id ?? "overview");
-  const [showTitle, setShowTitle] = useState(false);
-  const [navVisible, setNavVisible] = useState(true);
-  const lastScrollY = useRef(0);
   const [lightboxImage, setLightboxImage] = useState<{ alt: string; src?: string } | null>(null);
 
   const openLightbox = useCallback((alt: string, src?: string) => {
@@ -165,24 +129,6 @@ export function CaseStudyLayout({
     return () => observer.disconnect();
   }, [sections]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const y = window.scrollY;
-      setShowTitle(y > 200);
-      if (y < 100) {
-        setNavVisible(true);
-      } else if (y < lastScrollY.current) {
-        setNavVisible(true);
-      } else if (y > lastScrollY.current + 10) {
-        setNavVisible(false);
-      }
-      lastScrollY.current = y;
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
     <LightboxContext.Provider value={openLightbox}>
       <div className="min-h-screen">
@@ -196,120 +142,35 @@ export function CaseStudyLayout({
         )}
 
         {/* Top Navigation */}
-        <nav
-          aria-label="Case study navigation"
-          className={`sticky top-0 backdrop-blur-md transition-transform duration-300 relative ${
-            navVisible ? "translate-y-0" : "-translate-y-full"
-          }`}
-          style={{ zIndex: 'var(--z-nav)', transitionTimingFunction: 'var(--ease-out-quart)', backgroundColor: "color-mix(in srgb, var(--background) 80%, transparent)" }}
-        >
-          <Link
-            href="/"
-            className="absolute left-6 lg:left-20 top-1/2 -translate-y-1/2 inline-flex items-center gap-2 text-[14px] text-[var(--muted)] link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm"
-          >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <path d="M5.5 4L1.5 8M1.5 8L5.5 12M1.5 8H10C11.3807 8 12.5 6.88071 12.5 5.5V5.5C12.5 4.11929 11.3807 3 10 3H8.5" stroke="currentColor"/>
-            </svg>
-            <span>Index</span>
-          </Link>
-          <div className="flex items-center justify-between py-5 px-6 lg:px-20">
-            <div />
-            <button
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              aria-label="Scroll to top"
-              className={`hidden sm:block text-[14px] font-medium transition-[opacity,transform] duration-200 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm ${
-                showTitle
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 -translate-y-2 pointer-events-none"
-              }`}
-              style={{ transitionTimingFunction: 'var(--ease-out-quart)' }}
-            >
-              {title.replace(/\.$/, "")}
-            </button>
-            {/* Desktop: hover dropdown + theme toggle */}
-            <div className="hidden sm:flex items-center gap-4">
-              <Link href="/about" className="text-[13px] font-medium text-[var(--muted)] link-hover hover:bg-[var(--surface)] transition-colors h-8 px-3 flex items-center rounded-full focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none">
-                About
-              </Link>
-              <WorkDropdown caseStudies={caseStudies} />
-              <ContactDropdown />
-            </div>
-            {/* Mobile: hamburger menu */}
-            <div className="sm:hidden">
-              <MobileMenu caseStudies={caseStudies} />
-            </div>
-          </div>
-        </nav>
+        <NavBar showBack scrollTitle={title} />
 
-        {/* Sticky Left Nav */}
-        <aside className="hidden xl:block fixed left-8 top-[11.5rem] w-44">
-          <ul className="space-y-1">
-            {sections.map((section) => {
-              const isActive = activeSection === section.id;
-              const glyph = SECTION_GLYPHS[section.id];
-              return (
-                <li key={section.id}>
-                  <a
-                    href={`#${section.id}`}
-                    className={`text-[13px] flex items-center gap-3 py-1 transition-[color,opacity] duration-300 focus-visible:ring-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm ${
-                      isActive
-                        ? "text-[var(--foreground)] opacity-100"
-                        : "text-[var(--muted)] link-hover opacity-60 hover:opacity-100"
-                    }`}
-                    style={{ transitionTimingFunction: 'var(--ease-out-expo)' }}
-                  >
-                    <span
-                      className="relative shrink-0"
-                      style={{ width: 20, height: 20 }}
-                    >
-                      {glyph && (
-                        <span
-                          className="absolute inset-0 flex items-center justify-center"
-                          style={{
-                            fontFamily: "var(--font-geist-pixel-square)",
-                            fontSize: 20,
-                            lineHeight: 1,
-                            opacity: isActive ? 1 : 0,
-                            transform: isActive ? "scale(1)" : "scale(0.8)",
-                            transition: "opacity 0.3s ease, transform 0.3s ease",
-                          }}
-                        >
-                          {glyph}
-                        </span>
-                      )}
-                    </span>
-                    {section.label}
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
-        </aside>
+        {/* Sticky Left Nav — vertical track with sliding indicator */}
+        <SideNav sections={sections} activeSection={activeSection} />
 
         {/* Main Content */}
-        <main className="max-w-[800px] mx-auto px-6 pt-8 sm:pt-20 pb-16">
+        <main className="max-w-[48rem] mx-auto px-6 pt-8 sm:pt-20 pb-16">
           {/* Hero */}
-          <header className="pb-10">
-            <div className="text-[12px] text-[var(--muted)] mb-6">
+          <header className="pb-8">
+            <div className="text-[10px] uppercase tracking-[.04em] text-[rgba(0,0,0,.35)] font-[500] mb-3">
               {breadcrumb}
             </div>
 
-            <h1 className="text-[36px] sm:text-[44px] font-medium leading-[1.1] tracking-[-0.02em] mb-6">
+            <h1 className="text-[28px] sm:text-[32px] font-[500] leading-[1.15] tracking-[-0.01em] text-[rgba(0,0,0,.85)] mb-4">
               {title}
             </h1>
 
-            <p className="text-[16px] leading-relaxed text-[var(--muted)] mb-8">
+            <p className="text-[14px] font-[450] leading-[1.45rem] tracking-[-0.005em] text-[rgba(0,0,0,.6)] mb-0">
               {description}
             </p>
 
             {/* Meta info */}
-            <div className="grid grid-cols-2 gap-x-12 gap-y-6 text-[13px]">
+            <div className="grid grid-cols-2 gap-x-8 gap-y-4 mt-6 pt-5 border-t border-[rgba(0,0,0,.06)]">
               {meta.map((item) => (
                 <div key={item.label}>
-                  <div className="text-[11px] uppercase tracking-[0.08em] text-[var(--muted)] mb-2 font-mono">
+                  <div className="text-[10px] uppercase tracking-[.04em] text-[rgba(0,0,0,.35)] font-[500] mb-0.5">
                     {item.label}
                   </div>
-                  <div className="whitespace-pre-line leading-relaxed">{item.value}</div>
+                  <div className="text-[13px] font-[450] whitespace-pre-line leading-[1.45] text-[rgba(0,0,0,.6)]">{item.value}</div>
                 </div>
               ))}
             </div>
@@ -327,18 +188,18 @@ export function CaseStudyLayout({
           {children}
 
           {/* Footer Navigation */}
-          <footer className="py-10 mt-4 border-t border-[var(--border)]">
+          <footer className="py-8 mt-8 border-t border-[var(--border)]">
             <div className="flex items-center justify-between">
               <Link
                 href="/"
-                className="text-[14px] text-[var(--muted)] link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm"
+                className="text-[12px] text-[rgba(0,0,0,.55)] link-hover press-scale touch-hitbox transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm"
               >
                 ← All projects
               </Link>
               {nextProject && (
                 <Link
                   href={`/case-study/${nextProject.slug}`}
-                  className="text-[14px] text-[var(--muted)] link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm"
+                  className="text-[12px] text-[rgba(0,0,0,.55)] link-hover press-scale touch-hitbox transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm"
                 >
                   Next project →
                 </Link>
@@ -348,13 +209,11 @@ export function CaseStudyLayout({
         </main>
 
         {/* Site Footer */}
-        <footer className="px-6 lg:px-20 py-12 border-t border-[var(--border)] mx-auto">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 text-[13px] text-[var(--muted)]">
+        <footer className="px-6 lg:px-20 py-8 border-t border-[var(--border)] mx-auto">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 text-[12px] text-[rgba(0,0,0,.5)]">
             <p>
               Built with{" "}
               <Link href="https://nextjs.org" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm" target="_blank" rel="noopener noreferrer">Next.js</Link>
-              ,{" "}
-              <Link href="https://agentation.dev/" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm" target="_blank" rel="noopener noreferrer">Agentation</Link>
               {" & "}
               <Link href="https://claude.ai/code" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm" target="_blank" rel="noopener noreferrer">Claude Code</Link>
             </p>
@@ -371,6 +230,70 @@ export function CaseStudyLayout({
 
 // ── Content Components ──────────────────────────────────────────────
 
+function SideNav({ sections, activeSection }: { sections: { id: string; label: string }[]; activeSection: string }) {
+  const listRef = useRef<HTMLUListElement>(null);
+  const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
+  const indicatorRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const idx = sections.findIndex(s => s.id === activeSection);
+    const item = itemRefs.current[idx];
+    const list = listRef.current;
+    const ind = indicatorRef.current;
+    if (!item || !list || !ind) return;
+
+    const listRect = list.getBoundingClientRect();
+    const itemRect = item.getBoundingClientRect();
+    const y = itemRect.top - listRect.top;
+    const centerY = y + (itemRect.height - 12) / 2;
+
+    ind.style.transform = `translateY(${centerY}px)`;
+  }, [activeSection, sections]);
+
+  return (
+    <aside className="hidden xl:block fixed left-20 w-44" style={{ top: "9.25rem" }}>
+      <div className="flex gap-3">
+        <div className="relative" style={{ width: 1.5 }}>
+          <div className="absolute inset-0" style={{ backgroundColor: "rgba(0,0,0,.08)", borderRadius: 1 }} />
+          <div
+            ref={indicatorRef}
+            style={{
+              position: "absolute",
+              left: 0,
+              width: 1.5,
+              height: 12,
+              backgroundColor: "rgba(0,0,0,.8)",
+              borderRadius: 1,
+              transition: "transform 0.26s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+              willChange: "transform",
+            }}
+          />
+        </div>
+        <ul ref={listRef} className="flex flex-col" style={{ gap: 0 }}>
+          {sections.map((section, i) => {
+            const isActive = activeSection === section.id;
+            return (
+              <li key={section.id} ref={(el) => { itemRefs.current[i] = el; }}>
+                <a
+                  href={`#${section.id}`}
+                  className={`text-[12px] block py-[3px] transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm ${
+                    isActive
+                      ? "text-[rgba(0,0,0,.8)] font-[550]"
+                      : "text-[rgba(0,0,0,.35)]"
+                  }`}
+                  style={{ transitionTimingFunction: 'var(--ease-out-expo)' }}
+                >
+                  {section.label}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </aside>
+  );
+}
+
 export function Section({
   id,
   sectionTitle,
@@ -385,28 +308,31 @@ export function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} className="scroll-mt-24 py-10">
-      <div className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-5 font-mono">
-        {sectionTitle}
+    <section id={id} className="scroll-mt-24 pt-16">
+      <div className="flex items-center gap-3 mb-4">
+        <span className="text-[13px] font-[550] tracking-[-0.005em] text-[rgba(0,0,0,.78)] whitespace-nowrap">
+          {sectionTitle}
+        </span>
+        <div className="flex-1 h-px bg-[rgba(0,0,0,.08)]" />
       </div>
       {chapterTitle && (
-        <h2 className="text-[26px] sm:text-[32px] font-medium leading-[1.2] tracking-[-0.01em] mb-4">
+        <h2 className="text-[20px] sm:text-[24px] font-[500] leading-[1.4] tracking-[-0.01em] text-[rgba(0,0,0,.85)] mb-4">
           {chapterTitle}
         </h2>
       )}
       {subtitle && (
-        <p className="text-[15px] font-medium text-[var(--foreground)] mb-3">
+        <p className="text-[14px] font-[500] text-[rgba(0,0,0,.85)] mb-3">
           {subtitle}
         </p>
       )}
-      <div className="space-y-5">{children}</div>
+      <div className="flex flex-col gap-3.5">{children}</div>
     </section>
   );
 }
 
 export function Paragraph({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[15px] leading-[1.75] text-[var(--muted)]">
+    <p className="text-[14px] font-[450] leading-[1.45rem] tracking-[-0.005em] text-[rgba(0,0,0,.8)]">
       {children}
     </p>
   );
@@ -431,11 +357,11 @@ export function ImageBlock({
 
   const isWhiteBox = contained || flush;
   const containerClass = isWhiteBox
-    ? `flex items-center justify-center rounded-xl bg-[var(--surface)] ${flush ? "" : `px-3 pt-4 pb-4 sm:px-6 sm:pt-8 sm:pb-8 sm:h-[380px]`}`
+    ? `flex items-center justify-center rounded-lg bg-[var(--surface)] ${flush ? "" : `px-3 pt-4 pb-4 sm:px-6 sm:pt-8 sm:pb-8 sm:h-[380px]`}`
     : "bg-[var(--surface)]";
 
   return (
-    <figure className="my-8">
+    <figure className="my-1">
       <div
         className={`relative rounded-lg overflow-hidden ${containerClass} ${src ? "cursor-zoom-in" : ""} transition-opacity img-hover`}
         {...(src ? {
@@ -448,14 +374,14 @@ export function ImageBlock({
         {src ? (
           <img src={src} alt={alt} loading="lazy" decoding="async" className={`block ${flush ? "w-full" : isWhiteBox ? "max-h-full object-contain" : "w-full"}`} style={maxWidth ? { maxWidth } : undefined} />
         ) : (
-          <div className="aspect-[16/10] flex items-center justify-center text-[var(--muted)] text-sm">
+          <div className="aspect-[16/10] flex items-center justify-center text-[rgba(0,0,0,.5)] text-sm">
             {alt}
           </div>
         )}
-        <span className="absolute inset-0 rounded-lg pointer-events-none" style={{ boxShadow: "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px inset" }} />
+        <span className="absolute inset-0 rounded-lg pointer-events-none" style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,.06)" }} />
       </div>
       {caption && (
-        <figcaption className="text-[13px] text-[var(--muted)] mt-3 text-center">
+        <figcaption className="text-[12px] text-[rgba(0,0,0,.4)] mt-2">
           {caption}
         </figcaption>
       )}
@@ -471,7 +397,7 @@ export function TwoImages({
   const openLightbox = useContext(LightboxContext);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
       {images.map((img, i) => (
         <figure key={i}>
           <div
@@ -486,13 +412,13 @@ export function TwoImages({
             {img.src ? (
               <img src={img.src} alt={img.alt} loading="lazy" decoding="async" className="w-full block" />
             ) : (
-              <div className="aspect-[4/3] flex items-center justify-center text-[var(--muted)] text-sm">
+              <div className="aspect-[4/3] flex items-center justify-center text-[rgba(0,0,0,.5)] text-sm">
                 {img.alt}
               </div>
             )}
           </div>
           {img.caption && (
-            <figcaption className="text-[13px] text-[var(--muted)] mt-2">
+            <figcaption className="text-[12px] text-[rgba(0,0,0,.4)] mt-2">
               {img.caption}
             </figcaption>
           )}
@@ -504,15 +430,15 @@ export function TwoImages({
 
 export function KeyGaps({ gaps }: { gaps: { description: string }[] }) {
   return (
-    <div className="my-8">
-      <div className="text-[11px] uppercase tracking-[0.1em] text-[var(--muted)] mb-4 font-mono">
+    <div className="my-4">
+      <div className="text-[13px] font-[550] tracking-[-0.005em] text-[rgba(0,0,0,.78)] mb-3">
         Key Gaps
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
         {gaps.map((gap, i) => (
           <div key={i} className="flex items-start gap-3">
-            <span className="text-[var(--muted)] mt-0.5">→</span>
-            <span className="text-[14px] leading-relaxed">{gap.description}</span>
+            <span className="text-[rgba(0,0,0,.5)] mt-0.5">→</span>
+            <span className="text-[14px] leading-[1.45rem]">{gap.description}</span>
           </div>
         ))}
       </div>
@@ -528,9 +454,9 @@ export function WhatWorked({
   didnt: string[];
 }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 my-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 my-4">
       <div>
-        <div className="text-[11px] uppercase tracking-[0.1em] text-emerald-600 mb-4 font-mono">
+        <div className="text-[13px] font-[550] tracking-[-0.005em] text-emerald-600 mb-3">
           What Worked
         </div>
         <ul className="space-y-3">
@@ -543,7 +469,7 @@ export function WhatWorked({
         </ul>
       </div>
       <div>
-        <div className="text-[11px] uppercase tracking-[0.1em] text-rose-500 mb-4 font-mono">
+        <div className="text-[13px] font-[550] tracking-[-0.005em] text-rose-500 mb-3">
           What Didn&apos;t
         </div>
         <ul className="space-y-3">
@@ -561,17 +487,17 @@ export function WhatWorked({
 
 export function Callout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="my-8 p-6 bg-[var(--surface)] rounded-lg shadow-[0_0_0_1px_var(--border)]">
-      <p className="text-[15px] leading-relaxed">{children}</p>
+    <div className="my-4 p-4 bg-[var(--surface)] rounded-lg" style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,.06)" }}>
+      <p className="text-[14px] leading-[1.45rem] text-[rgba(0,0,0,.8)]">{children}</p>
     </div>
   );
 }
 
 export function LearningItem({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-[200px_1fr] gap-4 py-8 border-t border-[var(--border)]">
-      <h3 className="text-[15px] font-medium">{title}</h3>
-      <p className="text-[14px] leading-relaxed text-[var(--muted)]">{children}</p>
+    <div className="grid grid-cols-1 sm:grid-cols-[200px_1fr] gap-4 py-6 border-t border-[var(--border)]">
+      <h3 className="text-[13px] font-[550] text-[rgba(0,0,0,.85)]">{title}</h3>
+      <p className="text-[13px] leading-[1.5] text-[rgba(0,0,0,.65)]">{children}</p>
     </div>
   );
 }
@@ -580,13 +506,17 @@ export function LearningItem({ title, children }: { title: string; children: Rea
 
 export function Stats({ stats }: { stats: { value: string; label: string }[] }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-8 my-8">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 my-4">
       {stats.map((stat, i) => (
-        <div key={i}>
-          <div className="text-[28px] font-medium tracking-[-0.02em] mb-1 tabular-nums">
+        <div
+          key={i}
+          className="bg-white rounded-lg p-4"
+          style={{ boxShadow: "0 1px 2px rgba(0,0,0,.04), inset 0 0 0 1px rgba(0,0,0,.06)" }}
+        >
+          <div className="text-[20px] font-[500] tracking-[-0.01em] mb-1 tabular-nums text-[rgba(0,0,0,.85)]">
             {stat.value}
           </div>
-          <div className="text-[13px] leading-relaxed text-[var(--muted)]">
+          <div className="text-[13px] leading-[1.45] text-[rgba(0,0,0,.5)]">
             {stat.label}
           </div>
         </div>
@@ -603,11 +533,11 @@ export function Quote({
   attribution: string;
 }) {
   return (
-    <blockquote className="my-8 border-l-2 border-[var(--border)] pl-6 py-1">
-      <p className="text-[15px] leading-[1.75] italic text-[var(--foreground)]">
+    <blockquote className="my-4 pl-5 py-1" style={{ borderLeft: "1.5px solid rgba(0,0,0,.08)" }}>
+      <p className="text-[14px] font-[450] leading-[1.6] italic text-[rgba(0,0,0,.6)]">
         &ldquo;{children}&rdquo;
       </p>
-      <cite className="block mt-3 text-[13px] text-[var(--muted)] not-italic">
+      <cite className="block mt-2 text-[12px] font-[450] text-[rgba(0,0,0,.35)] not-italic">
         — {attribution}
       </cite>
     </blockquote>
@@ -621,7 +551,7 @@ export function ImageCarousel({
 }) {
   return (
     <div
-      className="my-8 -mx-6 overflow-x-auto scrollbar-hide"
+      className="my-4 -mx-6 overflow-x-auto scrollbar-hide"
       role="region"
       aria-label="Image carousel"
       tabIndex={0}
@@ -652,8 +582,8 @@ export function VideoBlock({
   caption?: string;
 }) {
   return (
-    <figure className="my-8">
-      <div className="relative flex justify-center px-6 py-8 rounded-xl bg-[#F4F5F7]">
+    <figure className="my-1">
+      <div className="relative flex justify-center px-6 py-8 rounded-lg bg-[#F6F7F9]">
         <video
           src={src}
           poster={poster}
@@ -664,14 +594,53 @@ export function VideoBlock({
           aria-label={alt}
           className="w-full block rounded-lg"
         />
-        <span className="absolute inset-0 rounded-xl pointer-events-none" style={{ boxShadow: "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px inset" }} />
+        <span className="absolute inset-0 rounded-lg pointer-events-none" style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,.06)" }} />
       </div>
       {caption && (
-        <figcaption className="text-[13px] text-[var(--muted)] mt-3 text-center">
+        <figcaption className="text-[12px] text-[rgba(0,0,0,.4)] mt-2">
           {caption}
         </figcaption>
       )}
     </figure>
+  );
+}
+
+export function Highlight({
+  children,
+  color = "yellow",
+}: {
+  children: React.ReactNode;
+  color?: "blue" | "yellow" | "green" | "purple" | "pink";
+}) {
+  return <span className={`highlight highlight-${color}`}>{children}</span>;
+}
+
+export function PulseDot({ color = "#4a9eff" }: { color?: string }) {
+  return (
+    <>
+      <style>{`
+        @keyframes pulse-dot {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.4; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .pulse-dot-anim { animation: none; }
+        }
+      `}</style>
+      <span
+        className="pulse-dot-anim"
+        style={{
+          display: "inline-block",
+          width: 6,
+          height: 6,
+          borderRadius: "50%",
+          backgroundColor: color,
+          animation: "pulse-dot 2s ease-in-out infinite",
+          verticalAlign: "middle",
+        }}
+        aria-hidden="true"
+      />
+    </>
   );
 }
 
@@ -685,10 +654,143 @@ export function TeamMember({
   children: React.ReactNode;
 }) {
   return (
-    <div className="py-6 border-t border-[var(--border)] first:border-t sm:[&:nth-child(2)]:border-t">
-      <div className="text-[15px] font-medium">{name}</div>
-      <div className="text-[13px] text-[var(--muted)] mb-2">{role}</div>
-      <p className="text-[14px] leading-relaxed text-[var(--muted)]">{children}</p>
+    <div className="py-5 border-t border-[var(--border)] first:border-t sm:[&:nth-child(2)]:border-t">
+      <div className="text-[13px] font-[550] text-[rgba(0,0,0,.85)]">{name}</div>
+      <div className="text-[12px] text-[rgba(0,0,0,.4)] mb-1.5">{role}</div>
+      <p className="text-[13px] leading-[1.5] text-[rgba(0,0,0,.65)]">{children}</p>
+    </div>
+  );
+}
+
+/* ── Pill Tabs ── */
+
+export function PillTabs({
+  tabs,
+}: {
+  tabs: { id: string; label: string; content: React.ReactNode }[];
+}) {
+  const [active, setActive] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const btnRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const indicatorRef = useRef<HTMLDivElement>(null);
+  const hoverRef = useRef<HTMLDivElement>(null);
+  const isKeyboard = useRef(false);
+
+  useEffect(() => {
+    const btn = btnRefs.current[active];
+    const ind = indicatorRef.current;
+    const container = containerRef.current;
+    if (!btn || !ind || !container) return;
+    const cRect = container.getBoundingClientRect();
+    const bRect = btn.getBoundingClientRect();
+    const x = bRect.left - cRect.left;
+    if (isKeyboard.current) {
+      ind.style.transition = "none";
+      isKeyboard.current = false;
+    } else {
+      ind.style.transition = "transform 250ms cubic-bezier(0.77, 0, 0.175, 1), width 250ms cubic-bezier(0.77, 0, 0.175, 1)";
+    }
+    ind.style.width = `${bRect.width}px`;
+    ind.style.transform = `translateX(${x}px)`;
+  }, [active]);
+
+  return (
+    <div style={{ marginTop: ".5rem" }}>
+      <style>{`
+        .pill-tab { position: relative; z-index: 1; padding: .375rem .875rem; border-radius: 9999px; border: none; cursor: pointer; font-size: .8125rem; font-weight: 500; font-family: inherit; letter-spacing: -.005rem; background: transparent; color: rgba(0,0,0,.5); transition: color 150ms ease, transform 100ms ease; }
+        .pill-tab-active { color: #fff; }
+        .pill-tab:active { transform: scale(0.97); }
+        .pill-tab-panel { display: flex; flex-direction: column; gap: .875rem; transition: opacity 150ms cubic-bezier(0.215, 0.61, 0.355, 1), filter 150ms cubic-bezier(0.215, 0.61, 0.355, 1); }
+        @media (prefers-reduced-motion: reduce) {
+          .pill-tab-panel { transition: none; }
+          .pill-tab-indicator { transition: none !important; }
+        }
+      `}</style>
+      <div
+        ref={containerRef}
+        onMouseLeave={() => { const h = hoverRef.current; if (h) h.style.opacity = "0"; }}
+        style={{
+          display: "inline-flex",
+          gap: ".25rem",
+          padding: ".25rem",
+          borderRadius: 9999,
+          backgroundColor: "#F0F1F4",
+          position: "relative",
+        }}
+      >
+        <div
+          ref={hoverRef}
+          style={{
+            position: "absolute",
+            top: ".25rem",
+            left: 0,
+            height: "calc(100% - .5rem)",
+            borderRadius: 9999,
+            backgroundColor: "rgba(0,0,0,.05)",
+            willChange: "transform",
+            opacity: 0,
+            transition: "transform 200ms cubic-bezier(0.165, 0.84, 0.44, 1), width 200ms cubic-bezier(0.165, 0.84, 0.44, 1), opacity 150ms ease",
+            pointerEvents: "none",
+          }}
+        />
+        <div
+          ref={indicatorRef}
+          className="pill-tab-indicator"
+          style={{
+            position: "absolute",
+            top: ".25rem",
+            left: 0,
+            height: "calc(100% - .5rem)",
+            borderRadius: 9999,
+            backgroundColor: "#4c74ff",
+            willChange: "transform",
+          }}
+        />
+        {tabs.map((t, i) => (
+          <button
+            key={t.id}
+            ref={(el) => { btnRefs.current[i] = el; }}
+            onClick={() => setActive(i)}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") isKeyboard.current = true; }}
+            onMouseEnter={() => {
+              if (i === active) return;
+              const btn = btnRefs.current[i];
+              const ctr = containerRef.current;
+              const h = hoverRef.current;
+              if (!btn || !ctr || !h) return;
+              const cRect = ctr.getBoundingClientRect();
+              const bRect = btn.getBoundingClientRect();
+              h.style.width = `${bRect.width}px`;
+              h.style.transform = `translateX(${bRect.left - cRect.left}px)`;
+              h.style.opacity = "1";
+            }}
+            onMouseLeave={() => { const h = hoverRef.current; if (h) h.style.opacity = "0"; }}
+            className={`pill-tab ${active === i ? "pill-tab-active" : ""}`}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ marginTop: "1.25rem", position: "relative" }}>
+        {tabs.map((t, i) => (
+          <div
+            key={t.id}
+            className="pill-tab-panel"
+            style={{
+              opacity: active === i ? 1 : 0,
+              filter: active === i ? "blur(0)" : "blur(4px)",
+              position: active === i ? "relative" : "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              pointerEvents: active === i ? "auto" : "none",
+            }}
+          >
+            {t.content}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

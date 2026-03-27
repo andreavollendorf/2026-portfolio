@@ -150,13 +150,13 @@ export default function MobileMenu({
             <Link
               href="/about"
               onClick={close}
-              className="block text-[16px] font-medium text-[var(--foreground)] px-4 py-2.5 -mx-4 mb-3 rounded-xl active:bg-[var(--surface)] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
+              className="block text-[14px] font-[500] text-[var(--foreground)] px-4 py-2.5 -mx-4 mb-3 rounded-lg active:bg-[#F0F1F4] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
             >
               About
             </Link>
 
             <div className="pt-3 border-t border-[var(--border)]">
-              <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-3 font-normal font-mono">
+              <p className="text-[13px] font-[550] tracking-[-0.005em] text-[rgba(0,0,0,.78)] mb-3">
                 Case Studies
               </p>
 
@@ -168,16 +168,16 @@ export default function MobileMenu({
                       key={study.slug}
                       href={`/case-study/${study.slug}`}
                       onClick={close}
-                      className="group flex items-center gap-3 rounded-xl px-4 py-2.5 -mx-4 active:bg-[var(--surface)] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
+                      className="group flex items-center gap-3 rounded-lg px-4 py-2.5 -mx-4 active:bg-[#F0F1F4] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
                     >
-                      <div className="w-11 h-11 rounded-lg bg-white border border-[var(--border)] flex-shrink-0 flex items-center justify-center">
+                      <div className="w-11 h-11 rounded-lg bg-white flex-shrink-0 flex items-center justify-center" style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,.06)" }}>
                         {config && <config.Icon colored />}
                       </div>
                       <div>
-                        <span className="block text-[15px] font-medium text-[var(--foreground)]">
+                        <span className="block text-[13px] font-[550] text-[rgba(0,0,0,.85)]">
                           {study.title}
                         </span>
-                        <span className="block text-[13px] text-[var(--muted)]">
+                        <span className="block text-[11px] text-[rgba(0,0,0,.35)]">
                           {study.description}
                         </span>
                       </div>
@@ -188,7 +188,7 @@ export default function MobileMenu({
             </div>
 
             <div className="pt-3 border-t border-[var(--border)]">
-              <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-3 font-normal font-mono">
+              <p className="text-[13px] font-[550] tracking-[-0.005em] text-[rgba(0,0,0,.78)] mb-3">
                 Work With Me
               </p>
 
@@ -200,16 +200,16 @@ export default function MobileMenu({
                     onClick={close}
                     target={item.external ? "_blank" : undefined}
                     rel={item.external ? "noopener noreferrer" : undefined}
-                    className="group flex items-center gap-3 rounded-xl px-4 py-2.5 -mx-4 active:bg-[var(--surface)] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
+                    className="group flex items-center gap-3 rounded-lg px-4 py-2.5 -mx-4 active:bg-[#F0F1F4] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
                   >
-                    <div className="w-11 h-11 rounded-lg bg-white border border-[var(--border)] flex-shrink-0 flex items-center justify-center">
+                    <div className="w-11 h-11 rounded-lg bg-white flex-shrink-0 flex items-center justify-center" style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,.06)" }}>
                       <item.Icon colored />
                     </div>
                     <div>
-                      <span className="block text-[15px] font-medium text-[var(--foreground)]">
+                      <span className="block text-[13px] font-[550] text-[rgba(0,0,0,.85)]">
                         {item.label}
                       </span>
-                      <span className="block text-[13px] text-[var(--muted)]">
+                      <span className="block text-[11px] text-[rgba(0,0,0,.35)]">
                         {item.description}
                       </span>
                     </div>

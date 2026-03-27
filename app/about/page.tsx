@@ -1,10 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import WorkDropdown from "../components/work-dropdown";
-import ContactDropdown from "../components/contact-dropdown";
-import MobileMenu from "../components/mobile-menu";
-import { caseStudies } from "../data/case-studies";
+import NavBar from "../components/nav-bar";
 
 const toolkit = [
   { name: "Figma", src: "/images/about/toolkit/figma.avif" },
@@ -42,79 +39,50 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen">
       {/* Navigation */}
-      <nav aria-label="About page navigation" className="sticky top-0 backdrop-blur-md" style={{ zIndex: "var(--z-nav)", backgroundColor: "color-mix(in srgb, var(--background) 80%, transparent)" }}>
-        <Link
-          href="/"
-          className="absolute left-6 lg:left-20 top-1/2 -translate-y-1/2 inline-flex items-center gap-2 text-[14px] text-[var(--muted)] link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm"
-        >
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M5.5 4L1.5 8M1.5 8L5.5 12M1.5 8H10C11.3807 8 12.5 6.88071 12.5 5.5V5.5C12.5 4.11929 11.3807 3 10 3H8.5" stroke="currentColor"/>
-          </svg>
-          <span>Index</span>
-        </Link>
-        <div className="flex items-center justify-between py-5 px-6 lg:px-20">
-          <div />
-          <div />
-          {/* Desktop */}
-          <div className="hidden sm:flex items-center gap-4">
-            <Link href="/about" className="text-[13px] font-medium text-[var(--muted)] link-hover hover:bg-[var(--surface)] transition-colors h-8 px-3 flex items-center rounded-full focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none">
-              About
-            </Link>
-            <WorkDropdown caseStudies={caseStudies} />
-            <ContactDropdown />
-          </div>
-          {/* Mobile */}
-          <div className="sm:hidden">
-            <MobileMenu caseStudies={caseStudies} />
-          </div>
-        </div>
-      </nav>
+      <NavBar showBack />
 
       {/* Main Content */}
-      <main className="max-w-[800px] mx-auto px-6 pt-8 sm:pt-20 pb-16">
+      <main className="max-w-[48rem] mx-auto px-6 pt-8 sm:pt-20 pb-16">
         {/* Hero — image floated right, text fills around it */}
         <section className="pb-14 overflow-hidden">
           <img
             src="/images/about/headshot.webp"
             alt="Andrea Vollendorf"
-            className="hidden sm:block float-right ml-8 mb-4 w-[38%] rounded-xl object-cover"
+            className="hidden sm:block float-right ml-8 mb-4 w-[38%] rounded-lg object-cover"
           />
-          <h1 className="text-[22px] sm:text-[26px] font-medium leading-[1.3] tracking-[-0.01em] mb-6 [text-wrap:pretty]">
+          <h1 className="text-[20px] sm:text-[24px] font-[500] leading-[1.4] tracking-[-0.01em] text-[rgba(0,0,0,.85)] mb-4 [text-wrap:pretty]">
             I&apos;ve spent my career helping teams untangle complex systems and build products people can actually trust.
           </h1>
           <img
             src="/images/about/headshot.webp"
             alt="Andrea Vollendorf"
-            className="sm:hidden w-full rounded-xl object-cover mb-6"
+            className="sm:hidden w-full rounded-lg object-cover mb-6"
           />
-          <p className="text-[15px] leading-[1.75] text-[var(--muted)] mb-5">
+          <p className="text-[14px] leading-[1.45rem] tracking-[-0.005em] text-[rgba(0,0,0,.8)] mb-4">
             I care a lot about clarity. Not just visual clarity, but conceptual clarity. What&apos;s happening. What&apos;s already been tried.
           </p>
-          <p className="text-[15px] leading-[1.75] text-[var(--muted)] mb-5">
+          <p className="text-[14px] leading-[1.45rem] tracking-[-0.005em] text-[rgba(0,0,0,.8)] mb-4">
             My perspective on design comes from lived experience. In my early adulthood, I experienced housing insecurity and saw how quickly access disappears when systems decide your time and dignity matter less. I watched my mom struggle to apply for food assistance when her English was limited. The process was slow, confusing, and fragmented&hellip;faxing documents, making calls, waiting in lines. At the same time, I could walk into a McDonald&apos;s and order food instantly on a touchscreen without speaking to a single human.
           </p>
-          <p className="text-[15px] leading-[1.75] text-[var(--muted)] mb-5">
+          <p className="text-[14px] leading-[1.45rem] tracking-[-0.005em] text-[rgba(0,0,0,.8)] mb-4">
             That contrast stuck with me. It&apos;s what pulled me toward product design.
           </p>
-          <p className="text-[15px] leading-[1.75] text-[var(--muted)] mb-5">
+          <p className="text-[14px] leading-[1.45rem] tracking-[-0.005em] text-[rgba(0,0,0,.8)] mb-4">
             I&apos;m also a mom, which has deepened my appreciation for systems that respect people&apos;s time and cognitive load. I live in rural Maine, where access, distance, and infrastructure shape everyday life. These experiences have influenced how I think about durability, simplicity, and designing for real-world constraints.
           </p>
-          <p className="text-[15px] leading-[1.75] text-[var(--muted)] mb-5">
+          <p className="text-[14px] leading-[1.45rem] tracking-[-0.005em] text-[rgba(0,0,0,.8)] mb-4">
             Today, I design systems that reduce friction, preserve context, and make progress visible. I&apos;m drawn to work where clarity builds trust and where thoughtful structure prevents errors before they happen.
           </p>
-          <p className="text-[15px] leading-[1.75] text-[var(--muted)]">
+          <p className="text-[14px] font-[450] leading-[1.45rem] tracking-[-0.005em] text-[rgba(0,0,0,.8)]">
             I believe good design should make things feel fairer, calmer, and easier — not just for some people, but for everyone.
           </p>
         </section>
 
-        {/* Divider */}
-        <div className="border-t border-[var(--border)]" />
-
         {/* More about me */}
-        <section className="py-14">
-          <h2 className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-8 font-normal font-mono">
+        <section className="pt-16">
+          <div className="flex items-center gap-3 mb-6"><span className="text-[13px] font-[550] tracking-[-0.005em] text-[rgba(0,0,0,.78)] whitespace-nowrap">
             More about me
-          </h2>
+          </span><div className="flex-1 h-px bg-[rgba(0,0,0,.08)]" /></div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {[
               { src: "/images/about/maine.webp", caption: "I live in beautiful coastal Maine and love a good hike." },
@@ -131,7 +99,7 @@ export default function AboutPage() {
                     className="w-full block aspect-square object-cover"
                   />
                 </div>
-                <figcaption className="text-[13px] text-[var(--muted)] mt-3 leading-relaxed">
+                <figcaption className="text-[12px] text-[rgba(0,0,0,.4)] mt-2 leading-[1.5]">
                   {img.caption}
                 </figcaption>
               </figure>
@@ -139,14 +107,11 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Divider */}
-        <div className="border-t border-[var(--border)]" />
-
         {/* My toolkit */}
-        <section className="py-14">
-          <h2 className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-8 font-normal font-mono">
+        <section className="pt-16">
+          <div className="flex items-center gap-3 mb-6"><span className="text-[13px] font-[550] tracking-[-0.005em] text-[rgba(0,0,0,.78)] whitespace-nowrap">
             My toolkit
-          </h2>
+          </span><div className="flex-1 h-px bg-[rgba(0,0,0,.08)]" /></div>
           <div className="grid grid-cols-4 sm:grid-cols-8 gap-4">
             {toolkit.map((tool) => (
               <div key={tool.name} className="flex flex-col items-center gap-2">
@@ -155,29 +120,26 @@ export default function AboutPage() {
                   alt={tool.name}
                   className="w-full aspect-square rounded-2xl object-cover"
                 />
-                <span className="text-[12px] text-[var(--muted)]">{tool.name}</span>
+                <span className="text-[12px] text-[rgba(0,0,0,.4)]">{tool.name}</span>
               </div>
             ))}
           </div>
         </section>
 
-        {/* Divider */}
-        <div className="border-t border-[var(--border)]" />
-
         {/* Volunteering */}
-        <section className="py-14">
-          <h2 className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-8 font-normal font-mono">
+        <section className="pt-16">
+          <div className="flex items-center gap-3 mb-6"><span className="text-[13px] font-[550] tracking-[-0.005em] text-[rgba(0,0,0,.78)] whitespace-nowrap">
             Volunteering
-          </h2>
+          </span><div className="flex-1 h-px bg-[rgba(0,0,0,.08)]" /></div>
           <div className="space-y-0">
             {volunteering.map((item) => (
               <div
                 key={item.org}
                 className="grid grid-cols-1 sm:grid-cols-[160px_140px_1fr] gap-x-8 gap-y-1 py-6 border-t border-[var(--border)] first:border-t-0 first:pt-0"
               >
-                <span className="text-[13px] text-[var(--muted)]">{item.category}</span>
-                <span className="text-[14px] font-medium">{item.org}</span>
-                <p className="text-[14px] leading-relaxed text-[var(--muted)]">{item.description}</p>
+                <span className="text-[13px] text-[rgba(0,0,0,.5)]">{item.category}</span>
+                <span className="text-[13px] font-[550]">{item.org}</span>
+                <p className="text-[13px] leading-[1.5] text-[rgba(0,0,0,.65)]">{item.description}</p>
               </div>
             ))}
           </div>
@@ -186,13 +148,11 @@ export default function AboutPage() {
       </main>
 
       {/* Footer */}
-      <footer className="px-6 lg:px-20 py-12 border-t border-[var(--border)] mx-auto">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 text-[13px] text-[var(--muted)]">
+      <footer className="px-6 lg:px-20 py-8 border-t border-[var(--border)] mx-auto">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 text-[12px] text-[rgba(0,0,0,.5)]">
           <p>
             Built with{" "}
             <Link href="https://nextjs.org" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm" target="_blank" rel="noopener noreferrer">Next.js</Link>
-            ,{" "}
-            <Link href="https://agentation.dev/" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm" target="_blank" rel="noopener noreferrer">Agentation</Link>
             {" & "}
             <Link href="https://claude.ai/code" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm" target="_blank" rel="noopener noreferrer">Claude Code</Link>
           </p>

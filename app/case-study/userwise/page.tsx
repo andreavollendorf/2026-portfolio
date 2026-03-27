@@ -6,6 +6,8 @@ import {
   Paragraph,
   ImageBlock,
   Quote,
+  PillTabs,
+  Highlight,
 } from "../components";
 
 const IMG = "/images/userwise";
@@ -23,13 +25,13 @@ export default function UserwisePage() {
     <CaseStudyLayout
       breadcrumb="Userwise"
       title="Designing player retention tools for mobile game developers."
-      description="Userwise gives mobile game developers powerful tools to retain players. I partnered closely with Maddie (Head of Product) and Tom (Co-founder) to design a LiveOps platform that helps studios retain players without adding operational complexity. I was embedded as design partner to founders, translating product vision into shipped features while working directly with engineering."
+      description={<>Userwise gives mobile game developers powerful tools to retain players. I partnered closely with Maddie (Head of Product) and Tom (Co-founder) to design a LiveOps platform that helps studios retain players without adding operational complexity. <Highlight color="green">I was embedded as design partner to founders</Highlight>, translating product vision into shipped features while working directly with engineering.</>}
       meta={[
         { label: "Role", value: "Lead Product Designer\n(Founder Collaboration)" },
         { label: "Timeline", value: "2022–2023" },
       ]}
       sections={sections}
-      nextProject={{ slug: "proof-ops", title: "Proof Ops" }}
+      nextProject={{ slug: "proof-serves", title: "Proof Serves" }}
       heroContent={
         <ImageBlock
           src={`${IMG}/userwise-hero.png`}
@@ -49,8 +51,8 @@ export default function UserwisePage() {
           I partnered closely with Maddie (Head of Product) and Tom (Co-founder)
           of Userwise to design a LiveOps platform that helps mobile game
           developers retain players without adding operational complexity. The
-          work focused on simplifying powerful tooling into clear, intuitive
-          workflows that feel approachable, even for non-technical teams.
+          work focused on <Highlight color="pink">simplifying powerful tooling into clear, intuitive
+          workflows</Highlight> that feel approachable, even for non-technical teams.
         </Paragraph>
         <ImageBlock
           src={`${IMG}/slot.png`}
@@ -69,8 +71,8 @@ export default function UserwisePage() {
           LiveOps platforms are inherently complex &mdash; scheduling campaigns,
           configuring in-game shops, managing versions across environments,
           importing bulk data. The challenge was designing interfaces that could
-          handle real operational complexity while remaining usable for teams who
-          aren&apos;t deeply technical. Every feature needed clear defaults,
+          handle real operational complexity while remaining <Highlight color="yellow">usable for teams who
+          aren&apos;t deeply technical</Highlight>. Every feature needed clear defaults,
           visible state, and recoverable actions.
         </Paragraph>
         <Quote attribution="Head of Product @ Userwise">
@@ -111,52 +113,81 @@ export default function UserwisePage() {
         sectionTitle="What I Designed"
         chapterTitle="Core features that power the platform today."
       >
-        <h3 className="text-[18px] font-medium mt-6 mb-2">Campaigns</h3>
-        <Paragraph>
-          Campaign creation, scheduling, and management. Designed flows for
-          setting up targeted player campaigns with configurable triggers,
-          timing, and content. Focused on making complex scheduling logic visible
-          and editable without overwhelming users.
-        </Paragraph>
-        <ImageBlock
-          src={`${IMG}/campaign.png`}
-          alt="Campaign scheduling and management interface"
-        />
-
-        <h3 className="text-[18px] font-medium mt-6 mb-2">Shops</h3>
-        <Paragraph>
-          In-game store configuration. Designed interfaces for creating and
-          managing offers, bundles, and pricing logic. The challenge was
-          representing complex pricing rules (time-limited, player-segment-specific,
-          tiered) in a way that&apos;s scannable and editable.
-        </Paragraph>
-        <ImageBlock
-          src={`${IMG}/shops.png`}
-          alt="In-game shop configuration interface with offers and pricing"
-        />
-
-        <h3 className="text-[18px] font-medium mt-6 mb-2">Version history</h3>
-        <Paragraph>
-          Change tracking and rollback. Designed a version history system that
-          lets teams see what changed, when, and by whom &mdash; with the
-          ability to restore previous states. Critical for teams managing live
-          games where mistakes can impact real players.
-        </Paragraph>
-        <ImageBlock
-          src={`${IMG}/version-history.png`}
-          alt="Version history interface showing change tracking and rollback"
-        />
-
-        <h3 className="text-[18px] font-medium mt-6 mb-2">JSON upload</h3>
-        <Paragraph>
-          Bulk data import with validation. Designed upload flows that handle
-          large JSON files, surface validation errors clearly, and let users fix
-          issues before committing changes. Focused on making error states
-          actionable rather than just informative.
-        </Paragraph>
-        <ImageBlock
-          src={`${IMG}/json.png`}
-          alt="JSON upload interface with validation and error handling"
+        <PillTabs
+          tabs={[
+            {
+              id: "campaigns",
+              label: "Campaigns",
+              content: (
+                <>
+                  <Paragraph>
+                    Campaign creation, scheduling, and management. Designed flows for
+                    setting up targeted player campaigns with configurable triggers,
+                    timing, and content. Focused on making complex scheduling logic visible
+                    and editable without overwhelming users.
+                  </Paragraph>
+                  <ImageBlock
+                    src={`${IMG}/campaign.png`}
+                    alt="Campaign scheduling and management interface"
+                  />
+                </>
+              ),
+            },
+            {
+              id: "shops",
+              label: "Shops",
+              content: (
+                <>
+                  <Paragraph>
+                    In-game store configuration. Designed interfaces for creating and
+                    managing offers, bundles, and pricing logic. The challenge was
+                    representing complex pricing rules (time-limited, player-segment-specific,
+                    tiered) in a way that&apos;s scannable and editable.
+                  </Paragraph>
+                  <ImageBlock
+                    src={`${IMG}/shops.png`}
+                    alt="In-game shop configuration interface with offers and pricing"
+                  />
+                </>
+              ),
+            },
+            {
+              id: "version-history",
+              label: "Version History",
+              content: (
+                <>
+                  <Paragraph>
+                    Change tracking and rollback. Designed a version history system that
+                    lets teams see what changed, when, and by whom &mdash; with the
+                    ability to restore previous states. Critical for teams managing live
+                    games where mistakes can impact real players.
+                  </Paragraph>
+                  <ImageBlock
+                    src={`${IMG}/version-history.png`}
+                    alt="Version history interface showing change tracking and rollback"
+                  />
+                </>
+              ),
+            },
+            {
+              id: "json",
+              label: "JSON Upload",
+              content: (
+                <>
+                  <Paragraph>
+                    Bulk data import with validation. Designed upload flows that handle
+                    large JSON files, surface validation errors clearly, and let users fix
+                    issues before committing changes. Focused on making error states
+                    actionable rather than just informative.
+                  </Paragraph>
+                  <ImageBlock
+                    src={`${IMG}/json.png`}
+                    alt="JSON upload interface with validation and error handling"
+                  />
+                </>
+              ),
+            },
+          ]}
         />
 
         <Quote attribution="Co-founder @ Userwise">
@@ -173,7 +204,7 @@ export default function UserwisePage() {
         chapterTitle="A platform that shipped, compounded, and lasted."
       >
         <Paragraph>
-          The platform launched in 2023 and is still actively used today, more
+          The platform launched in 2023 and is <Highlight color="purple">still actively used today</Highlight>, more
           than two years later. It serves studios including Halfbrick (makers of
           Fruit Ninja) and powers LiveOps for some of the world&apos;s
           most-played mobile games. The product&apos;s success allowed Userwise

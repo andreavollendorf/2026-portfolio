@@ -8,8 +8,11 @@ import {
   Stats,
   Quote,
   TeamMember,
+  PillTabs,
+  Highlight,
 } from "../components";
 import { useState, useRef, useEffect, useCallback, useSyncExternalStore } from "react";
+import { motion } from "motion/react";
 
 const IMG = "/images/proof-serves";
 const CANVAS = `${IMG}/canvas`;
@@ -111,7 +114,7 @@ function ChatResearchCanvas() {
   }, []);
 
   return (
-    <figure className="my-8">
+    <figure className="my-4">
       <style>{`
         @keyframes sticker-wiggle {
           0%, 100% { transform: rotate(0deg); }
@@ -122,7 +125,7 @@ function ChatResearchCanvas() {
         }
       `}</style>
       <div
-        className="rounded-xl overflow-hidden"
+        className="rounded-lg overflow-hidden"
         style={{ border: "1px solid #ebebeb", userSelect: "none" }}
       >
         {/* Header bar */}
@@ -175,7 +178,7 @@ function ChatResearchCanvas() {
           })}
         </div>
       </div>
-      <figcaption className="text-[13px] text-[var(--muted)] mt-3 text-center">
+      <figcaption className="text-[12px] text-[rgba(0,0,0,.4)] mt-2">
         Used Claude to analyze chat threads at scale.
       </figcaption>
     </figure>
@@ -184,11 +187,52 @@ function ChatResearchCanvas() {
 
 /* ── New Serve Structure ──────────────────────────────────────────── */
 
+function AnimatedBeam({ d, index, containerHeight }: { d: string; index: number; containerHeight: number }) {
+  const id = `beam-${index}`;
+  const beamHeight = 40;
+
+  return (
+    <>
+      <defs>
+        <motion.linearGradient
+          id={id}
+          gradientUnits="userSpaceOnUse"
+          x1="0"
+          x2="0"
+          animate={{
+            y1: [-beamHeight, containerHeight],
+            y2: [0, containerHeight + beamHeight],
+          }}
+          transition={{
+            duration: 2.4,
+            ease: "linear",
+            repeat: Infinity,
+            repeatDelay: 0.2,
+          }}
+        >
+          <stop stopColor="rgb(58, 171, 123)" stopOpacity="0" />
+          <stop offset="25%" stopColor="rgb(58, 171, 123)" stopOpacity="0.45" />
+          <stop offset="75%" stopColor="rgb(58, 171, 123)" stopOpacity="0.45" />
+          <stop offset="100%" stopColor="rgb(58, 171, 123)" stopOpacity="0" />
+        </motion.linearGradient>
+      </defs>
+      <path
+        d={d}
+        fill="none"
+        stroke={`url(#${id})`}
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </>
+  );
+}
+
 function NewServeStructure({ reducedMotion, hideTitle }: { reducedMotion: boolean; hideTitle?: boolean }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const jobRefs = useRef<(HTMLDivElement | null)[]>([]);
   const serveRef = useRef<HTMLDivElement>(null);
   const [paths, setPaths] = useState<string[]>([]);
+  const [containerHeight, setContainerHeight] = useState(200);
 
   const measure = useCallback(() => {
     const container = containerRef.current;
@@ -210,6 +254,7 @@ function NewServeStructure({ reducedMotion, hideTitle }: { reducedMotion: boolea
       return `M${jx} ${jy} C${jx} ${midY}, ${sx} ${midY}, ${sx} ${sy}`;
     });
     setPaths(newPaths);
+    setContainerHeight(cRect.height);
   }, []);
 
   useEffect(() => {
@@ -267,24 +312,9 @@ function NewServeStructure({ reducedMotion, hideTitle }: { reducedMotion: boolea
                   strokeDasharray="4 4"
                   strokeLinecap="round"
                 />
-                {/* Animated pulse traveling along the curve */}
+                {/* Animated gradient beam traveling along the curve */}
                 {!reducedMotion && (
-                  <path
-                    d={d}
-                    fill="none"
-                    stroke="rgba(58, 171, 123, 0.6)"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeDasharray="12 200"
-                  >
-                    <animate
-                      attributeName="stroke-dashoffset"
-                      from="212"
-                      to="0"
-                      dur="2s"
-                      repeatCount="indefinite"
-                    />
-                  </path>
+                  <AnimatedBeam d={d} index={i} containerHeight={containerHeight} />
                 )}
               </g>
             ) : null
@@ -433,7 +463,7 @@ function DataModelDiagramSplit() {
   const reassignedVisible = [stage >= 1, stage >= 3];
 
   return (
-    <figure className="my-8" ref={containerRef} role="img" aria-label="Diagram comparing old data model with multiple disconnected jobs versus new serve structure where all jobs feed into a single serve">
+    <figure className="my-4" ref={containerRef} role="img" aria-label="Diagram comparing old data model with multiple disconnected jobs versus new serve structure where all jobs feed into a single serve">
       <style>{`
         @keyframes diagram-pulse-blue {
           0%, 100% { box-shadow: 0 0 8px 0 rgba(59, 130, 246, 0.05), 0 0 3px 0 rgba(59, 130, 246, 0.03); }
@@ -452,7 +482,7 @@ function DataModelDiagramSplit() {
         <div className="flex flex-col">
           <div
             className="relative rounded-lg overflow-hidden px-5 py-8 sm:px-6 sm:py-10 flex-1"
-            style={{ backgroundColor: "#F4F5F7" }}
+            style={{ backgroundColor: "#F6F7F9" }}
           >
             <span className="absolute inset-0 rounded-lg pointer-events-none" style={{ boxShadow: "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px inset" }} />
             <div className="flex flex-col items-center justify-center h-full" style={{ position: "relative" }}>
@@ -520,7 +550,7 @@ function DataModelDiagramSplit() {
                             transform: "translate(-50%, -50%)",
                             fontSize: 10,
                             color: "#999",
-                            backgroundColor: "#F4F5F7",
+                            backgroundColor: "#F6F7F9",
                             padding: "1px 8px",
                             borderRadius: 9999,
                             border: "1px solid #e5e5e5",
@@ -539,7 +569,7 @@ function DataModelDiagramSplit() {
               })}
             </div>
           </div>
-          <figcaption className="text-[13px] text-[var(--muted)] text-center mt-3">
+          <figcaption className="text-[12px] text-[rgba(0,0,0,.4)] mt-2 text-center">
             Old data model
           </figcaption>
         </div>
@@ -548,12 +578,12 @@ function DataModelDiagramSplit() {
         <div className="flex flex-col">
           <div
             className="relative rounded-lg overflow-hidden flex-1"
-            style={{ backgroundColor: "#F4F5F7" }}
+            style={{ backgroundColor: "#F6F7F9" }}
           >
             <span className="absolute inset-0 rounded-lg pointer-events-none" style={{ boxShadow: "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px inset" }} />
             <NewServeStructure reducedMotion={reducedMotion} hideTitle />
           </div>
-          <figcaption className="text-[13px] text-[var(--muted)] text-center mt-3">
+          <figcaption className="text-[12px] text-[rgba(0,0,0,.4)] mt-2 text-center">
             New serve structure
           </figcaption>
         </div>
@@ -580,7 +610,7 @@ export default function ProofServesPage() {
     <CaseStudyLayout
       breadcrumb="Proof / Serves"
       title="I redesigned how thousands of law firms track their serves."
-      description="Proof handles service of process: the constitutional requirement that someone must be formally notified when they're sued. Our platform connects thousands of law firms with a nationwide network of process servers. These serves often involve urgent, emotionally charged cases where uncertainty quickly erodes trust. I led the redesign of our client-facing experience — the company's largest product initiative — partnering with product and engineering leadership to set strategy while staying hands-on in the craft."
+      description={<>Proof handles service of process: the constitutional requirement that someone must be formally notified when they&apos;re sued. Our platform connects thousands of law firms with a nationwide network of process servers. These serves often involve urgent, emotionally charged cases where uncertainty quickly erodes trust. <Highlight color="pink">I led the redesign of our client-facing experience</Highlight> — the company&apos;s largest product initiative — partnering with product and engineering leadership to set strategy while staying hands-on in the craft.</>}
       meta={[
         { label: "Role", value: "Director of Design" },
         { label: "Timeline", value: "July–December 2025" },
@@ -604,7 +634,7 @@ export default function ProofServesPage() {
         <Stats
           stats={[
             { value: "30%", label: "of chat messages from clients were asking for status updates" },
-            { value: ">$50k", label: "annual spend — high-value clients churned primarily because of poor visibility" },
+            { value: ">$50k", label: "client churned due to poor visibility" },
             { value: "30 days", label: "was the retention window — confusion killed momentum" },
           ]}
         />
@@ -647,8 +677,8 @@ export default function ProofServesPage() {
           happening with my job?
         </Paragraph>
         <Paragraph>
-          The problem wasn&apos;t the chat experience. It was that we weren&apos;t telling
-          clients what they needed to know.
+          The problem wasn&apos;t the chat experience. It was that <Highlight color="yellow">we weren&apos;t telling
+          clients what they needed to know</Highlight>.
         </Paragraph>
         <ChatResearchCanvas />
         <Quote attribution="Paralegal, mid-sized family law firm">
@@ -704,46 +734,60 @@ export default function ProofServesPage() {
         sectionTitle="Solution"
         chapterTitle="Three experiences that remove uncertainty."
       >
-        {/* Job Tracker */}
-        <h3 className="text-[15px] font-medium mt-6 mb-2">Job tracker</h3>
-        <Paragraph>
-          Answers one question: is this progressing the way it should? Instead of binary
-          status labels, it surfaces contextual health indicators (on track, needs attention,
-          at risk) and explains why. Attempts count in aggregate across the full serve. Risk
-          surfaces early, not after failure.
-        </Paragraph>
-        <div className="[&_figure>div]:pb-0 [&_figure>div]:items-end">
-          <ImageBlock
-            src={`${IMG}/tracker.png`}
-            alt="Job tracker showing health indicators"
-          />
-        </div>
-
-        {/* Unified History */}
-        <h3 className="text-[15px] font-medium mt-6 mb-2">Unified history</h3>
-        <Paragraph>
-          Reassignments no longer reset the conversation. A single timeline preserves all
-          attempts, chats, and documents regardless of how many times the serve changes hands.
-        </Paragraph>
-        <div className="[&_figure>div]:pb-0 [&_figure>div]:items-end">
-          <ImageBlock
-            src={`${IMG}/history.png`}
-            alt="Unified history timeline"
-          />
-        </div>
-
-        {/* Address Intelligence */}
-        <h3 className="text-[15px] font-medium mt-6 mb-2">Address intelligence</h3>
-        <Paragraph>
-          Many failed attempts came from address quality issues. We integrated Melissa Data to
-          validate addresses proactively and surface risks before dispatch.
-        </Paragraph>
-        <div className="[&_figure>div]:pb-0 [&_figure>div]:pr-0 [&_figure>div]:justify-end [&_figure>div]:items-end">
-          <ImageBlock
-            src={`${IMG}/address.png`}
-            alt="Address intelligence validation"
-          />
-        </div>
+        <PillTabs
+          tabs={[
+            {
+              id: "tracker",
+              label: "Job Tracker",
+              content: (
+                <>
+                  <Paragraph>
+                    Answers one question: is this progressing the way it should? Instead of binary
+                    status labels, it surfaces contextual health indicators (on track, needs attention,
+                    at risk) and explains why. Attempts count in aggregate across the full serve. Risk
+                    surfaces early, not after failure.
+                  </Paragraph>
+                  <ImageBlock
+                    src={`${IMG}/tracker.png`}
+                    alt="Job tracker showing health indicators"
+                  />
+                </>
+              ),
+            },
+            {
+              id: "history",
+              label: "Unified History",
+              content: (
+                <>
+                  <Paragraph>
+                    Reassignments no longer reset the conversation. A single timeline preserves all
+                    attempts, chats, and documents regardless of how many times the serve changes hands.
+                  </Paragraph>
+                  <ImageBlock
+                    src={`${IMG}/history.png`}
+                    alt="Unified history timeline"
+                  />
+                </>
+              ),
+            },
+            {
+              id: "address",
+              label: "Address Intelligence",
+              content: (
+                <>
+                  <Paragraph>
+                    Many failed attempts came from address quality issues. We integrated Melissa Data to
+                    validate addresses proactively and surface risks before dispatch.
+                  </Paragraph>
+                  <ImageBlock
+                    src={`${IMG}/address.png`}
+                    alt="Address intelligence validation"
+                  />
+                </>
+              ),
+            },
+          ]}
+        />
       </Section>
 
       {/* ── Enabling Ops ─────────────────────────────────────────────── */}
@@ -758,7 +802,7 @@ export default function ProofServesPage() {
           proposed redesigning the entire ops platform.
         </Paragraph>
         <Paragraph>
-          I recommended a narrower approach: a global job selector that surfaces key context
+          I <Highlight color="blue">recommended a narrower approach</Highlight>: a global job selector that surfaces key context
           without changing existing workflows. Ship value now, defer the full redesign.
         </Paragraph>
         <ImageBlock
@@ -839,8 +883,8 @@ export default function ProofServesPage() {
       >
         <Paragraph>
           By redesigning the client experience around a continuous story (and enabling internal
-          teams to support that truth), we reduced confusion, restored trust, and created a
-          scalable foundation for retention.
+          teams to support that truth), we reduced confusion, restored trust, and <Highlight color="green">created a
+          scalable foundation for retention</Highlight>.
         </Paragraph>
         <ImageBlock
           src={`${IMG}/serves.png`}

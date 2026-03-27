@@ -272,7 +272,7 @@ export default function WorkDropdown({
         aria-expanded={open}
         aria-haspopup="true"
         aria-controls={panelId}
-        className="text-[13px] font-medium text-[var(--muted)] link-hover hover:bg-[var(--surface)] transition-colors h-8 px-3 flex items-center gap-1 rounded-full focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none"
+        className="text-[12px] font-[450] text-[rgba(0,0,0,.55)] link-hover press-scale hover:bg-[var(--surface)] transition-colors h-8 px-3 flex items-center gap-1 rounded-md focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none"
       >
         Case Studies
         <svg
@@ -285,7 +285,7 @@ export default function WorkDropdown({
           strokeLinecap="round"
           strokeLinejoin="round"
           aria-hidden="true"
-          className="transition-transform duration-200"
+          className="transition-transform duration-200 will-change-transform"
           style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)" }}
         >
           <path d="M2.5 4L5 6.5L7.5 4" />
@@ -299,8 +299,9 @@ export default function WorkDropdown({
         id={panelId}
         role="menu"
         aria-hidden={!open}
-        className="absolute right-0 top-full mt-2 z-[var(--z-dropdown)] bg-[var(--background)] border border-[var(--border)] rounded-xl shadow-lg overflow-hidden w-[280px]"
+        className="absolute right-0 top-full mt-2 z-[var(--z-dropdown)] bg-[var(--background)] rounded-lg overflow-hidden w-[280px]"
         style={{
+          boxShadow: "0 4px 24px rgba(0,0,0,.06), inset 0 0 0 1px rgba(0,0,0,.08)",
           opacity: 0,
           transform: "translateY(-8px)",
           pointerEvents: "none",
@@ -320,12 +321,12 @@ export default function WorkDropdown({
                 href={`/case-study/${study.slug}`}
                 role="menuitem"
                 tabIndex={open ? 0 : -1}
-                className="group flex items-center gap-3 rounded-lg px-3 py-3 hover:bg-[var(--surface)] focus-visible:bg-[var(--surface)] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
+                className="group flex items-center gap-3 rounded-lg px-3 py-3 hover:bg-[#F0F1F4] focus-visible:bg-[var(--surface)] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
                 onClick={hideMenu}
                 onMouseEnter={() => setHoveredIdx(i)}
                 onMouseLeave={() => setHoveredIdx(null)}
               >
-                <div className="w-14 h-14 rounded-xl bg-white border border-[var(--border)] flex-shrink-0 flex items-center justify-center">
+                <div className="w-14 h-14 rounded-lg bg-white flex-shrink-0 flex items-center justify-center" style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,.06)" }}>
                   <motion.div
                     animate={animateProps}
                     transition={params.spring}
@@ -334,10 +335,10 @@ export default function WorkDropdown({
                   </motion.div>
                 </div>
                 <div>
-                  <span className="block text-[14px] font-medium text-[var(--foreground)]">
+                  <span className="block text-[13px] font-[550] text-[rgba(0,0,0,.85)]">
                     {study.title}
                   </span>
-                  <span className="block text-[12px] text-[var(--muted)] mt-px">
+                  <span className="block text-[11px] text-[rgba(0,0,0,.35)] mt-px">
                     {study.description}
                   </span>
                 </div>

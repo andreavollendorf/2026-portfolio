@@ -1,9 +1,6 @@
 import Link from "next/link";
-import WorkDropdown from "./components/work-dropdown";
-import ContactDropdown from "./components/contact-dropdown";
-import MobileMenu from "./components/mobile-menu";
+import NavBar from "./components/nav-bar";
 import ProjectCarousel from "./components/project-carousel";
-import { caseStudies } from "./data/case-studies";
 
 
 const projects = [
@@ -109,33 +106,15 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* Navigation */}
-      <nav aria-label="Main navigation" className="relative z-[var(--z-nav)]">
-        <div className="flex items-center justify-between px-6 lg:px-20 py-5 mx-auto">
-            <Link href="/" className="text-[15px] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm">
-              Andrea Vollendorf
-            </Link>
-            {/* Desktop: hover dropdown + theme toggle */}
-            <div className="hidden sm:flex items-center gap-4">
-              <Link href="/about" className="text-[13px] font-medium text-[var(--muted)] link-hover hover:bg-[var(--surface)] transition-colors h-8 px-3 flex items-center rounded-full focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none">
-                About
-              </Link>
-              <WorkDropdown caseStudies={caseStudies} />
-              <ContactDropdown />
-            </div>
-            {/* Mobile: hamburger menu */}
-            <div className="sm:hidden">
-              <MobileMenu caseStudies={caseStudies} />
-            </div>
-          </div>
-      </nav>
+      <NavBar />
 
       {/* Hero */}
       <header className="px-6 lg:px-20 pt-8 pb-8 sm:pt-16 sm:pb-14 mx-auto">
         <div className="max-w-[720px]">
-          <h1 className="text-[32px] sm:text-[40px] leading-[1.2] tracking-[-0.02em] font-medium mb-8">
+          <h1 className="text-[28px] sm:text-[36px] leading-[1.2] tracking-[-0.01em] font-[500] text-[rgba(0,0,0,.85)] mb-4">
           Complex systems tend to fail the people who need them most.
           </h1>
-          <p className="text-[16px] leading-[1.7] text-[var(--muted)] mb-6 sm:mb-8">
+          <p className="text-[14px] font-[450] leading-[1.45rem] tracking-[-0.005em] text-[rgba(0,0,0,.8)] mb-6 sm:mb-8">
           I&apos;m Andrea, a product design leader on the coast of Maine. I&apos;ve spent 14 years designing for the complex, regulated, invisible stuff - the systems that sit between people and the things they actually need. I bring strong craft, clear judgment, and strategic direction to work that usually doesn&apos;t get any of it.</p>
         </div>
       </header>
@@ -143,21 +122,22 @@ export default function Home() {
       {/* Projects */}
       <section id="projects" className="pb-20">
         <div className="px-6 lg:px-20 mx-auto">
-          <h2 className="text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] mb-8 font-normal font-mono">
-            Selected Work
-          </h2>
+          <div className="flex items-center gap-3 mb-6">
+            <span className="text-[13px] font-[550] tracking-[-0.005em] text-[rgba(0,0,0,.78)] whitespace-nowrap">
+              Selected Work
+            </span>
+            <div className="flex-1 h-px bg-[rgba(0,0,0,.08)]" />
+          </div>
         </div>
         <ProjectCarousel projects={projects} />
       </section>
 
       {/* Footer */}
-      <footer className="px-6 lg:px-20 py-12 border-t border-[var(--border)] mx-auto">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 text-[13px] text-[var(--muted)]">
+      <footer className="px-6 lg:px-20 py-8 border-t border-[var(--border)] mx-auto">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 text-[12px] text-[rgba(0,0,0,.5)]">
           <p>
             Built with{" "}
             <Link href="https://nextjs.org" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm" target="_blank" rel="noopener noreferrer">Next.js</Link>
-            ,{" "}
-            <Link href="https://agentation.dev/" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm" target="_blank" rel="noopener noreferrer">Agentation</Link>
             {" & "}
             <Link href="https://claude.ai/code" className="link-hover transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm" target="_blank" rel="noopener noreferrer">Claude Code</Link>
           </p>

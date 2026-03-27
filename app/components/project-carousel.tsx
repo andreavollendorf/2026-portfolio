@@ -412,7 +412,7 @@ export default function ProjectCarousel({
               "opacity 150ms cubic-bezier(0.165,0.84,0.44,1), transform 150ms cubic-bezier(0.165,0.84,0.44,1)",
           }}
         >
-          <span className="block -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--foreground)] text-[var(--background)] text-[13px] font-medium px-4 py-1.5 whitespace-nowrap shadow-lg">
+          <span className="block -translate-x-1/2 -translate-y-1/2 rounded-lg text-white text-[13px] font-[500] px-4 py-1.5 whitespace-nowrap" style={{ backgroundColor: "rgba(0,0,0,.85)", boxShadow: "0 4px 24px rgba(0,0,0,.12)" }}>
             View Case Study
           </span>
         </div>
@@ -425,7 +425,7 @@ export default function ProjectCarousel({
       >
         {[...cards, ...cards, ...cards].map((card, i) => {
           const imageContent = (
-            <div className="h-[360px] sm:h-[480px] rounded-xl bg-[var(--surface)] overflow-hidden p-[40px] flex items-center justify-center">
+            <div className="h-[360px] sm:h-[480px] rounded-lg bg-[#F6F7F9] overflow-hidden p-[40px] flex items-center justify-center">
               <img
                 src={card.image.src}
                 alt={
@@ -443,11 +443,11 @@ export default function ProjectCarousel({
           const label = (
             <div className="h-[44px] overflow-hidden">
               <div className="translate-y-[-100%] group-hover:translate-y-0 group-focus-visible:translate-y-0 transition-transform duration-200 ease-[var(--ease-out-quart)] pt-3 flex items-baseline justify-between">
-                <span className="text-[13px] font-medium text-[var(--foreground)]">
+                <span className="text-[13px] font-[550] text-[rgba(0,0,0,.85)]">
                   {card.projectTitle}
                 </span>
                 {card.hasCaseStudy ? (
-                  <span className="text-[11px] font-medium text-[var(--muted)]">
+                  <span className="text-[11px] font-[450] text-[rgba(0,0,0,.4)]">
                     View Case Study →
                   </span>
                 ) : null}
