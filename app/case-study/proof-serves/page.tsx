@@ -567,7 +567,7 @@ const sections = [
   { id: "where-we-started", label: "Where we started" },
   { id: "research", label: "Research" },
   { id: "reframe", label: "The reframe" },
-  { id: "one-serve", label: "One serve, one story" },
+  { id: "one-serve", label: "The restructure" },
   { id: "solution", label: "Solution" },
   { id: "ops", label: "Enabling ops" },
   { id: "outcomes", label: "Outcomes" },
