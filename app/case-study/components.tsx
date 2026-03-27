@@ -25,6 +25,7 @@ const SECTION_GLYPHS: Record<string, string> = {
   "where-we-started": "\u25CA", // ◊ lozenge
   research: "\u221E",       // ∞ infinity
   reframe: "\u21A9",        // ↩ hook arrow
+  "one-serve": "\u2206",   // ∆ delta (restructure/change)
   ops: "\u21E5",            // ⇥ tab arrow
   collaboration: "\u2194",  // ↔ bidirectional
   takeaway: "\u21AA",       // ↪ rightwards arrow with hook

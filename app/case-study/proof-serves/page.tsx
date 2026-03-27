@@ -182,11 +182,392 @@ function ChatResearchCanvas() {
   );
 }
 
+/* ── New Serve Structure ──────────────────────────────────────────── */
+
+function NewServeStructure({ reducedMotion, hideTitle }: { reducedMotion: boolean; hideTitle?: boolean }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const jobRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const serveRef = useRef<HTMLDivElement>(null);
+  const [paths, setPaths] = useState<string[]>([]);
+
+  const measure = useCallback(() => {
+    const container = containerRef.current;
+    const serve = serveRef.current;
+    if (!container || !serve) return;
+
+    const cRect = container.getBoundingClientRect();
+    const sRect = serve.getBoundingClientRect();
+    const sx = sRect.left + sRect.width / 2 - cRect.left;
+    const sy = sRect.top - cRect.top;
+
+    const newPaths = jobRefs.current.map((el) => {
+      if (!el) return "";
+      const jRect = el.getBoundingClientRect();
+      const jx = jRect.left + jRect.width / 2 - cRect.left;
+      const jy = jRect.bottom - cRect.top;
+      // Curved path from job bottom-center to serve top-center
+      const midY = jy + (sy - jy) * 0.5;
+      return `M${jx} ${jy} C${jx} ${midY}, ${sx} ${midY}, ${sx} ${sy}`;
+    });
+    setPaths(newPaths);
+  }, []);
+
+  useEffect(() => {
+    measure();
+    let rafId: number;
+    const onResize = () => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(measure);
+    };
+    window.addEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      cancelAnimationFrame(rafId);
+    };
+  }, [measure]);
+
+  return (
+    <div
+      className={hideTitle ? "px-5 py-8 sm:px-6 sm:py-10" : "rounded-lg p-5 sm:p-6"}
+      style={{
+        backgroundColor: hideTitle ? "transparent" : "#f0faf5",
+        border: hideTitle ? "none" : "1px solid #e5e5e5",
+        height: hideTitle ? "100%" : undefined,
+      }}
+    >
+      {!hideTitle && (
+        <h4
+          className="text-base sm:text-lg mb-6"
+          style={{ color: "var(--foreground)", fontWeight: 400, fontFamily: "var(--font-mackinac), serif" }}
+        >
+          New serve structure
+        </h4>
+      )}
+      <div ref={containerRef} style={{ position: "relative", height: hideTitle ? "100%" : undefined, display: hideTitle ? "flex" : undefined, flexDirection: hideTitle ? "column" : undefined, justifyContent: hideTitle ? "space-between" : undefined }}>
+        {/* SVG connector lines — positioned behind everything */}
+        <svg
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            pointerEvents: "none",
+            overflow: "visible",
+          }}
+        >
+          {paths.map((d, i) =>
+            d ? (
+              <g key={i}>
+                {/* Static dashed curve */}
+                <path
+                  d={d}
+                  fill="none"
+                  stroke="#ccc"
+                  strokeWidth="1"
+                  strokeDasharray="4 4"
+                  strokeLinecap="round"
+                />
+                {/* Animated pulse traveling along the curve */}
+                {!reducedMotion && (
+                  <path
+                    d={d}
+                    fill="none"
+                    stroke="rgba(58, 171, 123, 0.6)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeDasharray="12 200"
+                  >
+                    <animate
+                      attributeName="stroke-dashoffset"
+                      from="212"
+                      to="0"
+                      dur="2s"
+                      repeatCount="indefinite"
+                    />
+                  </path>
+                )}
+              </g>
+            ) : null
+          )}
+        </svg>
+
+        {/* Job row */}
+        <div className="flex items-start justify-center gap-1.5 sm:gap-3 w-full" style={{ position: "relative", zIndex: 1 }}>
+          {["Job ID 1", "Job ID 2", "Job ID 3"].map((label, i) => (
+            <div
+              key={label}
+              ref={(el) => { jobRefs.current[i] = el; }}
+              style={{ flex: 1, minWidth: 0, position: "relative" }}
+            >
+              <div
+                style={{
+                  position: "relative",
+                  padding: "8px 6px",
+                  borderRadius: 6,
+                  whiteSpace: "nowrap",
+                  textAlign: "center",
+                  fontFamily: "var(--font-geist-mono), monospace",
+                  border: "1px solid #e5e5e5",
+                  color: "#555",
+                  backgroundColor: "#fff",
+                  fontWeight: 500,
+                  fontSize: 12,
+                  lineHeight: "16px",
+                }}
+              >
+                {label}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Spacer for the curve area — collapses when justify-between is active */}
+        <div style={{ flexGrow: 1, minHeight: 60 }} />
+
+        {/* Serve ID box */}
+        <div className="flex justify-center" style={{ position: "relative", zIndex: 1 }}>
+          <div
+            ref={serveRef}
+            style={{
+              padding: "8px 6px",
+              borderRadius: 6,
+              whiteSpace: "nowrap",
+              textAlign: "center",
+              fontFamily: "var(--font-geist-mono), monospace",
+              backgroundColor: "#3aab7b",
+              color: "#fff",
+              fontWeight: 500,
+              fontSize: 12,
+              lineHeight: "16px",
+              minWidth: "200px",
+              boxShadow: "0 0 20px 0 rgba(58, 171, 123, 0.2), 0 0 8px 0 rgba(58, 171, 123, 0.1)",
+            }}
+          >
+            Serve ID 1234
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Data Model Diagram ──────────────────────────────────────────── */
+
+/*
+ * Animation stages for the old data model:
+ * 0 – Job 1 pulses (active)
+ * 1 – "Reassigned" between 1→2 appears
+ * 2 – Job 1 + Job 2 both pulse
+ * 3 – "Reassigned" between 2→3 appears
+ * 4 – All three jobs pulse (the problem: 3 active jobs)
+ * 5 – Hold, then reset
+ */
+const STAGE_DURATIONS = [1600, 500, 1600, 500, 2000, 800]; // ms per stage
+const TOTAL_CYCLE = STAGE_DURATIONS.reduce((a, b) => a + b, 0);
+
+function useAnimationStage(inView: boolean, reducedMotion: boolean) {
+  const [stage, setStage] = useState(0);
+
+  useEffect(() => {
+    if (!inView || reducedMotion) {
+      setStage(0);
+      return;
+    }
+    let elapsed = 0;
+    let rafId: number;
+    let last: number | null = null;
+    let prevStage = 0;
+
+    const tick = (now: number) => {
+      if (last !== null) elapsed += now - last;
+      last = now;
+
+      let t = elapsed % TOTAL_CYCLE;
+      let s = 0;
+      for (let i = 0; i < STAGE_DURATIONS.length; i++) {
+        if (t < STAGE_DURATIONS[i]) { s = i; break; }
+        t -= STAGE_DURATIONS[i];
+      }
+      // Only trigger re-render when stage actually changes
+      if (s !== prevStage) {
+        prevStage = s;
+        setStage(s);
+      }
+
+      rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, [inView, reducedMotion]);
+
+  return stage;
+}
+
+/* ── Split Variant (two separate containers) ─────────────────────── */
+
+function DataModelDiagramSplit() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+  const reducedMotion = useSyncExternalStore(
+    (cb) => {
+      const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+      mq.addEventListener("change", cb);
+      return () => mq.removeEventListener("change", cb);
+    },
+    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    () => false,
+  );
+
+  useEffect(() => {
+    if (!containerRef.current || reducedMotion) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { threshold: 0.3 }
+    );
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, [reducedMotion]);
+
+  const stage = useAnimationStage(inView, reducedMotion);
+  const jobActive = [stage >= 0, stage >= 2, stage >= 4];
+  const reassignedVisible = [stage >= 1, stage >= 3];
+
+  return (
+    <figure className="my-8" ref={containerRef} role="img" aria-label="Diagram comparing old data model with multiple disconnected jobs versus new serve structure where all jobs feed into a single serve">
+      <style>{`
+        @keyframes diagram-pulse-blue {
+          0%, 100% { box-shadow: 0 0 8px 0 rgba(59, 130, 246, 0.05), 0 0 3px 0 rgba(59, 130, 246, 0.03); }
+          50% { box-shadow: 0 0 14px 2px rgba(59, 130, 246, 0.09), 0 0 5px 0 rgba(59, 130, 246, 0.05); }
+        }
+        @keyframes diagram-pulse-green {
+          0%, 100% { box-shadow: 0 0 12px 0 rgba(58, 171, 123, 0.1), 0 0 4px 0 rgba(58, 171, 123, 0.06); }
+          50% { box-shadow: 0 0 24px 4px rgba(58, 171, 123, 0.18), 0 0 8px 0 rgba(58, 171, 123, 0.1); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .diagram-glow { animation: none; }
+        }
+      `}</style>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 items-stretch">
+        {/* ── Old Data Model (left container) ── */}
+        <div className="flex flex-col">
+          <div
+            className="relative rounded-lg overflow-hidden px-5 py-8 sm:px-6 sm:py-10 flex-1"
+            style={{ backgroundColor: "#F4F5F7" }}
+          >
+            <span className="absolute inset-0 rounded-lg pointer-events-none" style={{ boxShadow: "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px inset" }} />
+            <div className="flex flex-col items-center justify-center h-full" style={{ position: "relative" }}>
+              {["Job ID 1", "Job ID 2", "Job ID 3"].map((label, i) => {
+                const isActive = !reducedMotion && jobActive[i];
+                const isVisible = reassignedVisible[i];
+                return (
+                  <div key={label} className="flex flex-col items-center w-full">
+                    <div style={{ position: "relative", width: "100%" }}>
+                      <div
+                        className="diagram-glow"
+                        style={{
+                          position: "absolute",
+                          inset: 0,
+                          borderRadius: 6,
+                          animation: "diagram-pulse-blue 2.4s ease-in-out infinite",
+                          willChange: "box-shadow",
+                          opacity: isActive ? 1 : 0,
+                          transition: "opacity 500ms cubic-bezier(0.215, 0.61, 0.355, 1)",
+                          pointerEvents: "none",
+                        }}
+                      />
+                      <div
+                        style={{
+                          position: "relative",
+                          padding: "8px 6px",
+                          borderRadius: 6,
+                          whiteSpace: "nowrap",
+                          textAlign: "center",
+                          fontFamily: "var(--font-geist-mono), monospace",
+                          border: isActive ? "1px solid rgba(59, 130, 246, 0.3)" : "1px solid #e5e5e5",
+                          color: isActive ? "#555" : "#bbb",
+                          backgroundColor: isActive ? "#fff" : "#fafafa",
+                          fontWeight: isActive ? 500 : 400,
+                          fontSize: 12,
+                          lineHeight: "16px",
+                          transition: "border-color 500ms cubic-bezier(0.215, 0.61, 0.355, 1), color 500ms cubic-bezier(0.215, 0.61, 0.355, 1), background-color 500ms cubic-bezier(0.215, 0.61, 0.355, 1)",
+                        }}
+                      >
+                        {label}
+                      </div>
+                    </div>
+                    {i < 2 && (
+                      <div
+                        className="flex flex-col items-center"
+                        style={{ position: "relative", height: 40 }}
+                      >
+                        <div
+                          style={{
+                            position: "absolute",
+                            top: 0,
+                            bottom: 0,
+                            width: 0,
+                            borderLeft: "1px dashed #ccc",
+                            transformOrigin: "top",
+                            transform: reducedMotion || isVisible ? "scaleY(1)" : "scaleY(0)",
+                            transition: "transform 300ms cubic-bezier(0.215, 0.61, 0.355, 1)",
+                          }}
+                        />
+                        <div
+                          style={{
+                            position: "absolute",
+                            top: "50%",
+                            left: "50%",
+                            transform: "translate(-50%, -50%)",
+                            fontSize: 10,
+                            color: "#999",
+                            backgroundColor: "#F4F5F7",
+                            padding: "1px 8px",
+                            borderRadius: 9999,
+                            border: "1px solid #e5e5e5",
+                            lineHeight: 1.4,
+                            whiteSpace: "nowrap",
+                            opacity: reducedMotion ? 1 : isVisible ? 1 : 0,
+                            transition: "opacity 400ms cubic-bezier(0.215, 0.61, 0.355, 1) 150ms",
+                          }}
+                        >
+                          Reassigned
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <figcaption className="text-[13px] text-[var(--muted)] text-center mt-3">
+            Old data model
+          </figcaption>
+        </div>
+
+        {/* ── New Serve Structure (right container) ── */}
+        <div className="flex flex-col">
+          <div
+            className="relative rounded-lg overflow-hidden flex-1"
+            style={{ backgroundColor: "#F4F5F7" }}
+          >
+            <span className="absolute inset-0 rounded-lg pointer-events-none" style={{ boxShadow: "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px inset" }} />
+            <NewServeStructure reducedMotion={reducedMotion} hideTitle />
+          </div>
+          <figcaption className="text-[13px] text-[var(--muted)] text-center mt-3">
+            New serve structure
+          </figcaption>
+        </div>
+      </div>
+    </figure>
+  );
+}
+
 const sections = [
   { id: "why-it-mattered", label: "Why it mattered" },
   { id: "where-we-started", label: "Where we started" },
   { id: "research", label: "Research" },
   { id: "reframe", label: "The reframe" },
+  { id: "one-serve", label: "One serve, one story" },
   { id: "solution", label: "Solution" },
   { id: "ops", label: "Enabling ops" },
   { id: "outcomes", label: "Outcomes" },
@@ -199,9 +580,9 @@ export default function ProofServesPage() {
     <CaseStudyLayout
       breadcrumb="Proof / Serves"
       title="I redesigned how thousands of law firms track their serves."
-      description="Proof handles service of process: the constitutional requirement that someone must be formally notified when they're sued. Our platform connects thousands of law firms with a nationwide network of process servers. These serves often involve urgent, emotionally charged cases where uncertainty quickly erodes trust."
+      description="Proof handles service of process: the constitutional requirement that someone must be formally notified when they're sued. Our platform connects thousands of law firms with a nationwide network of process servers. These serves often involve urgent, emotionally charged cases where uncertainty quickly erodes trust. I led the redesign of our client-facing experience — the company's largest product initiative — partnering with product and engineering leadership to set strategy while staying hands-on in the craft."
       meta={[
-        { label: "Role", value: "Director of Product Design\n(Player/Coach)" },
+        { label: "Role", value: "Director of Design" },
         { label: "Timeline", value: "July–December 2025" },
       ]}
       sections={sections}
@@ -284,7 +665,6 @@ export default function ProofServesPage() {
         id="reframe"
         sectionTitle="The Reframe"
         chapterTitle="But clarity alone wouldn't solve it."
-        subtitle="There was a structural problem."
       >
         <Paragraph>
           When jobs get redispatched (natural disasters, server availability, access issues,
@@ -300,16 +680,21 @@ export default function ProofServesPage() {
           alt="Old model vs new model comparison"
           caption="Old model (left) vs new model (right)"
         />
+      </Section>
+
+      {/* ── One Serve, One Story ───────────────────────────────────────── */}
+
+      <Section
+        id="one-serve"
+        sectionTitle="The Restructure"
+        chapterTitle="One serve, one story."
+      >
         <Paragraph>
           &ldquo;Jobs&rdquo; were an internal concept that made sense for ops but meant
           nothing to clients. We needed a new mental model: one serve, one story, regardless
           of how many reassignments happened behind the scenes. The serve became the container.
         </Paragraph>
-        <ImageBlock
-          src={`${IMG}/data-model.png`}
-          alt="The new data model for serves"
-          caption="The new data model for serves"
-        />
+        <DataModelDiagramSplit />
       </Section>
 
       {/* ── Solution ─────────────────────────────────────────────────── */}
