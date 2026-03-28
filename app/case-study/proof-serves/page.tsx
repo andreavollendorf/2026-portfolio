@@ -827,7 +827,7 @@ export default function ProofServesPage() {
       >
         <Stats
           stats={[
-            { value: "25%", label: "reduction in status-check messages" },
+            { value: "25%", label: "reduction in messages" },
             { value: ">80%", label: "positive feedback" },
             { value: "70%", label: "quick action adoption" },
           ]}

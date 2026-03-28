@@ -288,8 +288,7 @@ export default function ProofOpsPage() {
           <div className="p-4 rounded-lg bg-[var(--surface)]" style={{ boxShadow: "var(--shadow-flush)" }}>
             <h3 className="text-[13px] font-[550] text-[rgba(0,0,0,.85)] mb-1">Measurable performance</h3>
             <p className="text-[13px] leading-[1.5] text-[rgba(0,0,0,.65)]">
-              For the first time, we can see who&apos;s excelling and where
-              training is needed.
+              We can now see where training is needed.
             </p>
           </div>
           <div className="p-4 rounded-lg bg-[var(--surface)]" style={{ boxShadow: "var(--shadow-flush)" }}>
