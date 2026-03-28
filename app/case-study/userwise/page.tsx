@@ -13,11 +13,11 @@ import {
 const IMG = "/images/userwise";
 
 const sections = [
-  { id: "outcome", label: "The outcome" },
-  { id: "challenge", label: "The challenge" },
-  { id: "process", label: "How I worked" },
-  { id: "designed", label: "What I designed" },
-  { id: "result", label: "The result" },
+  { id: "outcome", label: "The Outcome" },
+  { id: "challenge", label: "The Challenge" },
+  { id: "process", label: "How I Worked" },
+  { id: "designed", label: "What I Designed" },
+  { id: "result", label: "The Result" },
 ];
 
 export default function UserwisePage() {

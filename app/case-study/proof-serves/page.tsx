@@ -593,13 +593,13 @@ function DataModelDiagramSplit() {
 }
 
 const sections = [
-  { id: "why-it-mattered", label: "Why it mattered" },
-  { id: "where-we-started", label: "Where we started" },
+  { id: "why-it-mattered", label: "Why It Mattered" },
+  { id: "where-we-started", label: "Where We Started" },
   { id: "research", label: "Research" },
-  { id: "reframe", label: "The reframe" },
-  { id: "one-serve", label: "The restructure" },
+  { id: "reframe", label: "The Reframe" },
+  { id: "one-serve", label: "The Restructure" },
   { id: "solution", label: "Solution" },
-  { id: "ops", label: "Enabling ops" },
+  { id: "ops", label: "Enabling Ops" },
   { id: "outcomes", label: "Outcomes" },
   { id: "collaboration", label: "Collaboration" },
   { id: "takeaway", label: "Takeaway" },

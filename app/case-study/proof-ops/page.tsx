@@ -14,9 +14,9 @@ const IMG = "/images/proof-ops";
 
 const sections = [
   { id: "context", label: "Context" },
-  { id: "reality", label: "The reality" },
-  { id: "problem", label: "The problem" },
-  { id: "mapping", label: "Mapping work" },
+  { id: "reality", label: "The Reality" },
+  { id: "problem", label: "The Problem" },
+  { id: "mapping", label: "Mapping Work" },
   { id: "architecture", label: "Architecture" },
   { id: "documentation", label: "Documentation" },
   { id: "collaboration", label: "Collaboration" },

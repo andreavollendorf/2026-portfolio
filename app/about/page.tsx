@@ -358,7 +358,7 @@ export default function AboutPage() {
         {/* More about me */}
         <section className="pt-16">
           <div className="flex items-center gap-3 mb-6"><span className="text-[13px] font-[550] tracking-[-0.005em] text-[rgba(0,0,0,.78)] whitespace-nowrap">
-            More about me
+            More About Me
           </span><div className="flex-1 h-px bg-[rgba(0,0,0,.08)]" /></div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {[
@@ -387,7 +387,7 @@ export default function AboutPage() {
         {/* My toolkit */}
         <section className="pt-16">
           <div className="flex items-center gap-3 mb-6"><span className="text-[13px] font-[550] tracking-[-0.005em] text-[rgba(0,0,0,.78)] whitespace-nowrap">
-            My toolkit
+            My Toolkit
           </span><div className="flex-1 h-px bg-[rgba(0,0,0,.08)]" /></div>
           <div ref={gridRef} className="grid grid-cols-5 sm:grid-cols-10 gap-2" style={{ touchAction: "pan-y" }}>
             {items.map((tool, i) => {

@@ -111,7 +111,7 @@ export default function Home() {
 
       {/* Hero */}
       <header className="px-6 lg:px-20 pt-8 pb-8 sm:pt-16 sm:pb-14 mx-auto">
-        <div className="max-w-[720px]">
+        <div className="max-w-[700px]">
           <h1 className="text-[28px] sm:text-[36px] leading-[1.2] tracking-[-0.01em] font-[500] text-[rgba(0,0,0,.85)] mb-4">
           Complex systems tend to fail the people who need them most.
           </h1>
@@ -137,7 +137,7 @@ export default function Home() {
       <section className="px-6 lg:px-20 pb-20 mx-auto">
         <div className="flex items-center gap-3 mb-6">
           <span className="text-[13px] font-[550] tracking-[-0.005em] text-[rgba(0,0,0,.78)] whitespace-nowrap">
-            From colleagues
+            From Colleagues
           </span>
           <div className="flex-1 h-px bg-[rgba(0,0,0,.08)]" />
         </div>
