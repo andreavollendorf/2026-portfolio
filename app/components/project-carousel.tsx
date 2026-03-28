@@ -54,10 +54,8 @@ export default function ProjectCarousel({
 }) {
   const outerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const rafRef = useRef<number>(0);
   const offsetRef = useRef(0);
-  const loopWidthRef = useRef(0);
-  const stoppedRef = useRef(false);
+  const maxOffsetRef = useRef(0);
   const draggingRef = useRef(false);
   const dragStartXRef = useRef(0);
   const dragStartYRef = useRef(0);
@@ -125,35 +123,30 @@ export default function ProjectCarousel({
   const cards = flattenToCards(filtered);
   const cardCount = cards.length;
 
-  const wrapOffset = useCallback(() => {
-    const lw = loopWidthRef.current;
-    if (lw > 0) {
-      offsetRef.current = ((offsetRef.current % lw) + lw) % lw;
-    }
+  const clampOffset = useCallback(() => {
+    offsetRef.current = Math.max(0, Math.min(offsetRef.current, maxOffsetRef.current));
   }, []);
 
   const applyOffset = useCallback(() => {
     const track = trackRef.current;
     if (!track) return;
-    const lw = loopWidthRef.current;
-    track.style.transform = `translateX(${-(offsetRef.current + lw)}px)`;
+    track.style.transform = `translateX(${-offsetRef.current}px)`;
   }, []);
 
-  // Measure the exact loop point: offsetLeft of the first card in the second set
+  // Measure max scrollable distance
   useEffect(() => {
     const track = trackRef.current;
-    if (!track || cardCount === 0) return;
+    const outer = outerRef.current;
+    if (!track || !outer || cardCount === 0) return;
 
     const measure = () => {
-      const secondSetStart = track.children[cardCount] as HTMLElement;
-      if (secondSetStart) {
-        loopWidthRef.current = secondSetStart.offsetLeft;
-      }
+      maxOffsetRef.current = Math.max(0, track.scrollWidth - outer.clientWidth);
     };
     measure();
 
     const ro = new ResizeObserver(measure);
     ro.observe(track);
+    ro.observe(outer);
     return () => ro.disconnect();
   }, [cardCount]);
 
@@ -162,8 +155,7 @@ export default function ProjectCarousel({
     const track = trackRef.current;
     if (!track || cardCount === 0) return;
 
-    // Only need the first set of images (not duplicates)
-    const imgs = Array.from(track.querySelectorAll("img")).slice(0, cardCount);
+    const imgs = Array.from(track.querySelectorAll("img")).slice(0, Math.min(cardCount, 4));
     const allLoaded = imgs.every((img) => img.complete && img.naturalWidth > 0);
     if (allLoaded) {
       setReady(true);
@@ -181,7 +173,6 @@ export default function ProjectCarousel({
       img.addEventListener("error", check, { once: true });
     });
 
-    // Fallback: reveal after 2s even if some images are slow
     const timer = setTimeout(() => setReady(true), 2000);
     return () => clearTimeout(timer);
   }, [cardCount]);
@@ -192,7 +183,10 @@ export default function ProjectCarousel({
     applyOffset();
   }, [activeFilter, applyOffset]);
 
-  // Auto-scroll loop (all devices)
+  // Auto-scroll (stops at end, pauses on hover/drag)
+  const stoppedRef = useRef(false);
+  const rafRef = useRef<number>(0);
+
   useEffect(() => {
     const track = trackRef.current;
     const outer = outerRef.current;
@@ -203,14 +197,17 @@ export default function ProjectCarousel({
     let visible = false;
 
     const animate = () => {
-      if (stoppedRef.current) return;
+      if (stoppedRef.current || offsetRef.current >= maxOffsetRef.current) {
+        rafRef.current = requestAnimationFrame(animate);
+        return;
+      }
       if (!visible) {
         rafRef.current = requestAnimationFrame(animate);
         return;
       }
 
       offsetRef.current += 0.55;
-      wrapOffset();
+      clampOffset();
       applyOffset();
       rafRef.current = requestAnimationFrame(animate);
     };
@@ -230,7 +227,7 @@ export default function ProjectCarousel({
       observer.disconnect();
       cancelAnimationFrame(rafRef.current);
     };
-  }, [applyOffset, wrapOffset]);
+  }, [applyOffset, clampOffset]);
 
   // Wheel handler (desktop only)
   useEffect(() => {
@@ -242,16 +239,22 @@ export default function ProjectCarousel({
       const delta =
         Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
       if (delta === 0) return;
+
+      // At the edges, let the page scroll naturally
+      const atStart = offsetRef.current <= 0 && delta < 0;
+      const atEnd = offsetRef.current >= maxOffsetRef.current && delta > 0;
+      if (atStart || atEnd) return;
+
       e.preventDefault();
       stoppedRef.current = true;
       offsetRef.current += delta;
-      wrapOffset();
+      clampOffset();
       applyOffset();
     };
 
     el.addEventListener("wheel", handleWheel, { passive: false });
     return () => el.removeEventListener("wheel", handleWheel);
-  }, [applyOffset, wrapOffset]);
+  }, [applyOffset, clampOffset]);
 
   // Momentum glide after swipe release
   const startMomentum = useCallback(() => {
@@ -259,17 +262,18 @@ export default function ProjectCarousel({
     const friction = 0.95;
     const glide = () => {
       if (Math.abs(velocityRef.current) < 0.5) {
-        wrapOffset();
+        clampOffset();
         applyOffset();
         return;
       }
       velocityRef.current *= friction;
       offsetRef.current += velocityRef.current;
+      clampOffset();
       applyOffset();
       momentumRafRef.current = requestAnimationFrame(glide);
     };
     momentumRafRef.current = requestAnimationFrame(glide);
-  }, [applyOffset, wrapOffset]);
+  }, [applyOffset, clampOffset]);
 
   // Drag/swipe handler (all devices)
   useEffect(() => {
@@ -281,10 +285,8 @@ export default function ProjectCarousel({
 
     const onPointerDown = (e: PointerEvent) => {
       if (e.button !== 0) return;
-      // If a second finger comes down, cancel the drag (pinch gesture)
       if (pointerId !== -1 && e.pointerId !== pointerId) {
         draggingRef.current = false;
-        stoppedRef.current = false;
         if (didDragRef.current) {
           try { el.releasePointerCapture(pointerId); } catch {}
         }
@@ -303,7 +305,6 @@ export default function ProjectCarousel({
       lastMoveXRef.current = e.clientX;
       lastMoveTimeRef.current = Date.now();
       pointerId = e.pointerId;
-      stoppedRef.current = true;
     };
 
     const onPointerMove = (e: PointerEvent) => {
@@ -311,16 +312,13 @@ export default function ProjectCarousel({
       const dx = dragStartXRef.current - e.clientX;
       const dy = dragStartYRef.current - e.clientY;
 
-      // Determine swipe direction on first significant movement
       if (!dragLockedRef.current && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
         dragLockedRef.current =
           Math.abs(dx) >= Math.abs(dy) ? "horizontal" : "vertical";
       }
 
-      // If vertical swipe on touch, bail out and let the page scroll
       if (dragLockedRef.current === "vertical") {
         draggingRef.current = false;
-        stoppedRef.current = false;
         return;
       }
 
@@ -331,7 +329,6 @@ export default function ProjectCarousel({
       }
 
       if (didDragRef.current) {
-        // Track velocity from recent movement
         const now = Date.now();
         const dt = now - lastMoveTimeRef.current;
         if (dt > 0) {
@@ -341,6 +338,7 @@ export default function ProjectCarousel({
         lastMoveTimeRef.current = now;
 
         offsetRef.current = dragStartOffsetRef.current + dx;
+        clampOffset();
         applyOffset();
       }
     };
@@ -355,7 +353,7 @@ export default function ProjectCarousel({
         } catch {}
         startMomentum();
       } else {
-        wrapOffset();
+        clampOffset();
         applyOffset();
       }
       el.style.cursor = "";
@@ -374,7 +372,7 @@ export default function ProjectCarousel({
       el.removeEventListener("pointercancel", onPointerUp);
       cancelAnimationFrame(momentumRafRef.current);
     };
-  }, [applyOffset, startMomentum]);
+  }, [applyOffset, clampOffset, startMomentum]);
 
   const handleClick = useCallback((e: React.MouseEvent) => {
     if (didDragRef.current) {
@@ -390,6 +388,7 @@ export default function ProjectCarousel({
       aria-roledescription="carousel"
       aria-label="Selected work"
       onMouseEnter={() => { stoppedRef.current = true; }}
+      onMouseLeave={() => { stoppedRef.current = false; }}
       style={{
         touchAction: "pan-y pinch-zoom",
         opacity: transitioning || !ready ? 0 : 1,
@@ -420,10 +419,10 @@ export default function ProjectCarousel({
 
       <div
         ref={trackRef}
-        className="flex items-start gap-5"
+        className="flex items-start gap-5 pl-6 lg:pl-20 pr-6 lg:pr-20"
         style={{ width: "max-content", willChange: "transform" }}
       >
-        {[...cards, ...cards, ...cards].map((card, i) => {
+        {cards.map((card, i) => {
           const imageContent = (
             <div className="relative h-[360px] sm:h-[480px] rounded-lg bg-[var(--surface)] overflow-hidden p-[40px] flex items-center justify-center">
               <span className="absolute inset-0 rounded-lg pointer-events-none" style={{ boxShadow: "var(--shadow-flush)" }} />

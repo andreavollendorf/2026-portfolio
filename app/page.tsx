@@ -1,6 +1,7 @@
 import Link from "next/link";
 import NavBar from "./components/nav-bar";
 import ProjectCarousel from "./components/project-carousel";
+import TestimonialCard from "./components/testimonial-card";
 
 
 const projects = [
@@ -131,6 +132,44 @@ export default function Home() {
         </div>
         <ProjectCarousel projects={projects} />
       </section>
+
+      {/* Testimonials */}
+      <section className="px-6 lg:px-20 pb-20 mx-auto">
+        <div className="flex items-center gap-3 mb-6">
+          <span className="text-[13px] font-[550] tracking-[-0.005em] text-[rgba(0,0,0,.78)] whitespace-nowrap">
+            From colleagues
+          </span>
+          <div className="flex-1 h-px bg-[rgba(0,0,0,.08)]" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          {[
+            {
+              quote: "Andrea is the best design leader I\u2019ve worked with in my entire career. Not even close. She\u2019s an insanely sharp systems thinker\u2009\u2014\u2009when things get messy, she steps back, sees the whole system clearly, and simplifies it into something the team can actually act on. She brings a level of kindness, joy and care that is uncommon.",
+              name: "Shaun Tan",
+              role: "Product Designer, Proof",
+              photo: "/images/testimonials/shaun.jpeg",
+              gif: "/images/testimonials/office.gif",
+            },
+            {
+              quote: "She has a knack for communicating and articulating new ideas to clients and stakeholders clearly, and she\u2019s able to handle any type of feedback and untangle conflict with ease. She has the gift of building trust quickly and has no hesitation in taking the lead. Her passion for design, people, and making an impact are the driving factors to help her achieve anything she sets her mind to.",
+              name: "Kevin Bhagat",
+              role: "Product Design Director, Heyo",
+              photo: "/images/testimonials/kevin.jpeg",
+              gif: "/images/testimonials/kevin-reaction.gif",
+            },
+            {
+              quote: "Andrea seamlessly unites teams and stakeholders, solves complex problems with simple and elegant solutions, and builds scalable design systems. She combines a collaborative approach with methodical research and product thinking to create intuitive and impactful designs. Andrea leads by example\u2009\u2014\u2009one of empathy and dedication to continuous growth.",
+              name: "Esther Chung",
+              role: "Principal Product Designer, Sesame",
+              photo: "/images/testimonials/esther.jpeg",
+              gif: "/images/testimonials/esther-reaction.gif",
+            },
+          ].map((t) => (
+            <TestimonialCard key={t.name} {...t} />
+          ))}
+        </div>
+      </section>
+
 
       {/* Footer */}
       <footer className="px-6 lg:px-20 py-8 border-t border-[var(--border)] mx-auto">

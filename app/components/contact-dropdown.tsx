@@ -319,10 +319,10 @@ export default function ContactDropdown() {
                   </motion.div>
                 </div>
                 <div>
-                  <span className="block text-[13px] font-[550] text-[rgba(0,0,0,.85)]">
+                  <span className="block text-[13px] font-[550] text-[rgba(0,0,0,.85)] leading-tight">
                     {item.label}
                   </span>
-                  <span className="block text-[11px] text-[rgba(0,0,0,.3)] mt-px">
+                  <span className="block text-[12px] text-[rgba(0,0,0,.45)] leading-tight mt-0.5">
                     {item.description}
                   </span>
                 </div>
