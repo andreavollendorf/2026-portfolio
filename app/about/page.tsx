@@ -299,7 +299,7 @@ export default function AboutPage() {
       {/* Main Content */}
       <main className="max-w-[48rem] mx-auto px-6 pt-8 sm:pt-20 pb-16">
         {/* Hero — image floated right, text fills around it */}
-        <section className="pb-14 overflow-hidden">
+        <section className="pb-0 overflow-hidden">
           <img
             src="/images/about/headshot.webp"
             alt="Andrea Vollendorf"
@@ -429,9 +429,9 @@ export default function AboutPage() {
                 key={item.org}
                 className="grid grid-cols-1 sm:grid-cols-[160px_140px_1fr] gap-x-8 gap-y-1 py-6 border-t border-[var(--border)] first:border-t-0 first:pt-0"
               >
-                <span className="text-[13px] text-[rgba(0,0,0,.5)]">{item.category}</span>
-                <span className="text-[13px] font-[550]">{item.org}</span>
-                <p className="text-[13px] leading-[1.5] text-[rgba(0,0,0,.65)]">{item.description}</p>
+                <span className="text-[13px] text-[rgba(0,0,0,.4)]">{item.category}</span>
+                <span className="text-[13px] font-[550] text-[rgba(0,0,0,.85)]">{item.org}</span>
+                <p className="text-[14px] leading-[1.5] text-[rgba(0,0,0,.8)]">{item.description}</p>
               </div>
             ))}
           </div>
