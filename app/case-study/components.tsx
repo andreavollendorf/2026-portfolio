@@ -577,15 +577,17 @@ export function VideoBlock({
   poster,
   alt,
   caption,
+  flush,
 }: {
   src: string;
   poster?: string;
   alt: string;
   caption?: string;
+  flush?: boolean;
 }) {
   return (
     <figure className="my-1">
-      <div className="relative flex justify-center px-6 py-8 rounded-lg bg-[var(--surface)]">
+      <div className={`relative flex justify-center rounded-lg ${flush ? "" : "px-6 py-8 bg-[var(--surface)]"}`}>
         <video
           src={src}
           poster={poster}

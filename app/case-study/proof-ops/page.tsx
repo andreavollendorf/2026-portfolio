@@ -40,6 +40,7 @@ export default function ProofOpsPage() {
           src={`${IMG}/ops-teams.mp4`}
           poster={`${IMG}/cover.webp`}
           alt="Proof Ops team management interface"
+          flush
         />
       }
     >
