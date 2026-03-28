@@ -318,7 +318,7 @@ export function Section({
         <div className="flex-1 h-px bg-[rgba(0,0,0,.08)]" />
       </div>
       {chapterTitle && (
-        <h2 className="text-[20px] sm:text-[24px] font-[500] leading-[1.4] tracking-[-0.01em] text-[rgba(0,0,0,.85)] mb-4">
+        <h2 className="text-[24px] font-[500] leading-[1.4] tracking-[-0.01em] text-[rgba(0,0,0,.85)] mb-4">
           {chapterTitle}
         </h2>
       )}
@@ -418,6 +418,7 @@ export function TwoImages({
                 {img.alt}
               </div>
             )}
+            <span className="absolute inset-0 rounded-lg pointer-events-none" style={{ boxShadow: "var(--shadow-flush)" }} />
           </div>
           {img.caption && (
             <figcaption className="text-[12px] text-[rgba(0,0,0,.4)] mt-2">
@@ -562,9 +563,10 @@ export function ImageCarousel({
         {images.map((img, i) => (
           <div
             key={i}
-            className="w-[320px] sm:w-[400px] flex-shrink-0 rounded-lg overflow-hidden bg-[var(--surface)]"
+            className="relative w-[320px] sm:w-[400px] flex-shrink-0 rounded-lg overflow-hidden bg-[var(--surface)]"
           >
             <img src={img.src} alt={img.alt} loading="lazy" decoding="async" className="w-full block" />
+            <span className="absolute inset-0 rounded-lg pointer-events-none" style={{ boxShadow: "var(--shadow-flush)" }} />
           </div>
         ))}
       </div>
@@ -749,10 +751,13 @@ export function PillTabs({
   return (
     <div style={{ marginTop: ".5rem" }}>
       <style>{`
-        .pill-tab { position: relative; z-index: 1; padding: .375rem .875rem; border-radius: 9999px; border: none; cursor: pointer; font-size: .8125rem; font-weight: 500; font-family: inherit; letter-spacing: -.005rem; background: transparent; color: rgba(0,0,0,.5); transition: color 150ms ease, transform 100ms ease; }
+        .pill-tab { position: relative; z-index: 1; padding: .375rem .875rem; border-radius: 9999px; border: none; cursor: pointer; font-size: .8125rem; font-weight: 500; font-family: inherit; letter-spacing: -.005rem; background: transparent; color: rgba(0,0,0,.5); transition: color 150ms ease, transform 100ms ease; white-space: nowrap; }
         .pill-tab-active { color: #fff; }
         .pill-tab:active { transform: scale(0.97); }
         .pill-tab-panel { display: flex; flex-direction: column; gap: .875rem; transition: opacity 150ms var(--ease-out-cubic), filter 150ms var(--ease-out-cubic); }
+        @media (max-width: 480px) {
+          .pill-tab { padding: .375rem .5rem; font-size: .75rem; }
+        }
         @media (prefers-reduced-motion: reduce) {
           .pill-tab-panel { transition: none; }
           .pill-tab-indicator { transition: none !important; }

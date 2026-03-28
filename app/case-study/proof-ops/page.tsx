@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
 import {
   CaseStudyLayout,
   Section,
@@ -8,6 +7,7 @@ import {
   ImageBlock,
   VideoBlock,
   Highlight,
+  PillTabs,
 } from "../components";
 
 const IMG = "/images/proof-ops";
@@ -91,20 +91,14 @@ export default function ProofOpsPage() {
         chapterTitle="There was no task system. At all."
       >
         <Paragraph>
-          Specialists worked from a dashboard that showed jobs needing attention,
-          but <Highlight color="yellow">there was no structure for what needed attention</Highlight> or who should handle
-          it. The most common workflow was &ldquo;babysitting&rdquo;: a specialist
-          would open 15–20 browser tabs, one per job, and watch them move through
-          the serve lifecycle. When something needed action, they&apos;d jump in.
-          Then go back to watching.
+          Ops specialists weren't managing work. They were babysitting jobs. 
+          Every job required active monitoring — manually checking on process servers, 
+          hunting for status updates, piecing together what had happened from emails and Slack. 
+          Work got dropped when someone was out. Errors got caught after the fact, when a client called.
+          The issue wasn't effort. People were working hard. <Highlight color="yellow"> The system just gave them nothing to work with.</Highlight>
         </Paragraph>
-        <Paragraph>
-          Work got distributed through Slack and tribal knowledge. A supervisor
-          would say &ldquo;hey, can someone look at the Smith case?&rdquo; and
-          whoever was available would grab it. A client could have five serves open
-          with the same recurring issue and no one would notice — because people
-          were thinking about individual jobs, not client relationships or task types.
-        </Paragraph>
+
+        
         <Paragraph>
           This created compounding problems:
         </Paragraph>
@@ -114,7 +108,7 @@ export default function ProofOpsPage() {
             <h3 className="text-[13px] font-[550] text-[rgba(0,0,0,.85)] mb-1">No ownership</h3>
             <p className="text-[13px] leading-[1.5] text-[rgba(0,0,0,.65)]">
               Enterprise clients paying premium rates got the same anonymous
-              service as self-serve accounts. No one knew their history.
+              service as self-serve accounts. 
             </p>
           </div>
           <div className="p-4 rounded-lg bg-[var(--surface)]" style={{ boxShadow: "var(--shadow-flush)" }}>
@@ -127,8 +121,7 @@ export default function ProofOpsPage() {
           <div className="p-4 rounded-lg bg-[var(--surface)]" style={{ boxShadow: "var(--shadow-flush)" }}>
             <h3 className="text-[13px] font-[550] text-[rgba(0,0,0,.85)] mb-1">No specialization</h3>
             <p className="text-[13px] leading-[1.5] text-[rgba(0,0,0,.65)]">
-              Some work requires deep expertise (affidavit prep, compliance
-              review). Some requires speed (dispatch, basic QA). Treating all work
+              Some work requires deep expertise. Some requires speed. Treating all work
               as interchangeable meant neither got optimized.
             </p>
           </div>
@@ -160,9 +153,9 @@ export default function ProofOpsPage() {
           was.
         </Paragraph>
         <Paragraph>
-          I mapped the complete job lifecycle, from the moment a job enters the
-          platform to final completion, and identified every point where ops might
-          need to act. This revealed 10+ distinct task types, each with different
+          I interviewed ops specialists, shadowed their workflows, 
+          and mapped every touchpoint from job creation to affidavit filing.
+          This revealed 10+ distinct task types, each with different
           triggers, different required information, and different actions.
         </Paragraph>
         <Paragraph>
@@ -187,7 +180,43 @@ export default function ProofOpsPage() {
         sectionTitle="System Architecture"
         chapterTitle="I designed a three-layer model: Teams, Roles, and Routing Logic."
       >
-        <ArchitectureTabs />
+        <PillTabs
+          tabs={[
+            {
+              id: "teams",
+              label: "Teams",
+              content: (
+                <>
+                  <h3 className="text-[13px] font-[550] text-[rgba(0,0,0,.7)]">Teams create client ownership</h3>
+                  <Paragraph>Every client maps to a team. Enterprise clients get dedicated teams. Platform clients map regionally. Dispatch handles exceptions across all teams.</Paragraph>
+                  <ImageBlock src={`${IMG}/teams.png`} alt="Team type combobox with Enterprise, Platform, and Dispatch options" />
+                </>
+              ),
+            },
+            {
+              id: "roles",
+              label: "Roles",
+              content: (
+                <>
+                  <h3 className="text-[13px] font-[550] text-[rgba(0,0,0,.7)]">Roles create specialization</h3>
+                  <Paragraph>10 distinct roles, mapped from the lifecycle work. Each has clear responsibilities, required skills, and measurable outputs.</Paragraph>
+                  <ImageBlock src={`${IMG}/roles.png`} alt="Role assignments — QA Coordinator, QA Specialist, and Service Specialist with team member tags" />
+                </>
+              ),
+            },
+            {
+              id: "routing",
+              label: "Routing Logic",
+              content: (
+                <>
+                  <h3 className="text-[13px] font-[550] text-[rgba(0,0,0,.7)]">Routing logic creates predictability</h3>
+                  <Paragraph>Tasks find the right person through rules, not luck. The system prioritizes continuity (same person on a client{"\u2019"}s work) while ensuring coverage.</Paragraph>
+                  <ImageBlock src={`${IMG}/tasks.png`} alt="Task routing — active tasks with affidavit preparation checklist and assignment" />
+                </>
+              ),
+            },
+          ]}
+        />
       </Section>
 
       {/* ── Documentation ────────────────────────────────────────── */}
@@ -285,166 +314,3 @@ export default function ProofOpsPage() {
   );
 }
 
-/* ── Architecture Tabs ── */
-
-const archTabs = [
-  {
-    id: "teams",
-    label: "Teams",
-    heading: "Teams create client ownership",
-    body: "Every client maps to a team. Enterprise clients get dedicated teams. Platform clients map regionally. Dispatch handles exceptions across all teams.",
-    img: `${IMG}/teams.png`,
-    alt: "Team type combobox with Enterprise, Platform, and Dispatch options",
-  },
-  {
-    id: "roles",
-    label: "Roles",
-    heading: "Roles create specialization",
-    body: "10 distinct roles, mapped from the lifecycle work. Each has clear responsibilities, required skills, and measurable outputs.",
-    img: `${IMG}/roles.png`,
-    alt: "Role assignments — QA Coordinator, QA Specialist, and Service Specialist with team member tags",
-  },
-  {
-    id: "routing",
-    label: "Routing Logic",
-    heading: "Routing logic creates predictability",
-    body: "Tasks find the right person through rules, not luck. The system prioritizes continuity (same person on a client\u2019s work) while ensuring coverage.",
-    img: `${IMG}/tasks.png`,
-    alt: "Task routing — active tasks with affidavit preparation checklist and assignment",
-  },
-];
-
-function ArchitectureTabs() {
-  const [active, setActive] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const btnRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const indicatorRef = useRef<HTMLDivElement>(null);
-  const hoverRef = useRef<HTMLDivElement>(null);
-  const isKeyboard = useRef(false);
-
-  useEffect(() => {
-    const btn = btnRefs.current[active];
-    const ind = indicatorRef.current;
-    const container = containerRef.current;
-    if (!btn || !ind || !container) return;
-    const cRect = container.getBoundingClientRect();
-    const bRect = btn.getBoundingClientRect();
-    const x = bRect.left - cRect.left;
-    // Suppress slide animation on keyboard input
-    if (isKeyboard.current) {
-      ind.style.transition = "none";
-      isKeyboard.current = false;
-    } else {
-      ind.style.transition = "transform 250ms var(--ease-in-out-quart), width 250ms var(--ease-in-out-quart)";
-    }
-    ind.style.width = `${bRect.width}px`;
-    ind.style.transform = `translateX(${x}px)`;
-  }, [active]);
-
-  return (
-    <div style={{ marginTop: ".5rem" }}>
-      <style>{`
-        .arch-pill { position: relative; z-index: 1; padding: .375rem .875rem; border-radius: 9999px; border: none; cursor: pointer; font-size: .8125rem; font-weight: 500; font-family: inherit; letter-spacing: -.005rem; background: transparent; color: rgba(0,0,0,.5); transition: color 150ms ease, transform 100ms ease; }
-        .arch-pill-active { color: #fff; }
-        .arch-pill:active { transform: scale(0.97); }
-        .arch-tab-panel { display: flex; flex-direction: column; gap: .875rem; transition: opacity 150ms var(--ease-out-cubic), filter 150ms var(--ease-out-cubic); }
-        @media (prefers-reduced-motion: reduce) {
-          .arch-tab-panel { transition: none; }
-          .arch-indicator { transition: none !important; }
-        }
-      `}</style>
-      <div
-        ref={containerRef}
-        onMouseLeave={() => { const h = hoverRef.current; if (h) h.style.opacity = "0"; }}
-        style={{
-          display: "inline-flex",
-          gap: ".25rem",
-          padding: ".25rem",
-          borderRadius: 9999,
-          backgroundColor: "var(--surface-hover)",
-          position: "relative",
-        }}
-      >
-        {/* Hover highlight — follows mouse between inactive pills */}
-        <div
-          ref={hoverRef}
-          style={{
-            position: "absolute",
-            top: ".25rem",
-            left: 0,
-            height: "calc(100% - .5rem)",
-            borderRadius: 9999,
-            backgroundColor: "rgba(0,0,0,.05)",
-            willChange: "transform",
-            opacity: 0,
-            transition: "transform 200ms var(--ease-out-quart), width 200ms var(--ease-out-quart), opacity 150ms ease",
-            pointerEvents: "none",
-          }}
-        />
-        {/* Active indicator */}
-        <div
-          ref={indicatorRef}
-          className="arch-indicator"
-          style={{
-            position: "absolute",
-            top: ".25rem",
-            left: 0,
-            height: "calc(100% - .5rem)",
-            borderRadius: 9999,
-            backgroundColor: "var(--accent-pill)",
-            willChange: "transform",
-          }}
-        />
-        {archTabs.map((t, i) => (
-          <button
-            key={t.id}
-            ref={(el) => { btnRefs.current[i] = el; }}
-            onClick={() => setActive(i)}
-            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") isKeyboard.current = true; }}
-            onMouseEnter={() => {
-              if (i === active) return;
-              const btn = btnRefs.current[i];
-              const container = containerRef.current;
-              const h = hoverRef.current;
-              if (!btn || !container || !h) return;
-              const cRect = container.getBoundingClientRect();
-              const bRect = btn.getBoundingClientRect();
-              h.style.width = `${bRect.width}px`;
-              h.style.transform = `translateX(${bRect.left - cRect.left}px)`;
-              h.style.opacity = "1";
-            }}
-            onMouseLeave={() => {
-              const h = hoverRef.current;
-              if (h) h.style.opacity = "0";
-            }}
-            className={`arch-pill ${active === i ? "arch-pill-active" : ""}`}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
-
-      <div style={{ marginTop: "1.25rem", position: "relative" }}>
-        {archTabs.map((t, i) => (
-          <div
-            key={t.id}
-            className="arch-tab-panel"
-            style={{
-              opacity: active === i ? 1 : 0,
-              filter: active === i ? "blur(0)" : "blur(4px)",
-              position: active === i ? "relative" : "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              pointerEvents: active === i ? "auto" : "none",
-            }}
-          >
-            <h3 className="text-[13px] font-[550] text-[rgba(0,0,0,.7)]">{t.heading}</h3>
-            <Paragraph>{t.body}</Paragraph>
-            <ImageBlock src={t.img} alt={t.alt} />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}

@@ -126,6 +126,9 @@ export default function AboutPage() {
     startY: number;
     offsetX: number;
     offsetY: number;
+    pointerId: number;
+    target: Element;
+    isTouch: boolean;
   } | null>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dragPos, setDragPos] = useState({ x: 0, y: 0 });
@@ -169,16 +172,23 @@ export default function AboutPage() {
     const rect = cellRects.current[index];
     if (!rect) return;
 
+    const isTouch = e.pointerType === "touch";
     dragState.current = {
       index,
       startX: e.clientX,
       startY: e.clientY,
       offsetX: e.clientX - (rect.left + rect.width / 2),
       offsetY: e.clientY - (rect.top + rect.height / 2),
+      pointerId: e.pointerId,
+      target: e.target as Element,
+      isTouch,
     };
 
-    // Don't activate drag yet — wait for movement threshold
-    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+    // For mouse, capture immediately for smooth tracking.
+    // For touch, defer capture so the browser can still scroll vertically.
+    if (!isTouch) {
+      (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+    }
   }, [measureCells]);
 
   useEffect(() => {
@@ -194,7 +204,19 @@ export default function AboutPage() {
       // Activate drag after threshold
       if (dragIndex === null && Math.abs(dx) + Math.abs(dy) < DRAG_THRESHOLD) return;
 
-      if (dragIndex === null) setDragIndex(ds.index);
+      // For touch: if gesture is primarily vertical, it's a scroll — bail out
+      if (ds.isTouch && dragIndex === null && Math.abs(dy) > Math.abs(dx)) {
+        dragState.current = null;
+        return;
+      }
+
+      if (dragIndex === null) {
+        setDragIndex(ds.index);
+        // For touch, capture now that we've confirmed horizontal drag intent
+        if (ds.isTouch) {
+          try { (ds.target as HTMLElement).setPointerCapture(ds.pointerId); } catch {}
+        }
+      }
 
       // Position relative to original cell center
       const rect = cellRects.current[ds.index];
@@ -367,7 +389,7 @@ export default function AboutPage() {
           <div className="flex items-center gap-3 mb-6"><span className="text-[13px] font-[550] tracking-[-0.005em] text-[rgba(0,0,0,.78)] whitespace-nowrap">
             My toolkit
           </span><div className="flex-1 h-px bg-[rgba(0,0,0,.08)]" /></div>
-          <div ref={gridRef} className="grid grid-cols-5 sm:grid-cols-10 gap-2">
+          <div ref={gridRef} className="grid grid-cols-5 sm:grid-cols-10 gap-2" style={{ touchAction: "pan-y" }}>
             {items.map((tool, i) => {
               const isBeingDragged = dragIndex === i;
               const shift = getShiftTransform(i);
