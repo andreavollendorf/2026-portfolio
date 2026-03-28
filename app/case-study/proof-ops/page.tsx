@@ -109,21 +109,21 @@ export default function ProofOpsPage() {
         </Paragraph>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-[1.25rem] my-2">
-          <div className="p-4 rounded-lg bg-[#F6F7F9]" style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,.06)" }}>
+          <div className="p-4 rounded-lg bg-[var(--surface)]" style={{ boxShadow: "var(--shadow-flush)" }}>
             <h3 className="text-[13px] font-[550] text-[rgba(0,0,0,.85)] mb-1">No ownership</h3>
             <p className="text-[13px] leading-[1.5] text-[rgba(0,0,0,.65)]">
               Enterprise clients paying premium rates got the same anonymous
               service as self-serve accounts. No one knew their history.
             </p>
           </div>
-          <div className="p-4 rounded-lg bg-[#F6F7F9]" style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,.06)" }}>
+          <div className="p-4 rounded-lg bg-[var(--surface)]" style={{ boxShadow: "var(--shadow-flush)" }}>
             <h3 className="text-[13px] font-[550] text-[rgba(0,0,0,.85)] mb-1">No visibility</h3>
             <p className="text-[13px] leading-[1.5] text-[rgba(0,0,0,.65)]">
               We couldn&apos;t measure performance because there was nothing to
               measure. Everyone did everything.
             </p>
           </div>
-          <div className="p-4 rounded-lg bg-[#F6F7F9]" style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,.06)" }}>
+          <div className="p-4 rounded-lg bg-[var(--surface)]" style={{ boxShadow: "var(--shadow-flush)" }}>
             <h3 className="text-[13px] font-[550] text-[rgba(0,0,0,.85)] mb-1">No specialization</h3>
             <p className="text-[13px] leading-[1.5] text-[rgba(0,0,0,.65)]">
               Some work requires deep expertise (affidavit prep, compliance
@@ -131,7 +131,7 @@ export default function ProofOpsPage() {
               as interchangeable meant neither got optimized.
             </p>
           </div>
-          <div className="p-4 rounded-lg bg-[#F6F7F9]" style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,.06)" }}>
+          <div className="p-4 rounded-lg bg-[var(--surface)]" style={{ boxShadow: "var(--shadow-flush)" }}>
             <h3 className="text-[13px] font-[550] text-[rgba(0,0,0,.85)] mb-1">No scalability</h3>
             <p className="text-[13px] leading-[1.5] text-[rgba(0,0,0,.65)]">
               Every acquisition, every new service line, every enterprise deal
@@ -242,27 +242,27 @@ export default function ProofOpsPage() {
         chapterTitle="From tabs to tasks."
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-[1.25rem] my-2">
-          <div className="p-4 rounded-lg bg-[#F6F7F9]" style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,.06)" }}>
+          <div className="p-4 rounded-lg bg-[var(--surface)]" style={{ boxShadow: "var(--shadow-flush)" }}>
             <h3 className="text-[13px] font-[550] text-[rgba(0,0,0,.85)] mb-1">Structured queues</h3>
             <p className="text-[13px] leading-[1.5] text-[rgba(0,0,0,.65)]">
               Specialists went from babysitting 15–20 browser tabs to working a
               structured queue.
             </p>
           </div>
-          <div className="p-4 rounded-lg bg-[#F6F7F9]" style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,.06)" }}>
+          <div className="p-4 rounded-lg bg-[var(--surface)]" style={{ boxShadow: "var(--shadow-flush)" }}>
             <h3 className="text-[13px] font-[550] text-[rgba(0,0,0,.85)] mb-1">Dedicated enterprise support</h3>
             <p className="text-[13px] leading-[1.5] text-[rgba(0,0,0,.65)]">
               When a paralegal calls, they reach someone who knows their account.
             </p>
           </div>
-          <div className="p-4 rounded-lg bg-[#F6F7F9]" style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,.06)" }}>
+          <div className="p-4 rounded-lg bg-[var(--surface)]" style={{ boxShadow: "var(--shadow-flush)" }}>
             <h3 className="text-[13px] font-[550] text-[rgba(0,0,0,.85)] mb-1">Measurable performance</h3>
             <p className="text-[13px] leading-[1.5] text-[rgba(0,0,0,.65)]">
               For the first time, we can see who&apos;s excelling and where
               training is needed.
             </p>
           </div>
-          <div className="p-4 rounded-lg bg-[#F6F7F9]" style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,.06)" }}>
+          <div className="p-4 rounded-lg bg-[var(--surface)]" style={{ boxShadow: "var(--shadow-flush)" }}>
             <h3 className="text-[13px] font-[550] text-[rgba(0,0,0,.85)] mb-1">Foundation for growth</h3>
             <p className="text-[13px] leading-[1.5] text-[rgba(0,0,0,.65)]">
               Acquisitions now have an integration playbook.
@@ -334,7 +334,7 @@ function ArchitectureTabs() {
       ind.style.transition = "none";
       isKeyboard.current = false;
     } else {
-      ind.style.transition = "transform 250ms cubic-bezier(0.77, 0, 0.175, 1), width 250ms cubic-bezier(0.77, 0, 0.175, 1)";
+      ind.style.transition = "transform 250ms var(--ease-in-out-quart), width 250ms var(--ease-in-out-quart)";
     }
     ind.style.width = `${bRect.width}px`;
     ind.style.transform = `translateX(${x}px)`;
@@ -346,7 +346,7 @@ function ArchitectureTabs() {
         .arch-pill { position: relative; z-index: 1; padding: .375rem .875rem; border-radius: 9999px; border: none; cursor: pointer; font-size: .8125rem; font-weight: 500; font-family: inherit; letter-spacing: -.005rem; background: transparent; color: rgba(0,0,0,.5); transition: color 150ms ease, transform 100ms ease; }
         .arch-pill-active { color: #fff; }
         .arch-pill:active { transform: scale(0.97); }
-        .arch-tab-panel { display: flex; flex-direction: column; gap: .875rem; transition: opacity 150ms cubic-bezier(0.215, 0.61, 0.355, 1), filter 150ms cubic-bezier(0.215, 0.61, 0.355, 1); }
+        .arch-tab-panel { display: flex; flex-direction: column; gap: .875rem; transition: opacity 150ms var(--ease-out-cubic), filter 150ms var(--ease-out-cubic); }
         @media (prefers-reduced-motion: reduce) {
           .arch-tab-panel { transition: none; }
           .arch-indicator { transition: none !important; }
@@ -360,7 +360,7 @@ function ArchitectureTabs() {
           gap: ".25rem",
           padding: ".25rem",
           borderRadius: 9999,
-          backgroundColor: "#F0F1F4",
+          backgroundColor: "var(--surface-hover)",
           position: "relative",
         }}
       >
@@ -376,7 +376,7 @@ function ArchitectureTabs() {
             backgroundColor: "rgba(0,0,0,.05)",
             willChange: "transform",
             opacity: 0,
-            transition: "transform 200ms cubic-bezier(0.165, 0.84, 0.44, 1), width 200ms cubic-bezier(0.165, 0.84, 0.44, 1), opacity 150ms ease",
+            transition: "transform 200ms var(--ease-out-quart), width 200ms var(--ease-out-quart), opacity 150ms ease",
             pointerEvents: "none",
           }}
         />
@@ -390,7 +390,7 @@ function ArchitectureTabs() {
             left: 0,
             height: "calc(100% - .5rem)",
             borderRadius: 9999,
-            backgroundColor: "#4c74ff",
+            backgroundColor: "var(--accent-pill)",
             willChange: "transform",
           }}
         />

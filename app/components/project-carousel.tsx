@@ -99,7 +99,7 @@ export default function ProjectCarousel({
     fade.style.transform = "scale(0.1)";
     void fade.offsetHeight; // force reflow
     fade.style.transition =
-      "opacity 250ms cubic-bezier(0.19,1,0.22,1), transform 250ms cubic-bezier(0.19,1,0.22,1)";
+      "opacity 250ms var(--ease-out-expo), transform 250ms var(--ease-out-expo)";
     fade.style.opacity = "1";
     fade.style.transform = "scale(1)";
   }, []);
@@ -112,7 +112,7 @@ export default function ProjectCarousel({
       return;
     }
     fade.style.transition =
-      "opacity 150ms cubic-bezier(0.165,0.84,0.44,1), transform 150ms cubic-bezier(0.165,0.84,0.44,1)";
+      "opacity 150ms var(--ease-out-quart), transform 150ms var(--ease-out-quart)";
     fade.style.opacity = "0";
     fade.style.transform = "scale(0.1)";
   }, []);
@@ -409,7 +409,7 @@ export default function ProjectCarousel({
             opacity: 0,
             transform: "scale(0.1)",
             transition:
-              "opacity 150ms cubic-bezier(0.165,0.84,0.44,1), transform 150ms cubic-bezier(0.165,0.84,0.44,1)",
+              "opacity 150ms var(--ease-out-quart), transform 150ms var(--ease-out-quart)",
           }}
         >
           <span className="block -translate-x-1/2 -translate-y-1/2 rounded-lg text-white text-[13px] font-[500] px-4 py-1.5 whitespace-nowrap" style={{ backgroundColor: "rgba(0,0,0,.85)", boxShadow: "0 4px 24px rgba(0,0,0,.12)" }}>
@@ -425,7 +425,7 @@ export default function ProjectCarousel({
       >
         {[...cards, ...cards, ...cards].map((card, i) => {
           const imageContent = (
-            <div className="h-[360px] sm:h-[480px] rounded-lg bg-[#F6F7F9] overflow-hidden p-[40px] flex items-center justify-center">
+            <div className="h-[360px] sm:h-[480px] rounded-lg bg-[var(--surface)] overflow-hidden p-[40px] flex items-center justify-center">
               <img
                 src={card.image.src}
                 alt={

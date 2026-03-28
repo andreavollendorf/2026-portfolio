@@ -482,9 +482,9 @@ function DataModelDiagramSplit() {
         <div className="flex flex-col">
           <div
             className="relative rounded-lg overflow-hidden px-5 py-8 sm:px-6 sm:py-10 flex-1"
-            style={{ backgroundColor: "#F6F7F9" }}
+            style={{ backgroundColor: "var(--surface)" }}
           >
-            <span className="absolute inset-0 rounded-lg pointer-events-none" style={{ boxShadow: "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px inset" }} />
+            <span className="absolute inset-0 rounded-lg pointer-events-none" style={{ boxShadow: "var(--shadow-flush)" }} />
             <div className="flex flex-col items-center justify-center h-full" style={{ position: "relative" }}>
               {["Job ID 1", "Job ID 2", "Job ID 3"].map((label, i) => {
                 const isActive = !reducedMotion && jobActive[i];
@@ -501,7 +501,7 @@ function DataModelDiagramSplit() {
                           animation: "diagram-pulse-blue 2.4s ease-in-out infinite",
                           willChange: "box-shadow",
                           opacity: isActive ? 1 : 0,
-                          transition: "opacity 500ms cubic-bezier(0.215, 0.61, 0.355, 1)",
+                          transition: "opacity 500ms var(--ease-out-cubic)",
                           pointerEvents: "none",
                         }}
                       />
@@ -519,7 +519,7 @@ function DataModelDiagramSplit() {
                           fontWeight: isActive ? 500 : 400,
                           fontSize: 12,
                           lineHeight: "16px",
-                          transition: "border-color 500ms cubic-bezier(0.215, 0.61, 0.355, 1), color 500ms cubic-bezier(0.215, 0.61, 0.355, 1), background-color 500ms cubic-bezier(0.215, 0.61, 0.355, 1)",
+                          transition: "border-color 500ms var(--ease-out-cubic), color 500ms var(--ease-out-cubic), background-color 500ms var(--ease-out-cubic)",
                         }}
                       >
                         {label}
@@ -539,7 +539,7 @@ function DataModelDiagramSplit() {
                             borderLeft: "1px dashed #ccc",
                             transformOrigin: "top",
                             transform: reducedMotion || isVisible ? "scaleY(1)" : "scaleY(0)",
-                            transition: "transform 300ms cubic-bezier(0.215, 0.61, 0.355, 1)",
+                            transition: "transform 300ms var(--ease-out-cubic)",
                           }}
                         />
                         <div
@@ -550,14 +550,14 @@ function DataModelDiagramSplit() {
                             transform: "translate(-50%, -50%)",
                             fontSize: 10,
                             color: "#999",
-                            backgroundColor: "#F6F7F9",
+                            backgroundColor: "var(--surface)",
                             padding: "1px 8px",
                             borderRadius: 9999,
                             border: "1px solid #e5e5e5",
                             lineHeight: 1.4,
                             whiteSpace: "nowrap",
                             opacity: reducedMotion ? 1 : isVisible ? 1 : 0,
-                            transition: "opacity 400ms cubic-bezier(0.215, 0.61, 0.355, 1) 150ms",
+                            transition: "opacity 400ms var(--ease-out-cubic) 150ms",
                           }}
                         >
                           Reassigned
@@ -578,9 +578,9 @@ function DataModelDiagramSplit() {
         <div className="flex flex-col">
           <div
             className="relative rounded-lg overflow-hidden flex-1"
-            style={{ backgroundColor: "#F6F7F9" }}
+            style={{ backgroundColor: "var(--surface)" }}
           >
-            <span className="absolute inset-0 rounded-lg pointer-events-none" style={{ boxShadow: "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px inset" }} />
+            <span className="absolute inset-0 rounded-lg pointer-events-none" style={{ boxShadow: "var(--shadow-flush)" }} />
             <NewServeStructure reducedMotion={reducedMotion} hideTitle />
           </div>
           <figcaption className="text-[12px] text-[rgba(0,0,0,.4)] mt-2 text-center">

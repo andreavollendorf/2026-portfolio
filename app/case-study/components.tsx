@@ -151,7 +151,7 @@ export function CaseStudyLayout({
         <main className="max-w-[48rem] mx-auto px-6 pt-8 sm:pt-20 pb-16">
           {/* Hero */}
           <header className="pb-8">
-            <div className="text-[10px] uppercase tracking-[.04em] text-[rgba(0,0,0,.35)] font-[500] mb-3">
+            <div className="text-[10px] uppercase tracking-[.04em] text-[rgba(0,0,0,.3)] font-[500] mb-3">
               {breadcrumb}
             </div>
 
@@ -159,7 +159,7 @@ export function CaseStudyLayout({
               {title}
             </h1>
 
-            <p className="text-[14px] font-[450] leading-[1.45rem] tracking-[-0.005em] text-[rgba(0,0,0,.6)] mb-0">
+            <p className="text-[14px] font-[450] leading-[1.45rem] tracking-[-0.005em] text-[rgba(0,0,0,.65)] mb-0">
               {description}
             </p>
 
@@ -167,10 +167,10 @@ export function CaseStudyLayout({
             <div className="grid grid-cols-2 gap-x-8 gap-y-4 mt-6 pt-5 border-t border-[rgba(0,0,0,.06)]">
               {meta.map((item) => (
                 <div key={item.label}>
-                  <div className="text-[10px] uppercase tracking-[.04em] text-[rgba(0,0,0,.35)] font-[500] mb-0.5">
+                  <div className="text-[10px] uppercase tracking-[.04em] text-[rgba(0,0,0,.3)] font-[500] mb-0.5">
                     {item.label}
                   </div>
-                  <div className="text-[13px] font-[450] whitespace-pre-line leading-[1.45] text-[rgba(0,0,0,.6)]">{item.value}</div>
+                  <div className="text-[13px] font-[450] whitespace-pre-line leading-[1.45] text-[rgba(0,0,0,.65)]">{item.value}</div>
                 </div>
               ))}
             </div>
@@ -266,7 +266,7 @@ function SideNav({ sections, activeSection }: { sections: { id: string; label: s
               height: 12,
               backgroundColor: "rgba(0,0,0,.8)",
               borderRadius: 1,
-              transition: "transform 0.26s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+              transition: "transform 0.26s var(--ease-out-cubic)",
               willChange: "transform",
             }}
           />
@@ -281,7 +281,7 @@ function SideNav({ sections, activeSection }: { sections: { id: string; label: s
                   className={`text-[12px] block py-[3px] transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[var(--foreground)] outline-none rounded-sm ${
                     isActive
                       ? "text-[rgba(0,0,0,.8)] font-[550]"
-                      : "text-[rgba(0,0,0,.35)]"
+                      : "text-[rgba(0,0,0,.3)]"
                   }`}
                   style={{ transitionTimingFunction: 'var(--ease-out-expo)' }}
                 >
@@ -380,7 +380,7 @@ export function ImageBlock({
             {alt}
           </div>
         )}
-        <span className="absolute inset-0 rounded-lg pointer-events-none" style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,.06)" }} />
+        <span className="absolute inset-0 rounded-lg pointer-events-none" style={{ boxShadow: "var(--shadow-flush)" }} />
       </div>
       {caption && (
         <figcaption className="text-[12px] text-[rgba(0,0,0,.4)] mt-2">
@@ -489,7 +489,7 @@ export function WhatWorked({
 
 export function Callout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="my-4 p-4 bg-[var(--surface)] rounded-lg" style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,.06)" }}>
+    <div className="my-4 p-4 bg-[var(--surface)] rounded-lg" style={{ boxShadow: "var(--shadow-flush)" }}>
       <p className="text-[14px] leading-[1.45rem] text-[rgba(0,0,0,.8)]">{children}</p>
     </div>
   );
@@ -513,7 +513,7 @@ export function Stats({ stats }: { stats: { value: string; label: string }[] }) 
         <div
           key={i}
           className="bg-white rounded-lg p-4"
-          style={{ boxShadow: "0 1px 2px rgba(0,0,0,.04), inset 0 0 0 1px rgba(0,0,0,.06)" }}
+          style={{ boxShadow: "var(--shadow-raised)" }}
         >
           <div className="text-[20px] font-[500] tracking-[-0.01em] mb-1 tabular-nums text-[rgba(0,0,0,.85)]">
             {stat.value}
@@ -536,10 +536,10 @@ export function Quote({
 }) {
   return (
     <blockquote className="my-4 pl-5 py-1" style={{ borderLeft: "1.5px solid rgba(0,0,0,.08)" }}>
-      <p className="text-[14px] font-[450] leading-[1.6] italic text-[rgba(0,0,0,.6)]">
+      <p className="text-[14px] font-[450] leading-[1.6] italic text-[rgba(0,0,0,.65)]">
         &ldquo;{children}&rdquo;
       </p>
-      <cite className="block mt-2 text-[12px] font-[450] text-[rgba(0,0,0,.35)] not-italic">
+      <cite className="block mt-2 text-[12px] font-[450] text-[rgba(0,0,0,.3)] not-italic">
         — {attribution}
       </cite>
     </blockquote>
@@ -585,7 +585,7 @@ export function VideoBlock({
 }) {
   return (
     <figure className="my-1">
-      <div className="relative flex justify-center px-6 py-8 rounded-lg bg-[#F6F7F9]">
+      <div className="relative flex justify-center px-6 py-8 rounded-lg bg-[var(--surface)]">
         <video
           src={src}
           poster={poster}
@@ -596,7 +596,7 @@ export function VideoBlock({
           aria-label={alt}
           className="w-full block rounded-lg"
         />
-        <span className="absolute inset-0 rounded-lg pointer-events-none" style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,.06)" }} />
+        <span className="absolute inset-0 rounded-lg pointer-events-none" style={{ boxShadow: "var(--shadow-flush)" }} />
       </div>
       {caption && (
         <figcaption className="text-[12px] text-[rgba(0,0,0,.4)] mt-2">
@@ -614,7 +614,55 @@ export function Highlight({
   children: React.ReactNode;
   color?: "blue" | "yellow" | "green" | "purple" | "pink";
 }) {
-  return <span className={`highlight highlight-${color}`}>{children}</span>;
+  const ref = useRef<HTMLSpanElement>(null);
+  const [state, setState] = useState<"hidden" | "animate" | "shown">("hidden");
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setState("shown");
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        observer.disconnect();
+
+        // If user hasn't scrolled yet, they just landed on this page —
+        // show highlights that are already visible without animation.
+        if (window.scrollY < 50) {
+          setState("shown");
+        } else {
+          setState("animate");
+        }
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -30% 0px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const lineCount = ref.current?.getClientRects().length ?? 1;
+  const totalMs = 800 + Math.max(0, lineCount - 1) * 400;
+
+  return (
+    <span
+      ref={ref}
+      className={`highlight highlight-${color}`}
+      style={
+        state === "hidden"
+          ? { backgroundSize: "0% 100%" }
+          : state === "animate"
+            ? { animation: `highlight-wipe ${totalMs}ms var(--ease-out-quint) forwards` }
+            : undefined
+      }
+    >
+      {children}
+    </span>
+  );
 }
 
 export function PulseDot({ color = "#4a9eff" }: { color?: string }) {
@@ -690,7 +738,7 @@ export function PillTabs({
       ind.style.transition = "none";
       isKeyboard.current = false;
     } else {
-      ind.style.transition = "transform 250ms cubic-bezier(0.77, 0, 0.175, 1), width 250ms cubic-bezier(0.77, 0, 0.175, 1)";
+      ind.style.transition = "transform 250ms var(--ease-in-out-quart), width 250ms var(--ease-in-out-quart)";
     }
     ind.style.width = `${bRect.width}px`;
     ind.style.transform = `translateX(${x}px)`;
@@ -702,7 +750,7 @@ export function PillTabs({
         .pill-tab { position: relative; z-index: 1; padding: .375rem .875rem; border-radius: 9999px; border: none; cursor: pointer; font-size: .8125rem; font-weight: 500; font-family: inherit; letter-spacing: -.005rem; background: transparent; color: rgba(0,0,0,.5); transition: color 150ms ease, transform 100ms ease; }
         .pill-tab-active { color: #fff; }
         .pill-tab:active { transform: scale(0.97); }
-        .pill-tab-panel { display: flex; flex-direction: column; gap: .875rem; transition: opacity 150ms cubic-bezier(0.215, 0.61, 0.355, 1), filter 150ms cubic-bezier(0.215, 0.61, 0.355, 1); }
+        .pill-tab-panel { display: flex; flex-direction: column; gap: .875rem; transition: opacity 150ms var(--ease-out-cubic), filter 150ms var(--ease-out-cubic); }
         @media (prefers-reduced-motion: reduce) {
           .pill-tab-panel { transition: none; }
           .pill-tab-indicator { transition: none !important; }
@@ -716,7 +764,7 @@ export function PillTabs({
           gap: ".25rem",
           padding: ".25rem",
           borderRadius: 9999,
-          backgroundColor: "#F0F1F4",
+          backgroundColor: "var(--surface-hover)",
           position: "relative",
         }}
       >
@@ -731,7 +779,7 @@ export function PillTabs({
             backgroundColor: "rgba(0,0,0,.05)",
             willChange: "transform",
             opacity: 0,
-            transition: "transform 200ms cubic-bezier(0.165, 0.84, 0.44, 1), width 200ms cubic-bezier(0.165, 0.84, 0.44, 1), opacity 150ms ease",
+            transition: "transform 200ms var(--ease-out-quart), width 200ms var(--ease-out-quart), opacity 150ms ease",
             pointerEvents: "none",
           }}
         />
@@ -744,7 +792,7 @@ export function PillTabs({
             left: 0,
             height: "calc(100% - .5rem)",
             borderRadius: 9999,
-            backgroundColor: "#4c74ff",
+            backgroundColor: "var(--accent-pill)",
             willChange: "transform",
           }}
         />

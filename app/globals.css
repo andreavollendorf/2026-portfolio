@@ -4,17 +4,25 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --muted: rgba(0,0,0,.6);
+  --muted: rgba(0,0,0,.65);
   --accent: #6366f1;
+  --accent-pill: #4c74ff;
   --border: rgba(0,0,0,.08);
   --surface: #F6F7F9;
   --surface-hover: #F0F1F4;
 
   /* Easing curves */
   --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-out-cubic: cubic-bezier(0.215, 0.61, 0.355, 1);
   --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+  --ease-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
   --ease-in-out-quart: cubic-bezier(0.77, 0, 0.175, 1);
+
+  /* Shadow scale */
+  --shadow-flush: inset 0 0 0 1px rgba(0,0,0,.06);
+  --shadow-raised: 0 1px 2px rgba(0,0,0,.04), inset 0 0 0 1px rgba(0,0,0,.06);
+  --shadow-floating: 0 4px 24px rgba(0,0,0,.06), inset 0 0 0 1px rgba(0,0,0,.08);
 
   /* Hairline border */
   --border-hairline: 1px;
@@ -138,6 +146,8 @@ input, textarea, select { font-size: 16px; }
   border-radius: 0.25em 0.2em 0.22em 0.18em;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
 }
 .highlight-blue {
   background-image: linear-gradient(82deg, rgba(56, 132, 244, 0.42), rgba(56, 132, 244, 0.12) 6%, rgba(56, 132, 244, 0.22) 93%, rgba(56, 132, 244, 0.48));
@@ -153,6 +163,10 @@ input, textarea, select { font-size: 16px; }
 }
 .highlight-pink {
   background-image: linear-gradient(82deg, rgba(214, 64, 159, 0.42), rgba(214, 64, 159, 0.12) 6%, rgba(214, 64, 159, 0.22) 93%, rgba(214, 64, 159, 0.48));
+}
+@keyframes highlight-wipe {
+  from { background-size: 0% 100%; }
+  to   { background-size: 100% 100%; }
 }
 
 /* Hover-only utilities — prevents stuck :hover on touch devices */

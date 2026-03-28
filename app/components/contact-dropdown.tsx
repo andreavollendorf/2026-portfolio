@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback, useId } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
 
-const EASE_OUT_QUART = "cubic-bezier(0.165,0.84,0.44,1)";
+const EASE_OUT_QUART = "var(--ease-out-quart)";
 
 /* ─────────────────────────────────────────────────────────
  * ANIMATION STORYBOARD — Contact Icon Hover Micro-interactions
@@ -285,7 +285,7 @@ export default function ContactDropdown() {
         aria-hidden={!open}
         className="absolute right-0 top-full mt-2 z-[var(--z-dropdown)] bg-[var(--background)] rounded-lg overflow-hidden w-[280px]"
         style={{
-          boxShadow: "0 4px 24px rgba(0,0,0,.06), inset 0 0 0 1px rgba(0,0,0,.08)",
+          boxShadow: "var(--shadow-floating)",
           opacity: 0,
           transform: "translateY(-8px)",
           pointerEvents: "none",
@@ -304,12 +304,12 @@ export default function ContactDropdown() {
                 tabIndex={open ? 0 : -1}
                 target={item.external ? "_blank" : undefined}
                 rel={item.external ? "noopener noreferrer" : undefined}
-                className="group flex items-center gap-3 rounded-lg px-3 py-3 hover:bg-[#F0F1F4] focus-visible:bg-[var(--surface)] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
+                className="group flex items-center gap-3 rounded-lg px-3 py-3 hover:bg-[var(--surface-hover)] focus-visible:bg-[var(--surface)] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
                 onClick={hideMenu}
                 onMouseEnter={() => setHoveredIdx(i)}
                 onMouseLeave={() => setHoveredIdx(null)}
               >
-                <div className="w-14 h-14 rounded-lg bg-white flex-shrink-0 flex items-center justify-center" style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,.06)" }}>
+                <div className="w-14 h-14 rounded-lg bg-white flex-shrink-0 flex items-center justify-center" style={{ boxShadow: "var(--shadow-flush)" }}>
                   <motion.div
                     animate={animateProps}
                     transition={SPRING}
@@ -322,7 +322,7 @@ export default function ContactDropdown() {
                   <span className="block text-[13px] font-[550] text-[rgba(0,0,0,.85)]">
                     {item.label}
                   </span>
-                  <span className="block text-[11px] text-[rgba(0,0,0,.35)] mt-px">
+                  <span className="block text-[11px] text-[rgba(0,0,0,.3)] mt-px">
                     {item.description}
                   </span>
                 </div>

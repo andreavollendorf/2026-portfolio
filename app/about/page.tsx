@@ -68,7 +68,7 @@ function ToolIcon({
             ? "0 8px 24px rgba(0,0,0,.18), 0 2px 8px rgba(0,0,0,.1)"
             : "0 1px 3px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06), inset 0 0 0 0.5px rgba(255,255,255,.15)",
           transform: isDragging ? "scale(1.08)" : "scale(1)",
-          transition: isDragging ? "none" : "transform 250ms cubic-bezier(.2,1,.32,1), box-shadow 250ms cubic-bezier(.2,1,.32,1)",
+          transition: isDragging ? "none" : "transform 250ms var(--ease-out-quint), box-shadow 250ms var(--ease-out-quint)",
           cursor: isDragging ? "grabbing" : "grab",
         }}
       >
@@ -379,7 +379,7 @@ export default function AboutPage() {
                   className="relative"
                   style={{
                     transform: shift ?? "none",
-                    transition: dragIndex !== null ? "transform 250ms cubic-bezier(.2,1,.32,1)" : "none",
+                    transition: dragIndex !== null ? "transform 250ms var(--ease-out-quint)" : "none",
                   }}
                   onMouseEnter={() => dragIndex === null && handleEnter(tool.name)}
                   onMouseLeave={() => dragIndex === null && handleLeave()}
@@ -390,7 +390,7 @@ export default function AboutPage() {
                     onPointerDown={(e) => !settling && handlePointerDown(e, i)}
                     style={isBeingDragged ? {
                       transform: `translate(${dragPos.x}px, ${dragPos.y}px)`,
-                      transition: settling ? "transform 200ms cubic-bezier(.2,1,.32,1)" : "none",
+                      transition: settling ? "transform 200ms var(--ease-out-quint)" : "none",
                       opacity: 1,
                     } : {
                       opacity: 1,

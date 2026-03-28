@@ -49,7 +49,7 @@ export default function MobileMenu({
     if (!overlay || !content) return;
 
     clearTimeout(exitTimer.current);
-    const ease = "cubic-bezier(0.165,0.84,0.44,1)";
+    const ease = "var(--ease-out-quart)";
 
     if (open) {
       overlay.style.transition = `opacity 200ms ${ease}`;
@@ -105,7 +105,7 @@ export default function MobileMenu({
         <span
           className="absolute w-[18px] h-[2px] rounded-full bg-[var(--foreground)] transition-transform duration-200"
           style={{
-            transitionTimingFunction: "cubic-bezier(0.165,0.84,0.44,1)",
+            transitionTimingFunction: "var(--ease-out-quart)",
             transform: open
               ? "translateY(0) rotate(45deg)"
               : "translateY(-4px) rotate(0deg)",
@@ -114,7 +114,7 @@ export default function MobileMenu({
         <span
           className="absolute w-[18px] h-[2px] rounded-full bg-[var(--foreground)] transition-transform duration-200"
           style={{
-            transitionTimingFunction: "cubic-bezier(0.165,0.84,0.44,1)",
+            transitionTimingFunction: "var(--ease-out-quart)",
             transform: open
               ? "translateY(0) rotate(-45deg)"
               : "translateY(4px) rotate(0deg)",
@@ -150,7 +150,7 @@ export default function MobileMenu({
             <Link
               href="/about"
               onClick={close}
-              className="block text-[14px] font-[500] text-[var(--foreground)] px-4 py-2.5 -mx-4 mb-3 rounded-lg active:bg-[#F0F1F4] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
+              className="block text-[14px] font-[500] text-[var(--foreground)] px-4 py-2.5 -mx-4 mb-3 rounded-lg active:bg-[var(--surface-hover)] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
             >
               About
             </Link>
@@ -168,16 +168,16 @@ export default function MobileMenu({
                       key={study.slug}
                       href={`/case-study/${study.slug}`}
                       onClick={close}
-                      className="group flex items-center gap-3 rounded-lg px-4 py-2.5 -mx-4 active:bg-[#F0F1F4] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
+                      className="group flex items-center gap-3 rounded-lg px-4 py-2.5 -mx-4 active:bg-[var(--surface-hover)] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
                     >
-                      <div className="w-11 h-11 rounded-lg bg-white flex-shrink-0 flex items-center justify-center" style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,.06)" }}>
+                      <div className="w-11 h-11 rounded-lg bg-white flex-shrink-0 flex items-center justify-center" style={{ boxShadow: "var(--shadow-flush)" }}>
                         {config && <config.Icon colored />}
                       </div>
                       <div>
                         <span className="block text-[13px] font-[550] text-[rgba(0,0,0,.85)]">
                           {study.title}
                         </span>
-                        <span className="block text-[11px] text-[rgba(0,0,0,.35)]">
+                        <span className="block text-[11px] text-[rgba(0,0,0,.3)]">
                           {study.description}
                         </span>
                       </div>
@@ -200,16 +200,16 @@ export default function MobileMenu({
                     onClick={close}
                     target={item.external ? "_blank" : undefined}
                     rel={item.external ? "noopener noreferrer" : undefined}
-                    className="group flex items-center gap-3 rounded-lg px-4 py-2.5 -mx-4 active:bg-[#F0F1F4] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
+                    className="group flex items-center gap-3 rounded-lg px-4 py-2.5 -mx-4 active:bg-[var(--surface-hover)] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
                   >
-                    <div className="w-11 h-11 rounded-lg bg-white flex-shrink-0 flex items-center justify-center" style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,.06)" }}>
+                    <div className="w-11 h-11 rounded-lg bg-white flex-shrink-0 flex items-center justify-center" style={{ boxShadow: "var(--shadow-flush)" }}>
                       <item.Icon colored />
                     </div>
                     <div>
                       <span className="block text-[13px] font-[550] text-[rgba(0,0,0,.85)]">
                         {item.label}
                       </span>
-                      <span className="block text-[11px] text-[rgba(0,0,0,.35)]">
+                      <span className="block text-[11px] text-[rgba(0,0,0,.3)]">
                         {item.description}
                       </span>
                     </div>
