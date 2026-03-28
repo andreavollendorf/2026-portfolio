@@ -157,7 +157,7 @@ export default function MobileMenu({
 
             <div className="pt-3 border-t border-[var(--border)]">
               <p className="text-[13px] font-[550] tracking-[-0.005em] text-[rgba(0,0,0,.78)] mb-3">
-                Case Studies
+                Work
               </p>
 
               <div className="flex flex-col">
@@ -189,7 +189,7 @@ export default function MobileMenu({
 
             <div className="pt-3 border-t border-[var(--border)]">
               <p className="text-[13px] font-[550] tracking-[-0.005em] text-[rgba(0,0,0,.78)] mb-3">
-                Work With Me
+                Contact
               </p>
 
               <div className="flex flex-col">

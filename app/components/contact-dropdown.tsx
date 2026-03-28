@@ -260,7 +260,7 @@ export default function ContactDropdown() {
         aria-controls={panelId}
         className="text-[12px] font-[450] text-[rgba(0,0,0,.55)] link-hover press-scale hover:bg-[var(--surface)] transition-colors h-8 px-3 flex items-center gap-1 rounded-md focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none"
       >
-        Work With Me
+        Contact
         <svg
           width="10"
           height="10"
