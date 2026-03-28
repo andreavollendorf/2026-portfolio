@@ -425,7 +425,8 @@ export default function ProjectCarousel({
       >
         {[...cards, ...cards, ...cards].map((card, i) => {
           const imageContent = (
-            <div className="h-[360px] sm:h-[480px] rounded-lg bg-[var(--surface)] overflow-hidden p-[40px] flex items-center justify-center">
+            <div className="relative h-[360px] sm:h-[480px] rounded-lg bg-[var(--surface)] overflow-hidden p-[40px] flex items-center justify-center">
+              <span className="absolute inset-0 rounded-lg pointer-events-none" style={{ boxShadow: "var(--shadow-flush)" }} />
               <img
                 src={card.image.src}
                 alt={
