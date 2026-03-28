@@ -1,17 +1,20 @@
 "use client";
 
+import { useState, useRef, useCallback, useEffect } from "react";
 import Link from "next/link";
 import NavBar from "../components/nav-bar";
 
 const toolkit = [
-  { name: "Figma", src: "/images/about/toolkit/figma.avif" },
-  { name: "Claude", src: "/images/about/toolkit/claude.avif" },
-  { name: "Linear", src: "/images/about/toolkit/linear.avif" },
-  { name: "Notion", src: "/images/about/toolkit/notion.avif" },
-  { name: "Framer", src: "/images/about/toolkit/framer.avif" },
-  { name: "Loom", src: "/images/about/toolkit/loom.avif" },
-  { name: "Arc", src: "/images/about/toolkit/arc.avif" },
-  { name: "Slack", src: "/images/about/toolkit/slack.avif" },
+  { name: "Figma", src: "/images/about/toolkit/Figma.png" },
+  { name: "Claude", src: "/images/about/toolkit/Claude.png" },
+  { name: "VS Code", src: "/images/about/toolkit/VS Code.png" },
+  { name: "Conductor", src: "/images/about/toolkit/Conductor.png" },
+  { name: "Granola", src: "/images/about/toolkit/Granola.png" },
+  { name: "Linear", src: "/images/about/toolkit/Linear.png" },
+  { name: "Loom", src: "/images/about/toolkit/Loom.png" },
+  { name: "Notion", src: "/images/about/toolkit/Notion.png" },
+  { name: "Roblox", src: "/images/about/toolkit/Roblox.png" },
+  { name: "Wispr Flow", src: "/images/about/toolkit/Wispr Flow.png" },
 ];
 
 const volunteering = [
@@ -35,7 +38,259 @@ const volunteering = [
   },
 ];
 
+const TOOLTIP_DELAY = 300; // ms before first tooltip appears
+
+/* ── Reorderable icon with glass effect ─────────────────── */
+function ToolIcon({
+  tool,
+  style,
+  isDragging,
+  onPointerDown,
+}: {
+  tool: { name: string; src: string };
+  style?: React.CSSProperties;
+  isDragging?: boolean;
+  onPointerDown?: (e: React.PointerEvent) => void;
+}) {
+  return (
+    <div
+      className="relative flex items-center justify-center select-none"
+      style={{
+        zIndex: isDragging ? 50 : 0,
+        ...style,
+      }}
+      onPointerDown={onPointerDown}
+    >
+      <div
+        className="relative w-full aspect-square rounded-[22.37%] overflow-hidden"
+        style={{
+          boxShadow: isDragging
+            ? "0 8px 24px rgba(0,0,0,.18), 0 2px 8px rgba(0,0,0,.1)"
+            : "0 1px 3px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06), inset 0 0 0 0.5px rgba(255,255,255,.15)",
+          transform: isDragging ? "scale(1.08)" : "scale(1)",
+          transition: isDragging ? "none" : "transform 250ms cubic-bezier(.2,1,.32,1), box-shadow 250ms cubic-bezier(.2,1,.32,1)",
+          cursor: isDragging ? "grabbing" : "grab",
+        }}
+      >
+        <img
+          src={tool.src}
+          alt={tool.name}
+          className="w-full h-full object-cover pointer-events-none"
+          draggable={false}
+        />
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: "linear-gradient(165deg, rgba(255,255,255,.35) 0%, rgba(255,255,255,.08) 40%, transparent 50%)",
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
 export default function AboutPage() {
+  const [items, setItems] = useState(toolkit);
+
+  /* ── Tooltip state ──────────────────────────────────────── */
+  const [activeTip, setActiveTip] = useState<string | null>(null);
+  const [instant, setInstant] = useState(false);
+  const delayTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const leaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleEnter = useCallback((name: string) => {
+    if (leaveTimer.current) { clearTimeout(leaveTimer.current); leaveTimer.current = null; }
+    if (delayTimer.current) clearTimeout(delayTimer.current);
+    if (instant) {
+      setActiveTip(name);
+    } else {
+      delayTimer.current = setTimeout(() => {
+        setActiveTip(name);
+        setInstant(true);
+      }, TOOLTIP_DELAY);
+    }
+  }, [instant]);
+
+  const handleLeave = useCallback(() => {
+    if (delayTimer.current) { clearTimeout(delayTimer.current); delayTimer.current = null; }
+    setActiveTip(null);
+    leaveTimer.current = setTimeout(() => setInstant(false), 300);
+  }, []);
+
+  /* ── Drag-to-reorder state ──────────────────────────────── */
+  const gridRef = useRef<HTMLDivElement>(null);
+  const cellRects = useRef<DOMRect[]>([]);
+  const dragState = useRef<{
+    index: number;
+    startX: number;
+    startY: number;
+    offsetX: number;
+    offsetY: number;
+  } | null>(null);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [dragPos, setDragPos] = useState({ x: 0, y: 0 });
+  const [overIndex, setOverIndex] = useState<number | null>(null);
+  const [settling, setSettling] = useState(false);
+
+  // Measure all cell positions when drag starts
+  const measureCells = useCallback(() => {
+    if (!gridRef.current) return;
+    const children = gridRef.current.children;
+    cellRects.current = Array.from(children).map((el) =>
+      (el as HTMLElement).getBoundingClientRect()
+    );
+  }, []);
+
+  // Find which cell index a pointer is closest to
+  const hitTest = useCallback((clientX: number, clientY: number) => {
+    let closest = -1;
+    let minDist = Infinity;
+    for (let i = 0; i < cellRects.current.length; i++) {
+      const r = cellRects.current[i];
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      const dist = Math.abs(clientX - cx) + Math.abs(clientY - cy);
+      if (dist < minDist) {
+        minDist = dist;
+        closest = i;
+      }
+    }
+    return closest;
+  }, []);
+
+  const handlePointerDown = useCallback((e: React.PointerEvent, index: number) => {
+    // Only left mouse / primary touch
+    if (e.button !== 0) return;
+    // Kill tooltips during drag
+    setActiveTip(null);
+    if (delayTimer.current) clearTimeout(delayTimer.current);
+
+    measureCells();
+    const rect = cellRects.current[index];
+    if (!rect) return;
+
+    dragState.current = {
+      index,
+      startX: e.clientX,
+      startY: e.clientY,
+      offsetX: e.clientX - (rect.left + rect.width / 2),
+      offsetY: e.clientY - (rect.top + rect.height / 2),
+    };
+
+    // Don't activate drag yet — wait for movement threshold
+    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+  }, [measureCells]);
+
+  useEffect(() => {
+    const DRAG_THRESHOLD = 4; // px before drag activates
+
+    const onMove = (e: PointerEvent) => {
+      const ds = dragState.current;
+      if (!ds) return;
+
+      const dx = e.clientX - ds.startX;
+      const dy = e.clientY - ds.startY;
+
+      // Activate drag after threshold
+      if (dragIndex === null && Math.abs(dx) + Math.abs(dy) < DRAG_THRESHOLD) return;
+
+      if (dragIndex === null) setDragIndex(ds.index);
+
+      // Position relative to original cell center
+      const rect = cellRects.current[ds.index];
+      if (!rect) return;
+      const originX = rect.left + rect.width / 2;
+      const originY = rect.top + rect.height / 2;
+
+      setDragPos({
+        x: e.clientX - ds.offsetX - originX,
+        y: e.clientY - ds.offsetY - originY,
+      });
+
+      const target = hitTest(e.clientX, e.clientY);
+      if (target >= 0) setOverIndex(target);
+    };
+
+    const onUp = () => {
+      const ds = dragState.current;
+      if (!ds || dragIndex === null) {
+        // Never started dragging
+        dragState.current = null;
+        setDragIndex(null);
+        setDragPos({ x: 0, y: 0 });
+        setOverIndex(null);
+        return;
+      }
+
+      const targetIdx = overIndex ?? ds.index;
+      const targetRect = cellRects.current[targetIdx];
+      const originRect = cellRects.current[ds.index];
+
+      if (targetRect && originRect) {
+        // Animate to target cell position
+        const originX = originRect.left + originRect.width / 2;
+        const originY = originRect.top + originRect.height / 2;
+        const targetX = targetRect.left + targetRect.width / 2;
+        const targetY = targetRect.top + targetRect.height / 2;
+
+        setSettling(true);
+        setDragPos({ x: targetX - originX, y: targetY - originY });
+
+        // After settle animation, commit reorder
+        setTimeout(() => {
+          if (overIndex !== null && overIndex !== ds.index) {
+            setItems((prev) => {
+              const next = [...prev];
+              const [moved] = next.splice(ds.index, 1);
+              next.splice(overIndex, 0, moved);
+              return next;
+            });
+          }
+          dragState.current = null;
+          setDragIndex(null);
+          setDragPos({ x: 0, y: 0 });
+          setOverIndex(null);
+          setSettling(false);
+        }, 200);
+      } else {
+        dragState.current = null;
+        setDragIndex(null);
+        setDragPos({ x: 0, y: 0 });
+        setOverIndex(null);
+      }
+    };
+
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    };
+  }, [dragIndex, overIndex, hitTest]);
+
+  // Compute visual shift for each item during drag
+  const getShiftTransform = useCallback((visualIndex: number) => {
+    if (dragIndex === null || overIndex === null || dragIndex === overIndex) return undefined;
+    const from = dragIndex;
+    const to = overIndex;
+
+    // Items between from and to shift by one cell
+    if (from < to && visualIndex > from && visualIndex <= to) {
+      // Shift left (take previous cell's position)
+      const prev = cellRects.current[visualIndex - 1];
+      const curr = cellRects.current[visualIndex];
+      if (!prev || !curr) return undefined;
+      return `translate(${prev.left - curr.left}px, ${prev.top - curr.top}px)`;
+    }
+    if (from > to && visualIndex >= to && visualIndex < from) {
+      // Shift right (take next cell's position)
+      const next = cellRects.current[visualIndex + 1];
+      const curr = cellRects.current[visualIndex];
+      if (!next || !curr) return undefined;
+      return `translate(${next.left - curr.left}px, ${next.top - curr.top}px)`;
+    }
+    return undefined;
+  }, [dragIndex, overIndex]);
   return (
     <div className="min-h-screen">
       {/* Navigation */}
@@ -112,17 +367,54 @@ export default function AboutPage() {
           <div className="flex items-center gap-3 mb-6"><span className="text-[13px] font-[550] tracking-[-0.005em] text-[rgba(0,0,0,.78)] whitespace-nowrap">
             My toolkit
           </span><div className="flex-1 h-px bg-[rgba(0,0,0,.08)]" /></div>
-          <div className="grid grid-cols-4 sm:grid-cols-8 gap-4">
-            {toolkit.map((tool) => (
-              <div key={tool.name} className="flex flex-col items-center gap-2">
-                <img
-                  src={tool.src}
-                  alt={tool.name}
-                  className="w-full aspect-square rounded-2xl object-cover"
-                />
-                <span className="text-[12px] text-[rgba(0,0,0,.4)]">{tool.name}</span>
-              </div>
-            ))}
+          <div ref={gridRef} className="grid grid-cols-5 sm:grid-cols-10 gap-2">
+            {items.map((tool, i) => {
+              const isBeingDragged = dragIndex === i;
+              const shift = getShiftTransform(i);
+              const isOpen = activeTip === tool.name && dragIndex === null;
+              const skipAnim = instant && isOpen;
+              return (
+                <div
+                  key={tool.name}
+                  className="relative"
+                  style={{
+                    transform: shift ?? "none",
+                    transition: dragIndex !== null ? "transform 250ms cubic-bezier(.2,1,.32,1)" : "none",
+                  }}
+                  onMouseEnter={() => dragIndex === null && handleEnter(tool.name)}
+                  onMouseLeave={() => dragIndex === null && handleLeave()}
+                >
+                  <ToolIcon
+                    tool={tool}
+                    isDragging={isBeingDragged && !settling}
+                    onPointerDown={(e) => !settling && handlePointerDown(e, i)}
+                    style={isBeingDragged ? {
+                      transform: `translate(${dragPos.x}px, ${dragPos.y}px)`,
+                      transition: settling ? "transform 200ms cubic-bezier(.2,1,.32,1)" : "none",
+                      opacity: 1,
+                    } : {
+                      opacity: 1,
+                    }}
+                  />
+                  {/* Tooltip */}
+                  <span
+                    className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md px-2 py-1 text-[13px] leading-5 text-[rgba(0,0,0,.85)]"
+                    style={{
+                      backgroundColor: "canvas",
+                      outline: "1px solid rgba(0,0,0,.1)",
+                      boxShadow: "0 10px 15px -3px rgba(0,0,0,.06), 0 4px 6px -4px rgba(0,0,0,.06)",
+                      transformOrigin: "bottom center",
+                      opacity: isOpen ? 1 : 0,
+                      transform: isOpen ? "scale(1)" : "scale(0.9)",
+                      transition: skipAnim ? "none" : "transform 150ms, opacity 150ms",
+                      zIndex: 40,
+                    }}
+                  >
+                    {tool.name}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </section>
 
