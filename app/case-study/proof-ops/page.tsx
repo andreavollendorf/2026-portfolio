@@ -103,7 +103,7 @@ export default function ProofOpsPage() {
           This created compounding problems:
         </Paragraph>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-[1.25rem] my-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-2">
           <div className="p-4 rounded-lg bg-[var(--surface)]" style={{ boxShadow: "var(--shadow-flush)" }}>
             <h3 className="text-[13px] font-[550] text-[rgba(0,0,0,.85)] mb-1">No ownership</h3>
             <p className="text-[13px] leading-[1.5] text-[rgba(0,0,0,.65)]">
@@ -271,7 +271,7 @@ export default function ProofOpsPage() {
         sectionTitle="Outcome"
         chapterTitle="From tabs to tasks."
       >
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-[1.25rem] my-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-2">
           <div className="p-4 rounded-lg bg-[var(--surface)]" style={{ boxShadow: "var(--shadow-flush)" }}>
             <h3 className="text-[13px] font-[550] text-[rgba(0,0,0,.85)] mb-1">Structured queues</h3>
             <p className="text-[13px] leading-[1.5] text-[rgba(0,0,0,.65)]">

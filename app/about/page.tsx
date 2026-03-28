@@ -327,7 +327,7 @@ export default function AboutPage() {
             alt="Andrea Vollendorf"
             className="hidden sm:block float-right ml-8 mb-4 w-[38%] rounded-lg object-cover"
           />
-          <h1 className="text-[20px] sm:text-[24px] font-[500] leading-[1.4] tracking-[-0.01em] text-[rgba(0,0,0,.85)] mb-4 [text-wrap:pretty]">
+          <h1 className="text-[24px] sm:text-[28px] font-[500] leading-[1.4] tracking-[-0.01em] text-[rgba(0,0,0,.85)] mb-4 [text-wrap:pretty]">
             I&apos;ve spent my career helping teams untangle complex systems and build products people can actually trust.
           </h1>
           <img

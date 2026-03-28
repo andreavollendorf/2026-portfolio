@@ -442,7 +442,7 @@ export default function ProjectCarousel({
 
           const label = (
             <div className="h-[44px] overflow-hidden">
-              <div className="translate-y-[-100%] group-hover:translate-y-0 group-focus-visible:translate-y-0 transition-transform duration-200 ease-[var(--ease-out-quart)] pt-3 flex items-baseline justify-between">
+              <div className="translate-y-0 sm:translate-y-[-100%] sm:group-hover:translate-y-0 group-focus-visible:translate-y-0 transition-transform duration-200 ease-[var(--ease-out-quart)] pt-3 flex items-baseline justify-between">
                 <span className="text-[13px] font-[550] text-[rgba(0,0,0,.85)]">
                   {card.projectTitle}
                 </span>

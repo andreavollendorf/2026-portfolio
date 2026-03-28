@@ -178,7 +178,7 @@ function ChatResearchCanvas() {
           })}
         </div>
       </div>
-      <figcaption className="text-[12px] text-[rgba(0,0,0,.4)] mt-2">
+      <figcaption className="text-[12px] text-[rgba(0,0,0,.5)] mt-2">
         Used Claude to analyze chat threads at scale.
       </figcaption>
     </figure>
@@ -569,7 +569,7 @@ function DataModelDiagramSplit() {
               })}
             </div>
           </div>
-          <figcaption className="text-[12px] text-[rgba(0,0,0,.4)] mt-2 text-center">
+          <figcaption className="text-[12px] text-[rgba(0,0,0,.5)] mt-2 text-center">
             Old data model
           </figcaption>
         </div>
@@ -583,7 +583,7 @@ function DataModelDiagramSplit() {
             <span className="absolute inset-0 rounded-lg pointer-events-none" style={{ boxShadow: "var(--shadow-flush)" }} />
             <NewServeStructure reducedMotion={reducedMotion} hideTitle />
           </div>
-          <figcaption className="text-[12px] text-[rgba(0,0,0,.4)] mt-2 text-center">
+          <figcaption className="text-[12px] text-[rgba(0,0,0,.5)] mt-2 text-center">
             New serve structure
           </figcaption>
         </div>
@@ -823,7 +823,7 @@ export default function ProofServesPage() {
       <Section
         id="outcomes"
         sectionTitle="Outcomes"
-        chapterTitle=""
+        chapterTitle="Measurable results, visible trust."
       >
         <Stats
           stats={[
@@ -839,7 +839,7 @@ export default function ProofServesPage() {
       <Section
         id="collaboration"
         sectionTitle="Collaboration & Execution"
-        chapterTitle=""
+        chapterTitle="Building it together."
       >
         <Paragraph>
           I partnered closely with engineering to define the data model, edge cases, and

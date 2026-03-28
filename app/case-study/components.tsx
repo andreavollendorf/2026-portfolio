@@ -159,7 +159,7 @@ export function CaseStudyLayout({
               {title}
             </h1>
 
-            <p className="text-[14px] font-[450] leading-[1.45rem] tracking-[-0.005em] text-[rgba(0,0,0,.65)] mb-0">
+            <p className="text-[14px] font-[450] leading-[1.45rem] tracking-[-0.005em] text-[rgba(0,0,0,.8)] mb-0">
               {description}
             </p>
 
@@ -383,7 +383,7 @@ export function ImageBlock({
         <span className="absolute inset-0 rounded-lg pointer-events-none" style={{ boxShadow: "var(--shadow-flush)" }} />
       </div>
       {caption && (
-        <figcaption className="text-[12px] text-[rgba(0,0,0,.4)] mt-2">
+        <figcaption className="text-[12px] text-[rgba(0,0,0,.5)] mt-2">
           {caption}
         </figcaption>
       )}
@@ -395,7 +395,7 @@ export function ImageBlock({
 
 export function Stats({ stats }: { stats: { value: string; label: string }[] }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 my-4">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 my-4">
       {stats.map((stat, i) => (
         <div
           key={i}
@@ -489,7 +489,7 @@ export function VideoBlock({
         <span className="absolute inset-0 rounded-lg pointer-events-none" style={{ boxShadow: "var(--shadow-flush)" }} />
       </div>
       {caption && (
-        <figcaption className="text-[12px] text-[rgba(0,0,0,.4)] mt-2">
+        <figcaption className="text-[12px] text-[rgba(0,0,0,.5)] mt-2">
           {caption}
         </figcaption>
       )}

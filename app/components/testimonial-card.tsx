@@ -30,7 +30,7 @@ export default function TestimonialCard({
 
   return (
     <blockquote
-      className="relative flex flex-col justify-between rounded-lg p-5 overflow-visible"
+      className="relative flex flex-col justify-between rounded-lg p-5 overflow-visible bg-[var(--surface)]"
       style={{ boxShadow: "var(--shadow-flush)" }}
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
