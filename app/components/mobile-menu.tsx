@@ -155,6 +155,14 @@ export default function MobileMenu({
               About
             </Link>
 
+            <Link
+              href="/play"
+              onClick={close}
+              className="block text-[14px] font-[500] text-[var(--foreground)] px-4 py-2.5 -mx-4 mb-3 rounded-lg active:bg-[var(--surface-hover)] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--foreground)] outline-none"
+            >
+              Play
+            </Link>
+
             <div className="pt-3 border-t border-[var(--border)]">
               <p className="text-[13px] font-[550] tracking-[-0.005em] text-[rgba(0,0,0,.78)] mb-3">
                 Work

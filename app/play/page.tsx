@@ -4,6 +4,7 @@ import {
   startTransition,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -181,6 +182,9 @@ const TILE_PAD = 20;
 const PLAY_TILE_RING_W = 4096;
 const PLAY_TILE_RING_H = 2400;
 
+/** Below this width, mount one tile only (avoids iOS Safari OOM / “A problem repeatedly occurred”). */
+const PLAY_MOBILE_MQ = "(max-width: 767px)";
+
 function computeTile(items: CanvasItem[]) {
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
   for (const it of items) {
@@ -203,6 +207,16 @@ const INITIAL_OFFSET = { x: -450, y: 100 };
 
 export default function PlayPage() {
   const tile = useMemo(() => computeTile(ITEMS), []);
+
+  const [playLayout, setPlayLayout] = useState<"pending" | "compact" | "full">("pending");
+
+  useLayoutEffect(() => {
+    const mq = window.matchMedia(PLAY_MOBILE_MQ);
+    const apply = () => setPlayLayout(mq.matches ? "compact" : "full");
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
 
   const [offset, setOffset] = useState(INITIAL_OFFSET);
   const offsetRef = useRef(INITIAL_OFFSET);
@@ -258,10 +272,17 @@ export default function PlayPage() {
   }, []);
 
   const tiles = useMemo(() => {
-    const countX = Math.ceil(PLAY_TILE_RING_W / tile.w) + 2;
-    const countY = Math.ceil(PLAY_TILE_RING_H / tile.h) + 2;
     const centerCol = Math.floor(-offset.x / tile.w);
     const centerRow = Math.floor(-offset.y / tile.h);
+
+    if (playLayout === "pending") return [];
+
+    if (playLayout === "compact") {
+      return [{ col: centerCol, row: centerRow }];
+    }
+
+    const countX = Math.ceil(PLAY_TILE_RING_W / tile.w) + 2;
+    const countY = Math.ceil(PLAY_TILE_RING_H / tile.h) + 2;
     const halfX = Math.ceil(countX / 2);
     const halfY = Math.ceil(countY / 2);
 
@@ -272,7 +293,7 @@ export default function PlayPage() {
       }
     }
     return result;
-  }, [offset.x, offset.y, tile]);
+  }, [offset.x, offset.y, tile, playLayout]);
 
   /* ---- pointer drag to pan ---- */
   const setCanvasMoving = useCallback((on: boolean) => {
@@ -377,6 +398,8 @@ export default function PlayPage() {
 
   /* ---- scroll to pan (coalesced per frame — no lag spring; it fought scroll) ---- */
   useEffect(() => {
+    if (playLayout === "pending") return;
+
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
       setCanvasMoving(true);
@@ -392,7 +415,7 @@ export default function PlayPage() {
     };
     window.addEventListener("wheel", onWheel, { passive: false });
     return () => window.removeEventListener("wheel", onWheel);
-  }, [flushWheelAccum, scheduleWheelIdleClear, setCanvasMoving]);
+  }, [playLayout, flushWheelAccum, scheduleWheelIdleClear, setCanvasMoving]);
 
   /* Static media tiles; interactive components tile the same way so they repeat on the infinite canvas. */
   const staticItems = ITEMS.filter(i => i.type !== "component");
@@ -413,7 +436,14 @@ export default function PlayPage() {
             >
               {item.src && (
                 /* eslint-disable-next-line @next/next/no-img-element */
-                <img src={item.src} alt="" draggable={false} style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }} />
+                <img
+                  src={item.src}
+                  alt=""
+                  draggable={false}
+                  loading="lazy"
+                  decoding="async"
+                  style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
+                />
               )}
             </div>
           );
@@ -451,6 +481,19 @@ export default function PlayPage() {
     </div>
   );
 
+  if (playLayout === "pending") {
+    return (
+      <>
+        <NavBar showBack />
+        <div
+          className="fixed inset-0 bg-[var(--background)]"
+          aria-busy="true"
+          aria-label="Loading play canvas"
+        />
+      </>
+    );
+  }
+
   return (
     <MinesweeperProvider>
       <NavBar showBack />
@@ -462,7 +505,12 @@ export default function PlayPage() {
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
         className="play-canvas-root fixed inset-0 overflow-hidden select-none"
-        style={{ cursor: "grab", touchAction: "none" }}
+        style={{
+          cursor: "grab",
+          touchAction: "none",
+          WebkitTouchCallout: "none",
+          WebkitUserSelect: "none",
+        }}
       >
         {/* dot grid */}
         <div

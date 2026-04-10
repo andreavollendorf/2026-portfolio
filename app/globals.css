@@ -262,6 +262,14 @@ input, textarea, select { font-size: 16px; }
   animation-play-state: paused;
 }
 
+/* Phones: drop the looping breathe animation (iOS WebKit is easy to kill with hundreds of composited layers). */
+@media (max-width: 767px) {
+  .play-canvas-root .play-item {
+    animation:
+      play-enter 0.8s ease-out var(--enter-delay, 0s) both;
+  }
+}
+
 /* Respect reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
