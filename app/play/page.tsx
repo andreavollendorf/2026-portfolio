@@ -109,7 +109,7 @@ const ITEMS: CanvasItem[] = [
   { id: id(), type: "image", x: 178, y: -901, rotate: 3, width: 291, height: 300, src: "/images/play/mail.png" },
   { id: id(), type: "image", x: 262, y: 1075, rotate: 0, width: 260, height: 54, src: "/images/play/Line-Ornamental-22.png" },
   { id: id(), type: "image", x: -1185, y: -504, rotate: 0, width: 59, height: 69, src: "/images/play/Smiley-18.png" },
-  { id: id(), type: "text", x: -1133, y: 232, rotate: -4.5, width: 200, height: 20, text: "play some minesweeper!", fontSize: 12 },
+  { id: id(), type: "text", x: -1175, y: 232, rotate: -4.5, width: 200, height: 20, text: "play some minesweeper!", fontSize: 12 },
 ];
 
 /* ─────────────────────────────────────────────────────────

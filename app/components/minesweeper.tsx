@@ -462,26 +462,6 @@ export default function Minesweeper() {
         {/* mine icon */}
         <span style={{ fontSize: 12 }}>{"\u{1F4A3}"}</span>
         <span style={{ flex: 1 }}>Minesweeper</span>
-        {/* window buttons */}
-        {["_", "\u25A1", "\u2715"].map((label, i) => (
-          <button key={i} style={{
-            width: 16,
-            height: 14,
-            background: C.surface,
-            border: "none",
-            boxShadow: raised,
-            fontSize: 9,
-            lineHeight: "12px",
-            fontWeight: 700,
-            cursor: "default",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: 0,
-          }}>
-            {label}
-          </button>
-        ))}
       </div>
 
       {/* Header: counters + smiley */}
@@ -495,7 +475,9 @@ export default function Minesweeper() {
       }}>
         <LedDisplay value={minesRemaining} />
         <button
+          type="button"
           onClick={reset}
+          aria-label="New game"
           style={{
             width: 28,
             height: 28,
