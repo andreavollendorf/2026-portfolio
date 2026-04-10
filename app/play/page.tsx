@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import NavBar from "../components/nav-bar";
 
 /* ------------------------------------------------------------------ */
@@ -343,7 +344,16 @@ export default function PlayPage() {
               style={{ left: item.x, top: item.y, width: item.width, height: item.height, ...vars }}
             >
               {item.src && (
-                <img src={item.src} alt="" draggable={false} style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }} />
+                <Image
+                  src={item.src}
+                  alt=""
+                  width={item.width * 2}
+                  height={item.height * 2}
+                  draggable={false}
+                  quality={75}
+                  sizes={`${item.width}px`}
+                  style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
+                />
               )}
             </div>
           );
