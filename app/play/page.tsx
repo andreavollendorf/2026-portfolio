@@ -347,12 +347,11 @@ export default function PlayPage() {
                 <Image
                   src={item.src}
                   alt=""
-                  width={item.width * 2}
-                  height={item.height * 2}
+                  fill
                   draggable={false}
                   quality={75}
                   sizes={`${item.width}px`}
-                  style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
+                  style={{ objectFit: "contain" }}
                 />
               )}
             </div>
