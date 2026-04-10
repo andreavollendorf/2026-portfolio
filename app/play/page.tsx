@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Image from "next/image";
 import NavBar from "../components/nav-bar";
+import Minesweeper from "../components/minesweeper";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -10,7 +10,7 @@ import NavBar from "../components/nav-bar";
 
 interface CanvasItem {
   id: string;
-  type: "image" | "text";
+  type: "image" | "text" | "component";
   x: number;
   y: number;
   rotate: number;
@@ -20,6 +20,7 @@ interface CanvasItem {
   text?: string;
   fontSize?: number;
   mono?: boolean;
+  component?: string;
 }
 
 /* ------------------------------------------------------------------ */
@@ -53,19 +54,18 @@ const ITEMS: CanvasItem[] = [
   { id: id(), type: "image", x: 767, y: 675, rotate: 0, width: 300, height: 172, src: "/images/play/qbr.png" },
   { id: id(), type: "text", x: 790, y: 630, rotate: -6, width: 200, height: 20, text: "my favorite PMs", fontSize: 12 },
   { id: id(), type: "text", x: 1039, y: 470, rotate: 6.5, width: 200, height: 20, text: "personality hire \u{1F61C}", fontSize: 12 },
-  { id: id(), type: "image", x: 546, y: 771, rotate: 0, width: 300, height: 172, src: "/images/play/brand.png" },
-  { id: id(), type: "text", x: 623, y: 970, rotate: -5.5, width: 200, height: 20, text: "Land & Brand with Unfold", fontSize: 12 },
-  { id: id(), type: "image", x: 1430, y: 338, rotate: -3, width: 148, height: 300, src: "/images/play/theorem.png" },
+  { id: id(), type: "image", x: 526, y: 794, rotate: 0, width: 300, height: 172, src: "/images/play/brand.png" },
+  { id: id(), type: "text", x: 617, y: 994, rotate: -5.5, width: 200, height: 20, text: "Land & Brand with Unfold", fontSize: 12 },
+  { id: id(), type: "image", x: 1471, y: 350, rotate: -3, width: 148, height: 300, src: "/images/play/theorem.png" },
   { id: id(), type: "image", x: -1004, y: -411, rotate: -6.5, width: 165, height: 240, src: "/images/play/nails1.png" },
   { id: id(), type: "image", x: -865, y: -606, rotate: 5.5, width: 165, height: 240, src: "/images/play/nails2.png" },
   { id: id(), type: "image", x: -719, y: -593, rotate: -4.5, width: 185, height: 260, src: "/images/play/nails3.png" },
   { id: id(), type: "image", x: -664, y: -404, rotate: 7.5, width: 165, height: 240, src: "/images/play/nails4.png" },
   { id: id(), type: "image", x: -843, y: -413, rotate: -7.5, width: 205, height: 280, src: "/images/play/nails5.png" },
   { id: id(), type: "text", x: -722, y: -121, rotate: -4, width: 200, height: 20, text: "been doing nail art for 5 years", fontSize: 12 },
-  { id: id(), type: "image", x: -1055, y: 389, rotate: -9, width: 300, height: 151, src: "/images/play/Check.png" },
+  { id: id(), type: "image", x: -1027, y: 484, rotate: -9, width: 300, height: 151, src: "/images/play/Check.png" },
   { id: id(), type: "image", x: -13, y: -522, rotate: 0, width: 82, height: 241, src: "/images/play/11.png" },
-  { id: id(), type: "image", x: 1008, y: 995, rotate: -2.5, width: 100, height: 98, src: "/images/play/36.png" },
-  { id: id(), type: "image", x: -1229, y: -8, rotate: -3.5, width: 260, height: 242, src: "/images/play/41.png" },
+  { id: id(), type: "image", x: 995, y: 1032, rotate: -2.5, width: 100, height: 98, src: "/images/play/36.png" },
   { id: id(), type: "image", x: 577, y: 508, rotate: 5.5, width: 80, height: 70, src: "/images/play/100.png" },
   { id: id(), type: "image", x: -330, y: -208, rotate: 0, width: 120, height: 81, src: "/images/play/110.png" },
   { id: id(), type: "image", x: -645, y: -574, rotate: 0, width: 80, height: 34, src: "/images/play/12.png" },
@@ -73,19 +73,19 @@ const ITEMS: CanvasItem[] = [
   { id: id(), type: "image", x: -819, y: -401, rotate: 0, width: 80, height: 25, src: "/images/play/9.png" },
   { id: id(), type: "image", x: -780, y: -609, rotate: 15, width: 60, height: 47, src: "/images/play/92.png" },
   { id: id(), type: "image", x: -587, y: -423, rotate: 15, width: 80, height: 62, src: "/images/play/94.png" },
-  { id: id(), type: "image", x: -870, y: 165, rotate: 0, width: 200, height: 115, src: "/images/play/Scribble-Block-19.png" },
+  { id: id(), type: "image", x: -798, y: 199, rotate: 0, width: 200, height: 115, src: "/images/play/Scribble-Block-19.png" },
   { id: id(), type: "image", x: 209, y: -37, rotate: 13, width: 100, height: 38, src: "/images/play/Arrow-19.png" },
   { id: id(), type: "image", x: 1108, y: -427, rotate: 62, width: 80, height: 34, src: "/images/play/Arrow-38.png" },
   { id: id(), type: "image", x: -482, y: 401, rotate: 0, width: 113, height: 116, src: "/images/play/Angle-29.png" },
   { id: id(), type: "image", x: -1027, y: 845, rotate: 4, width: 220, height: 150, src: "/images/play/HandwrittenNotes-12.png" },
   { id: id(), type: "image", x: 167, y: 95, rotate: 0, width: 300, height: 16, src: "/images/play/Line-Ornamental-03.png" },
   { id: id(), type: "image", x: -645, y: 1075, rotate: 0, width: 220, height: 13, src: "/images/play/Line-Scribble-21.png" },
-  { id: id(), type: "image", x: 1119, y: 67, rotate: 4.5, width: 200, height: 195, src: "/images/play/Box-28.png" },
+  { id: id(), type: "image", x: 1174, y: 95, rotate: 4.5, width: 200, height: 195, src: "/images/play/Box-28.png" },
   { id: id(), type: "image", x: 1098, y: 719, rotate: 15, width: 50, height: 66, src: "/images/play/Heart-07.png" },
   { id: id(), type: "image", x: 583, y: -216, rotate: 0, width: 80, height: 78, src: "/images/play/Flower-05.png" },
-  { id: id(), type: "image", x: -1025, y: 479, rotate: -9.5, width: 300, height: 75, src: "/images/play/Angle-18.png" },
+  { id: id(), type: "image", x: -992, y: 586, rotate: -9.5, width: 300, height: 75, src: "/images/play/Angle-18.png" },
   { id: id(), type: "image", x: 636, y: 55, rotate: 0, width: 180, height: 65, src: "/images/play/Cloud-04.png" },
-  { id: id(), type: "image", x: -823, y: 46, rotate: 4, width: 320, height: 211, src: "/images/play/userwise.png" },
+  { id: id(), type: "image", x: -734, y: 65, rotate: 4, width: 320, height: 211, src: "/images/play/userwise.png" },
   { id: id(), type: "image", x: -1255, y: -894, rotate: -9.5, width: 300, height: 176, src: "/images/play/confidence.png" },
   { id: id(), type: "image", x: -1092, y: -794, rotate: -0.5, width: 300, height: 176, src: "/images/play/deg.png" },
   { id: id(), type: "image", x: 1318, y: 862, rotate: 4, width: 300, height: 285, src: "/images/play/tasks.png" },
@@ -98,6 +98,11 @@ const ITEMS: CanvasItem[] = [
   { id: id(), type: "text", x: 645, y: -786, rotate: -5.5, width: 200, height: 20, text: " before I got there", fontSize: 12 },
   { id: id(), type: "image", x: 271, y: 827, rotate: -15, width: 80, height: 45, src: "/images/play/Arrow-47.png" },
   { id: id(), type: "text", x: 102, y: 813, rotate: -1.5, width: 200, height: 20, text: "this bad boy has over 50 variations", fontSize: 12 },
+  { id: id(), type: "component", x: -1206, y: -91, rotate: 2.5, width: 242, height: 320, component: "minesweeper" },
+  { id: id(), type: "image", x: 178, y: -901, rotate: 3, width: 291, height: 300, src: "/images/play/mail.png" },
+  { id: id(), type: "image", x: 262, y: 1075, rotate: 0, width: 260, height: 54, src: "/images/play/Line-Ornamental-22.png" },
+  { id: id(), type: "image", x: -1185, y: -504, rotate: 0, width: 59, height: 69, src: "/images/play/Smiley-18.png" },
+  { id: id(), type: "text", x: -1133, y: 232, rotate: -4.5, width: 200, height: 20, text: "play some minesweeper!", fontSize: 12 },
 ];
 
 /* ─────────────────────────────────────────────────────────
@@ -330,10 +335,14 @@ export default function PlayPage() {
     return () => window.removeEventListener("wheel", onWheel);
   }, [nudgeLag]);
 
+  /* items split: components render once (outside tiles), static items tile */
+  const staticItems = ITEMS.filter(i => i.type !== "component");
+  const componentItems = ITEMS.filter(i => i.type === "component");
+
   /* ---- render a single tile ---- */
   const renderTile = (dx: number, dy: number) => (
     <div className="absolute pointer-events-none" style={{ transform: `translate(${dx}px, ${dy}px)` }}>
-      {ITEMS.map((item) => {
+      {staticItems.map((item) => {
         const vars = itemAnimVars(item);
 
         if (item.type === "image") {
@@ -344,15 +353,8 @@ export default function PlayPage() {
               style={{ left: item.x, top: item.y, width: item.width, height: item.height, ...vars }}
             >
               {item.src && (
-                <Image
-                  src={item.src}
-                  alt=""
-                  fill
-                  draggable={false}
-                  quality={75}
-                  sizes={`${item.width}px`}
-                  style={{ objectFit: "contain" }}
-                />
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img src={item.src} alt="" draggable={false} style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }} />
               )}
             </div>
           );
@@ -417,6 +419,20 @@ export default function PlayPage() {
                 {renderTile(t.col * tile.w, t.row * tile.h)}
               </div>
             ))}
+
+            {/* interactive components — render once, not tiled */}
+            {componentItems.map((item) => {
+              const vars = itemAnimVars(item);
+              return (
+                <div
+                  key={item.id}
+                  className="absolute play-item"
+                  style={{ left: item.x, top: item.y, ...vars }}
+                >
+                  {item.component === "minesweeper" && <Minesweeper />}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
