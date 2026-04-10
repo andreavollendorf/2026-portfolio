@@ -175,20 +175,37 @@ function itemAnimVars(item: CanvasItem) {
 const TILE_PAD = 20;
 
 /**
- * Virtual viewport for tile-ring density. Intentionally not tied to `window` so the server
- * and the client’s first paint compute the same `tiles` list — otherwise hydration swaps
- * the subtree and the canvas appears to jump after load.
+ * How far around the pan center we mount tiles (px, virtual). Not tied to `window` so SSR
+ * and the client agree on which cells exist — avoids hydration jump.
  */
 const PLAY_TILE_RING_W = 4096;
 const PLAY_TILE_RING_H = 2400;
 
+/** Desktop: repeat the collage this many tiles left/right and up/down from origin (world is 2r+1 per axis). */
+const PLAY_FULL_TILE_RADIUS = 4;
+
 /** Below this width, mount one tile only (avoids iOS Safari OOM / “A problem repeatedly occurred”). */
 const PLAY_MOBILE_MQ = "(max-width: 767px)";
+
+/**
+ * Compact-only: canvas `transform: scale(...)` (see wrapper below). Pan math divides by this so dragging
+ * stays 1:1 on screen. Edit **only this number** — no separate CSS scale to keep in sync.
+ */
+const PLAY_COMPACT_CANVAS_SCALE = 0.9;
 
 /** Compact: always one canonical tile at origin — pan is only the outer translate. Updating col/row on grid crossings jumped the inner layer by ±tile.w and caused iOS to clip/vanish layers after long pans. */
 const PLAY_COMPACT_TILES: { col: number; row: number }[] = [{ col: 0, row: 0 }];
 
-function computeTile(items: CanvasItem[]) {
+type TileMetrics = {
+  w: number;
+  h: number;
+  minX: number;
+  minY: number;
+  maxX: number;
+  maxY: number;
+};
+
+function computeTile(items: CanvasItem[]): TileMetrics {
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
   for (const it of items) {
     minX = Math.min(minX, it.x);
@@ -199,6 +216,61 @@ function computeTile(items: CanvasItem[]) {
   return {
     w: maxX - minX + TILE_PAD * 2,
     h: maxY - minY + TILE_PAD * 2,
+    minX,
+    minY,
+    maxX,
+    maxY,
+  };
+}
+
+type PanBounds = { minCol: number; maxCol: number; minRow: number; maxRow: number };
+
+function panBoundsForLayout(layout: "pending" | "compact" | "full"): PanBounds | null {
+  if (layout === "pending") return null;
+  if (layout === "compact") {
+    return { minCol: 0, maxCol: 0, minRow: 0, maxRow: 0 };
+  }
+  const r = PLAY_FULL_TILE_RADIUS;
+  return { minCol: -r, maxCol: r, minRow: -r, maxRow: r };
+}
+
+/**
+ * Pan layer origin sits at viewport center; translate (tx, ty) moves the world.
+ * Clamp using real collage bounds (items use negative x/y — grid cell [0,tw] is not the content box).
+ * Use layout viewport size so coords match `fixed inset-0` + pointer `clientX/Y`.
+ */
+function layoutViewportSize(): { vw: number; vh: number } {
+  if (typeof window === "undefined") return { vw: 1024, vh: 768 };
+  return {
+    vw: Math.max(1, window.innerWidth),
+    vh: Math.max(1, window.innerHeight),
+  };
+}
+
+function clampPanToWorld(
+  x: number,
+  y: number,
+  vw: number,
+  vh: number,
+  tile: Pick<TileMetrics, "w" | "h" | "minX" | "minY" | "maxX" | "maxY">,
+  b: PanBounds,
+): { x: number; y: number } {
+  const { w: tw, h: th, minX, minY, maxX, maxY } = tile;
+  const worldMinX = b.minCol * tw + minX;
+  const worldMaxX = b.maxCol * tw + maxX;
+  const worldMinY = b.minRow * th + minY;
+  const worldMaxY = b.maxRow * th + maxY;
+  const txMin = vw / 2 - worldMaxX;
+  const txMax = -vw / 2 - worldMinX;
+  const xLo = Math.min(txMin, txMax);
+  const xHi = Math.max(txMin, txMax);
+  const tyMin = vh / 2 - worldMaxY;
+  const tyMax = -vh / 2 - worldMinY;
+  const yLo = Math.min(tyMin, tyMax);
+  const yHi = Math.max(tyMin, tyMax);
+  return {
+    x: Math.min(xHi, Math.max(xLo, x)),
+    y: Math.min(yHi, Math.max(yLo, y)),
   };
 }
 
@@ -249,22 +321,33 @@ export default function PlayPage() {
   /** Pan transform via ref so pointermove doesn’t re-render the whole canvas every event. */
   const applyPan = useCallback(
     (x: number, y: number) => {
-      offsetRef.current = { x, y };
+      const b = panBoundsForLayout(playLayoutRef.current);
+      let nx = x;
+      let ny = y;
+      if (b && typeof window !== "undefined") {
+        const { vw, vh } = layoutViewportSize();
+        const expand =
+          playLayoutRef.current === "compact" ? 1 / PLAY_COMPACT_CANVAS_SCALE : 1;
+        const c = clampPanToWorld(x, y, vw * expand, vh * expand, tile, b);
+        nx = c.x;
+        ny = c.y;
+      }
+      offsetRef.current = { x: nx, y: ny };
       const el = panLayerRef.current;
-      if (el) el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      if (el) el.style.transform = `translate3d(${nx}px, ${ny}px, 0)`;
 
-      const col = Math.floor(-x / tile.w);
-      const row = Math.floor(-y / tile.h);
+      const col = Math.floor(-nx / tile.w);
+      const row = Math.floor(-ny / tile.h);
       const tc = tileCenterRef.current;
       if (col !== tc.col || row !== tc.row) {
         tileCenterRef.current = { col, row };
         /* Compact: never update offset — tile stays at (0,0); only ref pan moves (avoids inner translate jumps / iOS layer bugs). */
         if (playLayoutRef.current !== "compact") {
-          startTransition(() => setOffset({ x, y }));
+          startTransition(() => setOffset({ x: nx, y: ny }));
         }
       }
     },
-    [tile.w, tile.h],
+    [tile],
   );
 
   /* Compact: sync pan from ref when entering compact (offset state is not updated while panning on compact). */
@@ -310,6 +393,7 @@ export default function PlayPage() {
       return PLAY_COMPACT_TILES;
     }
 
+    const bounds = panBoundsForLayout("full")!;
     const centerCol = Math.floor(-offset.x / tile.w);
     const centerRow = Math.floor(-offset.y / tile.h);
 
@@ -321,6 +405,9 @@ export default function PlayPage() {
     const result: { col: number; row: number }[] = [];
     for (let row = centerRow - halfY; row <= centerRow + halfY; row++) {
       for (let col = centerCol - halfX; col <= centerCol + halfX; col++) {
+        if (col < bounds.minCol || col > bounds.maxCol || row < bounds.minRow || row > bounds.maxRow) {
+          continue;
+        }
         result.push({ col, row });
       }
     }
@@ -348,7 +435,9 @@ export default function PlayPage() {
     wheelRafRef.current = 0;
     if (acc.x === 0 && acc.y === 0) return;
     wheelAccRef.current = { x: 0, y: 0 };
-    applyPan(offsetRef.current.x - acc.x, offsetRef.current.y - acc.y);
+    const inv =
+      playLayoutRef.current === "compact" ? 1 / PLAY_COMPACT_CANVAS_SCALE : 1;
+    applyPan(offsetRef.current.x - acc.x * inv, offsetRef.current.y - acc.y * inv);
   }, [applyPan]);
 
   const onPointerDown = useCallback((e: React.PointerEvent) => {
@@ -371,7 +460,12 @@ export default function PlayPage() {
     if (!panning.current) return;
     const dx = e.clientX - panStart.current.x;
     const dy = e.clientY - panStart.current.y;
-    const next = { x: panOffsetStart.current.x + dx, y: panOffsetStart.current.y + dy };
+    const inv =
+      playLayoutRef.current === "compact" ? 1 / PLAY_COMPACT_CANVAS_SCALE : 1;
+    const next = {
+      x: panOffsetStart.current.x + dx * inv,
+      y: panOffsetStart.current.y + dy * inv,
+    };
     const now = Date.now();
     const dt = Math.max(1, now - lastPointer.current.t);
     velocity.current = {
@@ -387,9 +481,11 @@ export default function PlayPage() {
     if (!panning.current) return;
     panning.current = false;
     if (containerRef.current) containerRef.current.style.cursor = "grab";
-    /* px/ms → px/s for time-based glide */
-    let vx = velocity.current.x * 1000;
-    let vy = velocity.current.y * 1000;
+    /* px/ms → px/s for time-based glide (compact: screen velocity → inner pan space) */
+    const inv =
+      playLayoutRef.current === "compact" ? 1 / PLAY_COMPACT_CANVAS_SCALE : 1;
+    let vx = velocity.current.x * 1000 * inv;
+    let vy = velocity.current.y * 1000 * inv;
     let lastT = performance.now();
     const low = Math.abs(vx) < 8 && Math.abs(vy) < 8;
     if (low) {
@@ -427,6 +523,32 @@ export default function PlayPage() {
     },
     [],
   );
+
+  /* Keep pan inside bounds when the layout viewport size changes. */
+  useEffect(() => {
+    if (playLayout === "pending") return;
+
+    const reclamp = () => {
+      const { x, y } = offsetRef.current;
+      applyPan(x, y);
+    };
+    window.addEventListener("resize", reclamp);
+    return () => window.removeEventListener("resize", reclamp);
+  }, [playLayout, applyPan]);
+
+  /* iOS Safari: block non-standard pinch gestures so they don’t fight custom pan. */
+  useEffect(() => {
+    if (playLayout !== "compact") return;
+    const block = (e: Event) => e.preventDefault();
+    document.addEventListener("gesturestart", block, { passive: false });
+    document.addEventListener("gesturechange", block, { passive: false });
+    document.addEventListener("gestureend", block, { passive: false });
+    return () => {
+      document.removeEventListener("gesturestart", block);
+      document.removeEventListener("gesturechange", block);
+      document.removeEventListener("gestureend", block);
+    };
+  }, [playLayout]);
 
   /* ---- scroll to pan (coalesced per frame — no lag spring; it fought scroll) ---- */
   useEffect(() => {
@@ -546,42 +668,56 @@ export default function PlayPage() {
           WebkitUserSelect: "none",
         }}
       >
-        {/* dot grid */}
+        {/* Mobile: scale only this subtree (nav is outside). Scale comes from PLAY_COMPACT_CANVAS_SCALE only. */}
         <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: "radial-gradient(circle, rgba(0,0,0,.15) 1px, transparent 1px)",
-            backgroundSize: "32px 32px",
-          }}
-        />
-
-        {/* panning layer — pointer-events-none so hover reaches items */}
-        <div
-          ref={setPanLayerRef}
-          className={
+          className="absolute inset-0"
+          style={
             playLayout === "compact"
-              ? "absolute pointer-events-none"
-              : "absolute will-change-transform pointer-events-none"
+              ? {
+                  transform: `scale(${PLAY_COMPACT_CANVAS_SCALE})`,
+                  transformOrigin: "center center",
+                  pointerEvents: "none",
+                }
+              : undefined
           }
-          style={{
-            /* Full layout: transform in React avoids first-paint snap. Compact: ref-only + useLayoutEffect — avoids iOS flicker when state lags ref during pan. */
-            ...(playLayout === "full"
-              ? { transform: `translate3d(${offset.x}px, ${offset.y}px, 0)` }
-              : {}),
-            transformOrigin: "0 0",
-            left: "50%",
-            top: "50%",
-            backfaceVisibility: "hidden",
-          }}
         >
-          {tiles.map((t) => (
-            <div
-              key={playLayout === "compact" ? "play-compact-tile" : `${t.col},${t.row}`}
-              className="pointer-events-none"
-            >
-              {renderTile(t.col * tile.w, t.row * tile.h)}
-            </div>
-          ))}
+          {/* dot grid */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              backgroundImage: "radial-gradient(circle, rgba(0,0,0,.15) 1px, transparent 1px)",
+              backgroundSize: "32px 32px",
+            }}
+          />
+
+          {/* panning layer — pointer-events-none so hover reaches items */}
+          <div
+            ref={setPanLayerRef}
+            className={
+              playLayout === "compact"
+                ? "absolute pointer-events-none"
+                : "absolute will-change-transform pointer-events-none"
+            }
+            style={{
+              /* Full layout: transform in React avoids first-paint snap. Compact: ref-only + useLayoutEffect — avoids iOS flicker when state lags ref during pan. */
+              ...(playLayout === "full"
+                ? { transform: `translate3d(${offset.x}px, ${offset.y}px, 0)` }
+                : {}),
+              transformOrigin: "0 0",
+              left: "50%",
+              top: "50%",
+              backfaceVisibility: "hidden",
+            }}
+          >
+            {tiles.map((t) => (
+              <div
+                key={playLayout === "compact" ? "play-compact-tile" : `${t.col},${t.row}`}
+                className="pointer-events-none"
+              >
+                {renderTile(t.col * tile.w, t.row * tile.h)}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </MinesweeperProvider>
