@@ -1,0 +1,416 @@
+"use client";
+
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import NavBar from "../components/nav-bar";
+
+/* ------------------------------------------------------------------ */
+/*  Types                                                              */
+/* ------------------------------------------------------------------ */
+
+interface CanvasItem {
+  id: string;
+  type: "image" | "text";
+  x: number;
+  y: number;
+  rotate: number;
+  width: number;
+  height: number;
+  src?: string;
+  text?: string;
+  fontSize?: number;
+  mono?: boolean;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Items                                                              */
+/* ------------------------------------------------------------------ */
+
+let nextId = 1;
+const id = () => `item-${nextId++}`;
+
+const ITEMS: CanvasItem[] = [
+  { id: id(), type: "image", x: 395, y: -413, rotate: 3.2, width: 280, height: 160, src: "/images/play/vision.jpg" },
+  { id: id(), type: "image", x: 154, y: -489, rotate: -2, width: 300, height: 300, src: "/images/play/map.png" },
+  { id: id(), type: "image", x: 261, y: -264, rotate: -7, width: 300, height: 220, src: "/images/play/garden.png" },
+  { id: id(), type: "text", x: 478, y: -452, rotate: -0.5, width: 160, height: 18, text: "amateur landscape designer", fontSize: 11, mono: true },
+  { id: id(), type: "text", x: 144, y: -86, rotate: 0, width: 200, height: 20, text: "all native, full shade", fontSize: 12 },
+  { id: id(), type: "image", x: 687, y: 89, rotate: 0, width: 320, height: 211, src: "/images/play/caster.png" },
+  { id: id(), type: "text", x: 691, y: 304, rotate: 0, width: 200, height: 18, text: "Caster", fontSize: 13 },
+  { id: id(), type: "text", x: 694, y: 323, rotate: 0, width: 200, height: 18, text: "vibe coded 3D shadow casting tool", fontSize: 11, mono: true },
+  { id: id(), type: "image", x: 928, y: -362, rotate: 0, width: 320, height: 211, src: "/images/play/coldornah.png" },
+  { id: id(), type: "text", x: 925, y: -140, rotate: 0, width: 200, height: 18, text: "Is it cold or nah?", fontSize: 13 },
+  { id: id(), type: "text", x: 925, y: -116, rotate: 0, width: 260, height: 18, text: "Maine water temperature tracker", fontSize: 11, mono: true },
+  { id: id(), type: "text", x: 1053, y: -467, rotate: 4.5, width: 200, height: 20, text: "occasionally buggy", fontSize: 12 },
+  { id: id(), type: "image", x: 1352, y: -297, rotate: 3, width: 262, height: 312, src: "/images/play/servee.png" },
+  { id: id(), type: "image", x: -460, y: 427, rotate: 0, width: 300, height: 297, src: "/images/play/autofill.png" },
+  { id: id(), type: "image", x: 178, y: 120, rotate: 0, width: 278, height: 300, src: "/images/play/address.png" },
+  { id: id(), type: "image", x: 73, y: 553, rotate: 5, width: 300, height: 235, src: "/images/play/tracker.png" },
+  { id: id(), type: "image", x: -132, y: 851, rotate: -2.5, width: 180, height: 338, src: "/images/play/mobile.png" },
+  { id: id(), type: "image", x: -609, y: 838, rotate: 0, width: 300, height: 198, src: "/images/play/doc.png" },
+  { id: id(), type: "image", x: -234, y: -62, rotate: -1, width: 240, height: 384, src: "/images/play/merck.png" },
+  { id: id(), type: "image", x: 926, y: 516, rotate: 0, width: 300, height: 172, src: "/images/play/meets.png" },
+  { id: id(), type: "image", x: 767, y: 675, rotate: 0, width: 300, height: 172, src: "/images/play/qbr.png" },
+  { id: id(), type: "text", x: 790, y: 630, rotate: -6, width: 200, height: 20, text: "my favorite PMs", fontSize: 12 },
+  { id: id(), type: "text", x: 1039, y: 470, rotate: 6.5, width: 200, height: 20, text: "personality hire \u{1F61C}", fontSize: 12 },
+  { id: id(), type: "image", x: 546, y: 771, rotate: 0, width: 300, height: 172, src: "/images/play/brand.png" },
+  { id: id(), type: "text", x: 623, y: 970, rotate: -5.5, width: 200, height: 20, text: "Land & Brand with Unfold", fontSize: 12 },
+  { id: id(), type: "image", x: 1430, y: 338, rotate: -3, width: 148, height: 300, src: "/images/play/theorem.png" },
+  { id: id(), type: "image", x: -1004, y: -411, rotate: -6.5, width: 165, height: 240, src: "/images/play/nails1.png" },
+  { id: id(), type: "image", x: -865, y: -606, rotate: 5.5, width: 165, height: 240, src: "/images/play/nails2.png" },
+  { id: id(), type: "image", x: -719, y: -593, rotate: -4.5, width: 185, height: 260, src: "/images/play/nails3.png" },
+  { id: id(), type: "image", x: -664, y: -404, rotate: 7.5, width: 165, height: 240, src: "/images/play/nails4.png" },
+  { id: id(), type: "image", x: -843, y: -413, rotate: -7.5, width: 205, height: 280, src: "/images/play/nails5.png" },
+  { id: id(), type: "text", x: -722, y: -121, rotate: -4, width: 200, height: 20, text: "been doing nail art for 5 years", fontSize: 12 },
+  { id: id(), type: "image", x: -1055, y: 389, rotate: -9, width: 300, height: 151, src: "/images/play/Check.png" },
+  { id: id(), type: "image", x: -13, y: -522, rotate: 0, width: 82, height: 241, src: "/images/play/11.png" },
+  { id: id(), type: "image", x: 1008, y: 995, rotate: -2.5, width: 100, height: 98, src: "/images/play/36.png" },
+  { id: id(), type: "image", x: -1229, y: -8, rotate: -3.5, width: 260, height: 242, src: "/images/play/41.png" },
+  { id: id(), type: "image", x: 577, y: 508, rotate: 5.5, width: 80, height: 70, src: "/images/play/100.png" },
+  { id: id(), type: "image", x: -330, y: -208, rotate: 0, width: 120, height: 81, src: "/images/play/110.png" },
+  { id: id(), type: "image", x: -645, y: -574, rotate: 0, width: 80, height: 34, src: "/images/play/12.png" },
+  { id: id(), type: "image", x: -990, y: -397, rotate: 0, width: 80, height: 30, src: "/images/play/3.png" },
+  { id: id(), type: "image", x: -819, y: -401, rotate: 0, width: 80, height: 25, src: "/images/play/9.png" },
+  { id: id(), type: "image", x: -780, y: -609, rotate: 15, width: 60, height: 47, src: "/images/play/92.png" },
+  { id: id(), type: "image", x: -587, y: -423, rotate: 15, width: 80, height: 62, src: "/images/play/94.png" },
+  { id: id(), type: "image", x: -870, y: 165, rotate: 0, width: 200, height: 115, src: "/images/play/Scribble-Block-19.png" },
+  { id: id(), type: "image", x: 209, y: -37, rotate: 13, width: 100, height: 38, src: "/images/play/Arrow-19.png" },
+  { id: id(), type: "image", x: 1108, y: -427, rotate: 62, width: 80, height: 34, src: "/images/play/Arrow-38.png" },
+  { id: id(), type: "image", x: -482, y: 401, rotate: 0, width: 113, height: 116, src: "/images/play/Angle-29.png" },
+  { id: id(), type: "image", x: -1027, y: 845, rotate: 4, width: 220, height: 150, src: "/images/play/HandwrittenNotes-12.png" },
+  { id: id(), type: "image", x: 167, y: 95, rotate: 0, width: 300, height: 16, src: "/images/play/Line-Ornamental-03.png" },
+  { id: id(), type: "image", x: -645, y: 1075, rotate: 0, width: 220, height: 13, src: "/images/play/Line-Scribble-21.png" },
+  { id: id(), type: "image", x: 1119, y: 67, rotate: 4.5, width: 200, height: 195, src: "/images/play/Box-28.png" },
+  { id: id(), type: "image", x: 1098, y: 719, rotate: 15, width: 50, height: 66, src: "/images/play/Heart-07.png" },
+  { id: id(), type: "image", x: 583, y: -216, rotate: 0, width: 80, height: 78, src: "/images/play/Flower-05.png" },
+  { id: id(), type: "image", x: -1025, y: 479, rotate: -9.5, width: 300, height: 75, src: "/images/play/Angle-18.png" },
+  { id: id(), type: "image", x: 636, y: 55, rotate: 0, width: 180, height: 65, src: "/images/play/Cloud-04.png" },
+  { id: id(), type: "image", x: -823, y: 46, rotate: 4, width: 320, height: 211, src: "/images/play/userwise.png" },
+  { id: id(), type: "image", x: -1255, y: -894, rotate: -9.5, width: 300, height: 176, src: "/images/play/confidence.png" },
+  { id: id(), type: "image", x: -1092, y: -794, rotate: -0.5, width: 300, height: 176, src: "/images/play/deg.png" },
+  { id: id(), type: "image", x: 1318, y: 862, rotate: 4, width: 300, height: 285, src: "/images/play/tasks.png" },
+  { id: id(), type: "image", x: 728, y: -791, rotate: 1.5, width: 230, height: 329, src: "/images/play/before.png" },
+  { id: id(), type: "image", x: 1346, y: -756, rotate: 13.5, width: 62, height: 300, src: "/images/play/76.png" },
+  { id: id(), type: "image", x: 909, y: -847, rotate: 7.5, width: 60, height: 48, src: "/images/play/128.png" },
+  { id: id(), type: "image", x: -396, y: -811, rotate: -6.5, width: 288, height: 300, src: "/images/play/speed.png" },
+  { id: id(), type: "image", x: -134, y: -575, rotate: 0, width: 69, height: 109, src: "/images/play/Star-06.png" },
+  { id: id(), type: "text", x: 640, y: -809, rotate: -5.5, width: 200, height: 20, text: "this is what proof looked like", fontSize: 12 },
+  { id: id(), type: "text", x: 645, y: -786, rotate: -5.5, width: 200, height: 20, text: " before I got there", fontSize: 12 },
+  { id: id(), type: "image", x: 271, y: 827, rotate: -15, width: 80, height: 45, src: "/images/play/Arrow-47.png" },
+  { id: id(), type: "text", x: 102, y: 813, rotate: -1.5, width: 200, height: 20, text: "this bad boy has over 50 variations", fontSize: 12 },
+];
+
+/* ─────────────────────────────────────────────────────────
+ * ANIMATION STORYBOARD
+ *
+ * Read top-to-bottom. Each line is a layer of motion.
+ *
+ *    0ms   page mounts — all items invisible
+ *  0–600ms items fade in + scale up (staggered by seed)
+ *  600ms+  breathing loop begins — gentle vertical bob
+ *  hover   item tilts ±2–4° in seeded direction
+ *  pan/scroll  items lag behind fast motion, settle back when idle
+ * ───────────────────────────────────────────────────────── */
+
+/* entrance — fade + scale from 95% */
+const ENTER = {
+  duration:     0.8,     // seconds
+  maxStagger:   0.6,     // seconds, spread across all items
+  initialScale: 0.95,    // scale before appearing
+};
+
+/* breathing — subtle vertical float */
+const BREATHE = {
+  minDuration:  4,       // seconds (slowest item)
+  maxDuration:  7,       // seconds (fastest item)
+  minAmplitude: 3,       // px (smallest bob)
+  maxAmplitude: 6,       // px (largest bob)
+};
+
+/* hover — rotation nudge */
+const HOVER = {
+  minDeg:       1.5,     // minimum rotation nudge
+  maxDeg:       3.5,     // maximum rotation nudge
+};
+
+/* weight — items trail behind fast motion, then settle back (spring-driven) */
+const WEIGHT = {
+  maxLag:    7,      // px — cap so it doesn't look broken
+  stiffness: 0.04,   // spring pull strength (lower = more lag)
+  damping:   0.35,   // velocity retention per frame (lower = snappier settle)
+  velScale:  1.3,    // how much scroll/drag velocity feeds into lag
+};
+
+function seededRandom(id: string) {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (Math.imul(31, h) + id.charCodeAt(i)) | 0;
+  return (((h >>> 0) % 1000) / 1000);
+}
+
+function itemAnimVars(item: CanvasItem) {
+  const seed = seededRandom(item.id);
+  const dur = BREATHE.minDuration + seed * (BREATHE.maxDuration - BREATHE.minDuration);
+  const amp = BREATHE.minAmplitude + seed * (BREATHE.maxAmplitude - BREATHE.minAmplitude);
+  const nudge = HOVER.minDeg + seed * (HOVER.maxDeg - HOVER.minDeg);
+
+  return {
+    "--base-rotate":  `${item.rotate}deg`,
+    "--breathe-dur":  `${dur}s`,
+    "--breathe-delay": `${-(seed * dur)}s`,
+    "--breathe-y":    `${amp}px`,
+    "--hover-nudge":  `${seed > 0.5 ? nudge : -nudge}deg`,
+    "--enter-delay":  `${seed * ENTER.maxStagger}s`,
+  } as React.CSSProperties;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Tile bounds                                                        */
+/* ------------------------------------------------------------------ */
+
+const TILE_PAD = 20;
+
+function computeTile(items: CanvasItem[]) {
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (const it of items) {
+    minX = Math.min(minX, it.x);
+    minY = Math.min(minY, it.y);
+    maxX = Math.max(maxX, it.x + it.width);
+    maxY = Math.max(maxY, it.y + it.height);
+  }
+  return {
+    w: maxX - minX + TILE_PAD * 2,
+    h: maxY - minY + TILE_PAD * 2,
+  };
+}
+
+/* ------------------------------------------------------------------ */
+/*  Main page                                                          */
+/* ------------------------------------------------------------------ */
+
+const INITIAL_OFFSET = { x: -450, y: 100 };
+
+export default function PlayPage() {
+  const [offset, setOffset] = useState(INITIAL_OFFSET);
+  const offsetRef = useRef(INITIAL_OFFSET);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const panning = useRef(false);
+  const panStart = useRef({ x: 0, y: 0 });
+  const panOffsetStart = useRef({ x: 0, y: 0 });
+
+  const velocity = useRef({ x: 0, y: 0 });
+  const lastPointer = useRef({ x: 0, y: 0, t: 0 });
+  const rafId = useRef<number>(0);
+
+  /* weight / inertia — spring-driven lag */
+  const lagRef = useRef<HTMLDivElement>(null);
+  const lagPos = useRef({ x: 0, y: 0 });      // current lag offset
+  const lagVel = useRef({ x: 0, y: 0 });      // lag velocity
+  const lagRaf = useRef<number>(0);
+  const lagActive = useRef(false);
+
+  const tile = useMemo(() => computeTile(ITEMS), []);
+
+  const tiles = useMemo(() => {
+    const vw = typeof window !== "undefined" ? window.innerWidth : 1920;
+    const vh = typeof window !== "undefined" ? window.innerHeight : 1080;
+    const countX = Math.ceil(vw / tile.w) + 2;
+    const countY = Math.ceil(vh / tile.h) + 2;
+    const centerCol = Math.floor(-offset.x / tile.w);
+    const centerRow = Math.floor(-offset.y / tile.h);
+    const halfX = Math.ceil(countX / 2);
+    const halfY = Math.ceil(countY / 2);
+
+    const result: { col: number; row: number }[] = [];
+    for (let row = centerRow - halfY; row <= centerRow + halfY; row++) {
+      for (let col = centerCol - halfX; col <= centerCol + halfX; col++) {
+        result.push({ col, row });
+      }
+    }
+    return result;
+  }, [offset.x, offset.y, tile]);
+
+  /* ---- weight: spring loop ---- */
+  const tickLag = useCallback(() => {
+    const pos = lagPos.current;
+    const vel = lagVel.current;
+
+    vel.x = vel.x * WEIGHT.damping + (0 - pos.x) * WEIGHT.stiffness;
+    vel.y = vel.y * WEIGHT.damping + (0 - pos.y) * WEIGHT.stiffness;
+    pos.x += vel.x;
+    pos.y += vel.y;
+
+    pos.x = Math.max(-WEIGHT.maxLag, Math.min(WEIGHT.maxLag, pos.x));
+    pos.y = Math.max(-WEIGHT.maxLag, Math.min(WEIGHT.maxLag, pos.y));
+
+    const el = lagRef.current;
+    if (el) el.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
+
+    if (Math.abs(pos.x) < 0.1 && Math.abs(pos.y) < 0.1 &&
+        Math.abs(vel.x) < 0.1 && Math.abs(vel.y) < 0.1) {
+      pos.x = 0; pos.y = 0;
+      if (el) el.style.transform = "translate(0,0)";
+      lagActive.current = false;
+      return;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- rAF self-scheduling loop, stable by design
+    lagRaf.current = requestAnimationFrame(tickLag);
+  }, []);
+
+  const nudgeLag = useCallback((dx: number, dy: number) => {
+    lagVel.current.x -= dx * WEIGHT.velScale;
+    lagVel.current.y -= dy * WEIGHT.velScale;
+    if (!lagActive.current) {
+      lagActive.current = true;
+      lagRaf.current = requestAnimationFrame(tickLag);
+    }
+  }, [tickLag]);
+
+  /* ---- pointer drag to pan ---- */
+  const onPointerDown = useCallback((e: React.PointerEvent) => {
+    panning.current = true;
+    panStart.current = { x: e.clientX, y: e.clientY };
+    panOffsetStart.current = { ...offsetRef.current };
+    lastPointer.current = { x: e.clientX, y: e.clientY, t: Date.now() };
+    velocity.current = { x: 0, y: 0 };
+    cancelAnimationFrame(rafId.current);
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    if (containerRef.current) containerRef.current.style.cursor = "grabbing";
+  }, []);
+
+  const onPointerMove = useCallback((e: React.PointerEvent) => {
+    if (!panning.current) return;
+    const dx = e.clientX - panStart.current.x;
+    const dy = e.clientY - panStart.current.y;
+    const next = { x: panOffsetStart.current.x + dx, y: panOffsetStart.current.y + dy };
+    offsetRef.current = next;
+    setOffset(next);
+    const now = Date.now();
+    const dt = now - lastPointer.current.t || 1;
+    velocity.current = {
+      x: (e.clientX - lastPointer.current.x) / dt,
+      y: (e.clientY - lastPointer.current.y) / dt,
+    };
+    lastPointer.current = { x: e.clientX, y: e.clientY, t: now };
+    nudgeLag(velocity.current.x, velocity.current.y);
+  }, [nudgeLag]);
+
+  const onPointerUp = useCallback(() => {
+    if (!panning.current) return;
+    panning.current = false;
+    if (containerRef.current) containerRef.current.style.cursor = "grab";
+    let vx = velocity.current.x * 16;
+    let vy = velocity.current.y * 16;
+    const friction = 0.93;
+    const glide = () => {
+      vx *= friction;
+      vy *= friction;
+      if (Math.abs(vx) < 0.15 && Math.abs(vy) < 0.15) return;
+      offsetRef.current = { x: offsetRef.current.x + vx, y: offsetRef.current.y + vy };
+      setOffset({ ...offsetRef.current });
+      rafId.current = requestAnimationFrame(glide);
+    };
+    rafId.current = requestAnimationFrame(glide);
+  }, []);
+
+  useEffect(() => () => { cancelAnimationFrame(rafId.current); cancelAnimationFrame(lagRaf.current); }, []);
+
+  /* ---- scroll to pan ---- */
+  useEffect(() => {
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const next = {
+        x: offsetRef.current.x - e.deltaX,
+        y: offsetRef.current.y - e.deltaY,
+      };
+      offsetRef.current = next;
+      setOffset(next);
+      nudgeLag(e.deltaX * 0.05, e.deltaY * 0.05);
+    };
+    window.addEventListener("wheel", onWheel, { passive: false });
+    return () => window.removeEventListener("wheel", onWheel);
+  }, [nudgeLag]);
+
+  /* ---- render a single tile ---- */
+  const renderTile = (dx: number, dy: number) => (
+    <div className="absolute pointer-events-none" style={{ transform: `translate(${dx}px, ${dy}px)` }}>
+      {ITEMS.map((item) => {
+        const vars = itemAnimVars(item);
+
+        if (item.type === "image") {
+          return (
+            <div
+              key={item.id}
+              className="absolute play-item"
+              style={{ left: item.x, top: item.y, width: item.width, height: item.height, ...vars }}
+            >
+              {item.src && (
+                <img src={item.src} alt="" draggable={false} style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }} />
+              )}
+            </div>
+          );
+        }
+
+        return (
+          <div
+            key={item.id}
+            className="absolute play-item"
+            style={{ left: item.x, top: item.y, minWidth: 40, ...vars }}
+          >
+            <span style={{
+              fontSize: item.fontSize || 12,
+              fontFamily: item.mono ? "var(--font-geist-mono), monospace" : "inherit",
+              color: "var(--muted)",
+              whiteSpace: "nowrap",
+            }}>
+              {item.text}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+
+  return (
+    <>
+      <NavBar />
+
+      <div
+        ref={containerRef}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        className="fixed inset-0 overflow-hidden select-none"
+        style={{ cursor: "grab", touchAction: "none" }}
+      >
+        {/* dot grid */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: "radial-gradient(circle, rgba(0,0,0,.15) 1px, transparent 1px)",
+            backgroundSize: "32px 32px",
+          }}
+        />
+
+        {/* panning layer — pointer-events-none so hover reaches items */}
+        <div
+          className="absolute will-change-transform pointer-events-none"
+          style={{
+            transform: `translate(${offset.x}px, ${offset.y}px)`,
+            transformOrigin: "0 0",
+            left: "50%",
+            top: "50%",
+          }}
+        >
+          {/* weight layer — trails behind fast motion, settles back */}
+          <div ref={lagRef} className="will-change-transform">
+            {tiles.map((t) => (
+              <div key={`${t.col},${t.row}`} className="pointer-events-none">
+                {renderTile(t.col * tile.w, t.row * tile.h)}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}

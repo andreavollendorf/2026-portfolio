@@ -4,7 +4,6 @@ import localFont from "next/font/local";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { Analytics } from "@vercel/analytics/next";
 import { Agentation } from "agentation";
-import "dialkit/styles.css";
 import "./globals.css";
 
 const geistSans = Geist({

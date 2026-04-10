@@ -202,6 +202,39 @@ input, textarea, select { font-size: 16px; }
 }
 
 
+/* ─────────────────────────────────────────────────────────
+ * Play canvas animations
+ *
+ * Property ownership (avoids conflicts):
+ *   opacity    → play-enter (once)
+ *   translate  → play-breathe (loop)
+ *   transform  → base rotation + hover nudge (transition)
+ * ───────────────────────────────────────────────────────── */
+
+@keyframes play-enter {
+  from { opacity: 0; transform: rotate(var(--base-rotate, 0deg)) scale(0.95); }
+  to   { opacity: 1; transform: rotate(var(--base-rotate, 0deg)) scale(1); }
+}
+
+@keyframes play-breathe {
+  0%, 100% { translate: 0 0; }
+  50%      { translate: 0 var(--breathe-y, 4px); }
+}
+
+.play-item {
+  pointer-events: auto;
+  transform: rotate(var(--base-rotate, 0deg));
+  animation:
+    play-enter 0.8s ease-out var(--enter-delay, 0s) both,
+    play-breathe var(--breathe-dur, 5s) ease-in-out var(--breathe-delay, 0s) infinite;
+  transition: transform 300ms cubic-bezier(.2,.8,.3,1);
+}
+
+.play-item:hover {
+  transform: rotate(calc(var(--base-rotate, 0deg) + var(--hover-nudge, 2deg)));
+  cursor: default;
+}
+
 /* Respect reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
