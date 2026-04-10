@@ -218,6 +218,9 @@ export default function PlayPage() {
     return () => mq.removeEventListener("change", apply);
   }, []);
 
+  const playLayoutRef = useRef(playLayout);
+  playLayoutRef.current = playLayout;
+
   const [offset, setOffset] = useState(INITIAL_OFFSET);
   const offsetRef = useRef(INITIAL_OFFSET);
   const panLayerRef = useRef<HTMLDivElement>(null);
@@ -252,11 +255,25 @@ export default function PlayPage() {
       const tc = tileCenterRef.current;
       if (col !== tc.col || row !== tc.row) {
         tileCenterRef.current = { col, row };
-        startTransition(() => setOffset({ x, y }));
+        /* Compact: sync state immediately so tile dx/dy and ref transform stay aligned (no startTransition snap). */
+        if (playLayoutRef.current === "compact") {
+          setOffset({ x, y });
+        } else {
+          startTransition(() => setOffset({ x, y }));
+        }
       }
     },
     [tile.w, tile.h],
   );
+
+  /* Compact: pan transform is ref-only so React re-renders never overwrite live pan with stale offset. */
+  useLayoutEffect(() => {
+    if (playLayout !== "compact") return;
+    const el = panLayerRef.current;
+    if (!el) return;
+    const { x, y } = offsetRef.current;
+    el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+  }, [playLayout, offset.x, offset.y]);
 
   /**
    * Don’t put `transform` on the pan layer’s React `style` object: any re-render would apply
@@ -440,7 +457,7 @@ export default function PlayPage() {
                   src={item.src}
                   alt=""
                   draggable={false}
-                  loading="lazy"
+                  loading={playLayout === "compact" ? "eager" : "lazy"}
                   decoding="async"
                   style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
                 />
@@ -468,9 +485,11 @@ export default function PlayPage() {
       })}
       {componentItems.map((item) => {
         const vars = itemAnimVars(item);
+        /* Compact: stable key so Minesweeper doesn’t remount when tile cell dx/dy updates. */
+        const compKey = playLayout === "compact" ? item.id : `${item.id}@${dx},${dy}`;
         return (
           <div
-            key={`${item.id}@${dx},${dy}`}
+            key={compKey}
             className="absolute play-item"
             style={{ left: item.x, top: item.y, zIndex: 2, ...vars }}
           >
@@ -524,10 +543,16 @@ export default function PlayPage() {
         {/* panning layer — pointer-events-none so hover reaches items */}
         <div
           ref={setPanLayerRef}
-          className="absolute will-change-transform pointer-events-none"
+          className={
+            playLayout === "compact"
+              ? "absolute pointer-events-none"
+              : "absolute will-change-transform pointer-events-none"
+          }
           style={{
-            /* Must be in the tree from the first paint (SSR + hydration); ref-only transform ran too late and caused a visible snap. */
-            transform: `translate3d(${offset.x}px, ${offset.y}px, 0)`,
+            /* Full layout: transform in React avoids first-paint snap. Compact: ref-only + useLayoutEffect — avoids iOS flicker when state lags ref during pan. */
+            ...(playLayout === "full"
+              ? { transform: `translate3d(${offset.x}px, ${offset.y}px, 0)` }
+              : {}),
             transformOrigin: "0 0",
             left: "50%",
             top: "50%",
@@ -535,7 +560,10 @@ export default function PlayPage() {
           }}
         >
           {tiles.map((t) => (
-            <div key={`${t.col},${t.row}`} className="pointer-events-none">
+            <div
+              key={playLayout === "compact" ? "play-compact-tile" : `${t.col},${t.row}`}
+              className="pointer-events-none"
+            >
               {renderTile(t.col * tile.w, t.row * tile.h)}
             </div>
           ))}
