@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# play tooling (local editor, not published)
+/app/play-tooling
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

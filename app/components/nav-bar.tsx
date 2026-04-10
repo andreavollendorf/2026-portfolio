@@ -93,19 +93,12 @@ export default function NavBar({
             About
           </Link>
           <WorkDropdown caseStudies={caseStudies} />
-          <div className="relative group">
-            <span
-              className="text-[12px] font-[450] text-[rgba(0,0,0,.55)] link-hover hover:bg-[var(--surface)] transition-colors h-8 px-3 flex items-center rounded-md cursor-default"
-            >
-              Play
-            </span>
-            <span
-              className="absolute left-1/2 -translate-x-1/2 top-full mt-2 rounded-lg text-white text-[13px] font-[500] px-4 py-1.5 whitespace-nowrap opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100 pointer-events-none transition-[opacity,transform] duration-150"
-              style={{ backgroundColor: "rgba(0,0,0,.85)", boxShadow: "0 4px 24px rgba(0,0,0,.12)", transitionTimingFunction: "var(--ease-out-quart)" }}
-            >
-              Coming Soon
-            </span>
-          </div>
+          <Link
+            href="/play"
+            className="text-[12px] font-[450] text-[rgba(0,0,0,.55)] link-hover hover:bg-[var(--surface)] transition-colors h-8 px-3 flex items-center rounded-md focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--foreground)] outline-none"
+          >
+            Play
+          </Link>
           <ContactDropdown />
         </div>
         {/* Mobile */}
