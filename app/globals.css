@@ -64,6 +64,28 @@
 
 html {
   scroll-behavior: smooth;
+  /* Always use a vertical scroll lane so width doesn’t change when a route has no document scroll
+     (e.g. /play). scrollbar-gutter alone is unreliable with overlay scrollbars (common on macOS). */
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.28) transparent;
+}
+
+/* WebKit: styled scrollbar encourages a non-overlay lane that actually consumes width. */
+html::-webkit-scrollbar {
+  width: 10px;
+}
+html::-webkit-scrollbar-track {
+  background: transparent;
+}
+html::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+html::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.32);
 }
 
 body {

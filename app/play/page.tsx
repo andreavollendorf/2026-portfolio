@@ -382,7 +382,7 @@ export default function PlayPage() {
 
   return (
     <>
-      <NavBar />
+      <NavBar showBack />
 
       <div
         ref={containerRef}
