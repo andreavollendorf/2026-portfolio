@@ -185,6 +185,9 @@ const PLAY_TILE_RING_H = 2400;
 /** Below this width, mount one tile only (avoids iOS Safari OOM / “A problem repeatedly occurred”). */
 const PLAY_MOBILE_MQ = "(max-width: 767px)";
 
+/** Compact: always one canonical tile at origin — pan is only the outer translate. Updating col/row on grid crossings jumped the inner layer by ±tile.w and caused iOS to clip/vanish layers after long pans. */
+const PLAY_COMPACT_TILES: { col: number; row: number }[] = [{ col: 0, row: 0 }];
+
 function computeTile(items: CanvasItem[]) {
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
   for (const it of items) {
@@ -255,10 +258,8 @@ export default function PlayPage() {
       const tc = tileCenterRef.current;
       if (col !== tc.col || row !== tc.row) {
         tileCenterRef.current = { col, row };
-        /* Compact: sync state immediately so tile dx/dy and ref transform stay aligned (no startTransition snap). */
-        if (playLayoutRef.current === "compact") {
-          setOffset({ x, y });
-        } else {
+        /* Compact: never update offset — tile stays at (0,0); only ref pan moves (avoids inner translate jumps / iOS layer bugs). */
+        if (playLayoutRef.current !== "compact") {
           startTransition(() => setOffset({ x, y }));
         }
       }
@@ -266,14 +267,28 @@ export default function PlayPage() {
     [tile.w, tile.h],
   );
 
-  /* Compact: pan transform is ref-only so React re-renders never overwrite live pan with stale offset. */
+  /* Compact: sync pan from ref when entering compact (offset state is not updated while panning on compact). */
   useLayoutEffect(() => {
     if (playLayout !== "compact") return;
     const el = panLayerRef.current;
     if (!el) return;
     const { x, y } = offsetRef.current;
     el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-  }, [playLayout, offset.x, offset.y]);
+  }, [playLayout]);
+
+  const prevPlayLayoutRef = useRef(playLayout);
+  /* Leaving compact: full layout reads pan from React `offset` — flush ref so we don’t snap to stale state. */
+  useLayoutEffect(() => {
+    const prev = prevPlayLayoutRef.current;
+    prevPlayLayoutRef.current = playLayout;
+    if (prev !== "compact" || playLayout !== "full") return;
+    const { x, y } = offsetRef.current;
+    setOffset({ x, y });
+    tileCenterRef.current = {
+      col: Math.floor(-x / tile.w),
+      row: Math.floor(-y / tile.h),
+    };
+  }, [playLayout, tile.w, tile.h]);
 
   /**
    * Don’t put `transform` on the pan layer’s React `style` object: any re-render would apply
@@ -289,14 +304,14 @@ export default function PlayPage() {
   }, []);
 
   const tiles = useMemo(() => {
-    const centerCol = Math.floor(-offset.x / tile.w);
-    const centerRow = Math.floor(-offset.y / tile.h);
-
     if (playLayout === "pending") return [];
 
     if (playLayout === "compact") {
-      return [{ col: centerCol, row: centerRow }];
+      return PLAY_COMPACT_TILES;
     }
+
+    const centerCol = Math.floor(-offset.x / tile.w);
+    const centerRow = Math.floor(-offset.y / tile.h);
 
     const countX = Math.ceil(PLAY_TILE_RING_W / tile.w) + 2;
     const countY = Math.ceil(PLAY_TILE_RING_H / tile.h) + 2;
