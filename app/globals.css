@@ -206,14 +206,14 @@ input, textarea, select { font-size: 16px; }
  * Play canvas animations
  *
  * Property ownership (avoids conflicts):
- *   opacity    → play-enter (once)
- *   translate  → play-breathe (loop)
- *   transform  → base rotation + hover nudge (transition)
+ *   opacity + scale → play-enter (once, then releases)
+ *   translate       → play-breathe (loop)
+ *   transform       → base rotation + hover nudge (transition)
  * ───────────────────────────────────────────────────────── */
 
 @keyframes play-enter {
-  from { opacity: 0; transform: rotate(var(--base-rotate, 0deg)) scale(0.95); }
-  to   { opacity: 1; transform: rotate(var(--base-rotate, 0deg)) scale(1); }
+  from { opacity: 0; scale: 0.95; }
+  to   { opacity: 1; scale: 1; }
 }
 
 @keyframes play-breathe {
