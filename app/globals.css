@@ -257,6 +257,11 @@ input, textarea, select { font-size: 16px; }
   cursor: default;
 }
 
+/* Pause infinite “breathe” keyframes while panning / scrolling / gliding — huge compositor win. */
+.play-canvas-root.play-canvas-moving .play-item {
+  animation-play-state: paused;
+}
+
 /* Respect reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

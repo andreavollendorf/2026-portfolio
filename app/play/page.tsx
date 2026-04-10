@@ -1,8 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  startTransition,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import NavBar from "../components/nav-bar";
-import Minesweeper from "../components/minesweeper";
+import Minesweeper, { MinesweeperProvider } from "../components/minesweeper";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -114,7 +121,7 @@ const ITEMS: CanvasItem[] = [
  *  0–600ms items fade in + scale up (staggered by seed)
  *  600ms+  breathing loop begins — gentle vertical bob
  *  hover   item tilts ±2–4° in seeded direction
- *  pan/scroll  items lag behind fast motion, settle back when idle
+ *  pan/scroll  (optional parallax removed for lighter feel)
  * ───────────────────────────────────────────────────────── */
 
 /* entrance — fade + scale from 95% */
@@ -136,14 +143,6 @@ const BREATHE = {
 const HOVER = {
   minDeg:       1.5,     // minimum rotation nudge
   maxDeg:       3.5,     // maximum rotation nudge
-};
-
-/* weight — items trail behind fast motion, then settle back (spring-driven) */
-const WEIGHT = {
-  maxLag:    7,      // px — cap so it doesn't look broken
-  stiffness: 0.04,   // spring pull strength (lower = more lag)
-  damping:   0.35,   // velocity retention per frame (lower = snappier settle)
-  velScale:  1.3,    // how much scroll/drag velocity feeds into lag
 };
 
 function seededRandom(id: string) {
@@ -174,6 +173,14 @@ function itemAnimVars(item: CanvasItem) {
 
 const TILE_PAD = 20;
 
+/**
+ * Virtual viewport for tile-ring density. Intentionally not tied to `window` so the server
+ * and the client’s first paint compute the same `tiles` list — otherwise hydration swaps
+ * the subtree and the canvas appears to jump after load.
+ */
+const PLAY_TILE_RING_W = 4096;
+const PLAY_TILE_RING_H = 2400;
+
 function computeTile(items: CanvasItem[]) {
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
   for (const it of items) {
@@ -195,8 +202,17 @@ function computeTile(items: CanvasItem[]) {
 const INITIAL_OFFSET = { x: -450, y: 100 };
 
 export default function PlayPage() {
+  const tile = useMemo(() => computeTile(ITEMS), []);
+
   const [offset, setOffset] = useState(INITIAL_OFFSET);
   const offsetRef = useRef(INITIAL_OFFSET);
+  const panLayerRef = useRef<HTMLDivElement>(null);
+  /** Tile grid center; only when this changes do we need a React re-render. */
+  const tileCenterRef = useRef({
+    col: Math.floor(-INITIAL_OFFSET.x / tile.w),
+    row: Math.floor(-INITIAL_OFFSET.y / tile.h),
+  });
+
   const containerRef = useRef<HTMLDivElement>(null);
   const panning = useRef(false);
   const panStart = useRef({ x: 0, y: 0 });
@@ -205,21 +221,45 @@ export default function PlayPage() {
   const velocity = useRef({ x: 0, y: 0 });
   const lastPointer = useRef({ x: 0, y: 0, t: 0 });
   const rafId = useRef<number>(0);
+  const glidingRef = useRef(false);
+  const wheelAccRef = useRef({ x: 0, y: 0 });
+  const wheelRafRef = useRef<number>(0);
+  const wheelIdleTimerRef = useRef(0 as number | undefined);
 
-  /* weight / inertia — spring-driven lag */
-  const lagRef = useRef<HTMLDivElement>(null);
-  const lagPos = useRef({ x: 0, y: 0 });      // current lag offset
-  const lagVel = useRef({ x: 0, y: 0 });      // lag velocity
-  const lagRaf = useRef<number>(0);
-  const lagActive = useRef(false);
+  /** Pan transform via ref so pointermove doesn’t re-render the whole canvas every event. */
+  const applyPan = useCallback(
+    (x: number, y: number) => {
+      offsetRef.current = { x, y };
+      const el = panLayerRef.current;
+      if (el) el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
 
-  const tile = useMemo(() => computeTile(ITEMS), []);
+      const col = Math.floor(-x / tile.w);
+      const row = Math.floor(-y / tile.h);
+      const tc = tileCenterRef.current;
+      if (col !== tc.col || row !== tc.row) {
+        tileCenterRef.current = { col, row };
+        startTransition(() => setOffset({ x, y }));
+      }
+    },
+    [tile.w, tile.h],
+  );
+
+  /**
+   * Don’t put `transform` on the pan layer’s React `style` object: any re-render would apply
+   * stale `offset` state and overwrite the live transform from `applyPan`, snapping the
+   * canvas (and e.g. hiding Minesweeper off-screen). Sync from offsetRef whenever the node mounts.
+   */
+  const setPanLayerRef = useCallback((el: HTMLDivElement | null) => {
+    panLayerRef.current = el;
+    if (el) {
+      const { x, y } = offsetRef.current;
+      el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+    }
+  }, []);
 
   const tiles = useMemo(() => {
-    const vw = typeof window !== "undefined" ? window.innerWidth : 1920;
-    const vh = typeof window !== "undefined" ? window.innerHeight : 1080;
-    const countX = Math.ceil(vw / tile.w) + 2;
-    const countY = Math.ceil(vh / tile.h) + 2;
+    const countX = Math.ceil(PLAY_TILE_RING_W / tile.w) + 2;
+    const countY = Math.ceil(PLAY_TILE_RING_H / tile.h) + 2;
     const centerCol = Math.floor(-offset.x / tile.w);
     const centerRow = Math.floor(-offset.y / tile.h);
     const halfX = Math.ceil(countX / 2);
@@ -234,114 +274,133 @@ export default function PlayPage() {
     return result;
   }, [offset.x, offset.y, tile]);
 
-  /* ---- weight: spring loop ---- */
-  const tickLag = useCallback(() => {
-    const pos = lagPos.current;
-    const vel = lagVel.current;
-
-    vel.x = vel.x * WEIGHT.damping + (0 - pos.x) * WEIGHT.stiffness;
-    vel.y = vel.y * WEIGHT.damping + (0 - pos.y) * WEIGHT.stiffness;
-    pos.x += vel.x;
-    pos.y += vel.y;
-
-    pos.x = Math.max(-WEIGHT.maxLag, Math.min(WEIGHT.maxLag, pos.x));
-    pos.y = Math.max(-WEIGHT.maxLag, Math.min(WEIGHT.maxLag, pos.y));
-
-    const el = lagRef.current;
-    if (el) el.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
-
-    if (Math.abs(pos.x) < 0.1 && Math.abs(pos.y) < 0.1 &&
-        Math.abs(vel.x) < 0.1 && Math.abs(vel.y) < 0.1) {
-      pos.x = 0; pos.y = 0;
-      if (el) el.style.transform = "translate(0,0)";
-      lagActive.current = false;
-      return;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- rAF self-scheduling loop, stable by design
-    lagRaf.current = requestAnimationFrame(tickLag);
+  /* ---- pointer drag to pan ---- */
+  const setCanvasMoving = useCallback((on: boolean) => {
+    const el = containerRef.current;
+    if (!el) return;
+    el.classList.toggle("play-canvas-moving", on);
   }, []);
 
-  const nudgeLag = useCallback((dx: number, dy: number) => {
-    lagVel.current.x -= dx * WEIGHT.velScale;
-    lagVel.current.y -= dy * WEIGHT.velScale;
-    if (!lagActive.current) {
-      lagActive.current = true;
-      lagRaf.current = requestAnimationFrame(tickLag);
+  const scheduleWheelIdleClear = useCallback(() => {
+    if (wheelIdleTimerRef.current !== undefined) {
+      window.clearTimeout(wheelIdleTimerRef.current);
     }
-  }, [tickLag]);
+    wheelIdleTimerRef.current = window.setTimeout(() => {
+      if (!panning.current && !glidingRef.current) setCanvasMoving(false);
+    }, 100);
+  }, [setCanvasMoving]);
 
-  /* ---- pointer drag to pan ---- */
+  const flushWheelAccum = useCallback(() => {
+    const acc = wheelAccRef.current;
+    wheelRafRef.current = 0;
+    if (acc.x === 0 && acc.y === 0) return;
+    wheelAccRef.current = { x: 0, y: 0 };
+    applyPan(offsetRef.current.x - acc.x, offsetRef.current.y - acc.y);
+  }, [applyPan]);
+
   const onPointerDown = useCallback((e: React.PointerEvent) => {
     panning.current = true;
+    setCanvasMoving(true);
+    if (wheelIdleTimerRef.current !== undefined) {
+      window.clearTimeout(wheelIdleTimerRef.current);
+    }
     panStart.current = { x: e.clientX, y: e.clientY };
     panOffsetStart.current = { ...offsetRef.current };
     lastPointer.current = { x: e.clientX, y: e.clientY, t: Date.now() };
     velocity.current = { x: 0, y: 0 };
     cancelAnimationFrame(rafId.current);
+    glidingRef.current = false;
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
     if (containerRef.current) containerRef.current.style.cursor = "grabbing";
-  }, []);
+  }, [setCanvasMoving]);
 
   const onPointerMove = useCallback((e: React.PointerEvent) => {
     if (!panning.current) return;
     const dx = e.clientX - panStart.current.x;
     const dy = e.clientY - panStart.current.y;
     const next = { x: panOffsetStart.current.x + dx, y: panOffsetStart.current.y + dy };
-    offsetRef.current = next;
-    setOffset(next);
     const now = Date.now();
-    const dt = now - lastPointer.current.t || 1;
+    const dt = Math.max(1, now - lastPointer.current.t);
     velocity.current = {
       x: (e.clientX - lastPointer.current.x) / dt,
       y: (e.clientY - lastPointer.current.y) / dt,
     };
     lastPointer.current = { x: e.clientX, y: e.clientY, t: now };
-    nudgeLag(velocity.current.x, velocity.current.y);
-  }, [nudgeLag]);
+    /* 1:1 pan only — lag spring during drag fought the pointer and felt rubbery. */
+    applyPan(next.x, next.y);
+  }, [applyPan]);
 
   const onPointerUp = useCallback(() => {
     if (!panning.current) return;
     panning.current = false;
     if (containerRef.current) containerRef.current.style.cursor = "grab";
-    let vx = velocity.current.x * 16;
-    let vy = velocity.current.y * 16;
-    const friction = 0.93;
-    const glide = () => {
-      vx *= friction;
-      vy *= friction;
-      if (Math.abs(vx) < 0.15 && Math.abs(vy) < 0.15) return;
-      offsetRef.current = { x: offsetRef.current.x + vx, y: offsetRef.current.y + vy };
-      setOffset({ ...offsetRef.current });
+    /* px/ms → px/s for time-based glide */
+    let vx = velocity.current.x * 1000;
+    let vy = velocity.current.y * 1000;
+    let lastT = performance.now();
+    const low = Math.abs(vx) < 8 && Math.abs(vy) < 8;
+    if (low) {
+      glidingRef.current = false;
+      setCanvasMoving(false);
+      return;
+    }
+    glidingRef.current = true;
+    const glide = (t: number) => {
+      const dt = Math.min(48, t - lastT) / 1000;
+      lastT = t;
+      const decay = Math.exp(-10 * dt);
+      vx *= decay;
+      vy *= decay;
+      if (Math.abs(vx) < 8 && Math.abs(vy) < 8) {
+        glidingRef.current = false;
+        setCanvasMoving(false);
+        return;
+      }
+      const nx = offsetRef.current.x + vx * dt;
+      const ny = offsetRef.current.y + vy * dt;
+      applyPan(nx, ny);
       rafId.current = requestAnimationFrame(glide);
     };
     rafId.current = requestAnimationFrame(glide);
-  }, []);
+  }, [applyPan, setCanvasMoving]);
 
-  useEffect(() => () => { cancelAnimationFrame(rafId.current); cancelAnimationFrame(lagRaf.current); }, []);
+  useEffect(
+    () => () => {
+      cancelAnimationFrame(rafId.current);
+      cancelAnimationFrame(wheelRafRef.current);
+      if (wheelIdleTimerRef.current !== undefined) {
+        window.clearTimeout(wheelIdleTimerRef.current);
+      }
+    },
+    [],
+  );
 
-  /* ---- scroll to pan ---- */
+  /* ---- scroll to pan (coalesced per frame — no lag spring; it fought scroll) ---- */
   useEffect(() => {
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
-      const next = {
-        x: offsetRef.current.x - e.deltaX,
-        y: offsetRef.current.y - e.deltaY,
-      };
-      offsetRef.current = next;
-      setOffset(next);
-      nudgeLag(e.deltaX * 0.05, e.deltaY * 0.05);
+      setCanvasMoving(true);
+      if (wheelIdleTimerRef.current !== undefined) {
+        window.clearTimeout(wheelIdleTimerRef.current);
+      }
+      wheelAccRef.current.x += e.deltaX;
+      wheelAccRef.current.y += e.deltaY;
+      if (!wheelRafRef.current) {
+        wheelRafRef.current = requestAnimationFrame(flushWheelAccum);
+      }
+      scheduleWheelIdleClear();
     };
     window.addEventListener("wheel", onWheel, { passive: false });
     return () => window.removeEventListener("wheel", onWheel);
-  }, [nudgeLag]);
+  }, [flushWheelAccum, scheduleWheelIdleClear, setCanvasMoving]);
 
-  /* items split: components render once (outside tiles), static items tile */
+  /* Static media tiles; interactive components tile the same way so they repeat on the infinite canvas. */
   const staticItems = ITEMS.filter(i => i.type !== "component");
   const componentItems = ITEMS.filter(i => i.type === "component");
 
   /* ---- render a single tile ---- */
   const renderTile = (dx: number, dy: number) => (
-    <div className="absolute pointer-events-none" style={{ transform: `translate(${dx}px, ${dy}px)` }}>
+    <div className="absolute pointer-events-none" style={{ transform: `translate3d(${dx}px, ${dy}px, 0)` }}>
       {staticItems.map((item) => {
         const vars = itemAnimVars(item);
 
@@ -377,11 +436,23 @@ export default function PlayPage() {
           </div>
         );
       })}
+      {componentItems.map((item) => {
+        const vars = itemAnimVars(item);
+        return (
+          <div
+            key={`${item.id}@${dx},${dy}`}
+            className="absolute play-item"
+            style={{ left: item.x, top: item.y, zIndex: 2, ...vars }}
+          >
+            {item.component === "minesweeper" && <Minesweeper />}
+          </div>
+        );
+      })}
     </div>
   );
 
   return (
-    <>
+    <MinesweeperProvider>
       <NavBar showBack />
 
       <div
@@ -390,7 +461,7 @@ export default function PlayPage() {
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
-        className="fixed inset-0 overflow-hidden select-none"
+        className="play-canvas-root fixed inset-0 overflow-hidden select-none"
         style={{ cursor: "grab", touchAction: "none" }}
       >
         {/* dot grid */}
@@ -404,38 +475,24 @@ export default function PlayPage() {
 
         {/* panning layer — pointer-events-none so hover reaches items */}
         <div
+          ref={setPanLayerRef}
           className="absolute will-change-transform pointer-events-none"
           style={{
-            transform: `translate(${offset.x}px, ${offset.y}px)`,
+            /* Must be in the tree from the first paint (SSR + hydration); ref-only transform ran too late and caused a visible snap. */
+            transform: `translate3d(${offset.x}px, ${offset.y}px, 0)`,
             transformOrigin: "0 0",
             left: "50%",
             top: "50%",
+            backfaceVisibility: "hidden",
           }}
         >
-          {/* weight layer — trails behind fast motion, settles back */}
-          <div ref={lagRef} className="will-change-transform">
-            {tiles.map((t) => (
-              <div key={`${t.col},${t.row}`} className="pointer-events-none">
-                {renderTile(t.col * tile.w, t.row * tile.h)}
-              </div>
-            ))}
-
-            {/* interactive components — render once, not tiled */}
-            {componentItems.map((item) => {
-              const vars = itemAnimVars(item);
-              return (
-                <div
-                  key={item.id}
-                  className="absolute play-item"
-                  style={{ left: item.x, top: item.y, ...vars }}
-                >
-                  {item.component === "minesweeper" && <Minesweeper />}
-                </div>
-              );
-            })}
-          </div>
+          {tiles.map((t) => (
+            <div key={`${t.col},${t.row}`} className="pointer-events-none">
+              {renderTile(t.col * tile.w, t.row * tile.h)}
+            </div>
+          ))}
         </div>
       </div>
-    </>
+    </MinesweeperProvider>
   );
 }

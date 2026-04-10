@@ -1,6 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type MouseEvent,
+  type ReactNode,
+} from "react";
 
 /* ------------------------------------------------------------------ */
 /*  Config                                                              */
@@ -155,7 +166,7 @@ function Digit({ char }: { char: string }) {
   const w = 13, h = 23;
   const t = 2; // segment thickness
 
-  const segStyle = (on: boolean): React.CSSProperties => ({
+  const segStyle = (on: boolean): CSSProperties => ({
     position: "absolute",
     background: on ? C.ledOn : C.ledOff,
     transition: "none",
@@ -206,10 +217,10 @@ function LedDisplay({ value }: { value: number }) {
 
 function SmileyFace({ state, pressing }: { state: GameState; pressing: boolean }) {
   let face: string;
-  if (state === "won") face = "😎";
-  else if (state === "lost") face = "😵";
-  else if (pressing) face = "😮";
-  else face = "🙂";
+  if (state === "won") face = "\u{1F60E}";
+  else if (state === "lost") face = "\u{1F635}";
+  else if (pressing) face = "\u{1F62E}";
+  else face = "\u{1F642}";
 
   return (
     <span style={{ fontSize: 18, lineHeight: "24px", userSelect: "none" }}>
@@ -219,10 +230,32 @@ function SmileyFace({ state, pressing }: { state: GameState; pressing: boolean }
 }
 
 /* ------------------------------------------------------------------ */
-/*  Main component                                                      */
+/*  Shared game context (one board for every tiled instance)          */
 /* ------------------------------------------------------------------ */
 
-export default function Minesweeper() {
+type MinesweeperContextValue = {
+  board: Cell[][];
+  gameState: GameState;
+  time: number;
+  pressing: boolean;
+  minesRemaining: number;
+  reset: () => void;
+  handleClick: (r: number, c: number) => void;
+  handleRightClick: (e: MouseEvent, r: number, c: number) => void;
+  handleChord: (r: number, c: number) => void;
+  onGridMouseDown: () => void;
+  onGridMouseUp: () => void;
+};
+
+const MinesweeperContext = createContext<MinesweeperContextValue | null>(null);
+
+function useMinesweeperContext() {
+  const v = useContext(MinesweeperContext);
+  if (!v) throw new Error("Minesweeper must be used within MinesweeperProvider");
+  return v;
+}
+
+export function MinesweeperProvider({ children }: { children: ReactNode }) {
   const [board, setBoard] = useState(() => createBoard(ROWS, COLS));
   const [gameState, setGameState] = useState<GameState>("idle");
   const [time, setTime] = useState(0);
@@ -282,7 +315,7 @@ export default function Minesweeper() {
   }, [gameState, board]);
 
   /* right click — flag */
-  const handleRightClick = useCallback((e: React.MouseEvent, r: number, c: number) => {
+  const handleRightClick = useCallback((e: MouseEvent, r: number, c: number) => {
     e.preventDefault();
     if (gameState === "won" || gameState === "lost") return;
 
@@ -344,10 +377,63 @@ export default function Minesweeper() {
     return () => window.removeEventListener("mouseup", up);
   }, []);
 
-  /* ---- render ---- */
+  const value = useMemo(
+    () => ({
+      board,
+      gameState,
+      time,
+      pressing,
+      minesRemaining,
+      reset,
+      handleClick,
+      handleRightClick,
+      handleChord,
+      onGridMouseDown,
+      onGridMouseUp,
+    }),
+    [
+      board,
+      gameState,
+      time,
+      pressing,
+      minesRemaining,
+      reset,
+      handleClick,
+      handleRightClick,
+      handleChord,
+      onGridMouseDown,
+      onGridMouseUp,
+    ],
+  );
+
+  return (
+    <MinesweeperContext.Provider value={value}>
+      {children}
+    </MinesweeperContext.Provider>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  View — render once per tile; all share context */
+/* ------------------------------------------------------------------ */
+
+export default function Minesweeper() {
+  const {
+    board,
+    gameState,
+    time,
+    pressing,
+    minesRemaining,
+    reset,
+    handleClick,
+    handleRightClick,
+    handleChord,
+    onGridMouseDown,
+    onGridMouseUp,
+  } = useMinesweeperContext();
+
   const gridW = COLS * CELL;
   const gridH = ROWS * CELL;
-  const windowW = gridW + 20; // 10px padding each side
 
   return (
     <div
@@ -374,10 +460,10 @@ export default function Minesweeper() {
         marginBottom: 3,
       }}>
         {/* mine icon */}
-        <span style={{ fontSize: 12 }}>💣</span>
+        <span style={{ fontSize: 12 }}>{"\u{1F4A3}"}</span>
         <span style={{ flex: 1 }}>Minesweeper</span>
         {/* window buttons */}
-        {["_", "□", "✕"].map((label, i) => (
+        {["_", "\u25A1", "\u2715"].map((label, i) => (
           <button key={i} style={{
             width: 16,
             height: 14,
@@ -454,11 +540,11 @@ export default function Minesweeper() {
 
               /* revealed cell */
               if (cell.revealed) {
-                let content: React.ReactNode = null;
+                let content: ReactNode = null;
                 let bg = C.surface;
 
                 if (cell.mine) {
-                  content = <span style={{ fontSize: CELL * 0.65 }}>💣</span>;
+                  content = <span style={{ fontSize: CELL * 0.65 }}>{"\u{1F4A3}"}</span>;
                   // the clicked mine gets red bg — mark it specially
                   if (gameState === "lost") bg = C.surface;
                 } else if (cell.adjacent > 0) {
@@ -515,7 +601,7 @@ export default function Minesweeper() {
                     boxSizing: "border-box",
                   }}
                 >
-                  {cell.flagged && <span style={{ fontSize: CELL * 0.6 }}>🚩</span>}
+                  {cell.flagged && <span style={{ fontSize: CELL * 0.6 }}>{"\u{1F6A9}"}</span>}
                 </div>
               );
             })
