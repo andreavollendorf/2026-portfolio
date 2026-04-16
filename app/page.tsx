@@ -146,7 +146,7 @@ export default function Home() {
             {
               quote: "Andrea is the best design leader I\u2019ve worked with in my entire career. Not even close. She\u2019s an insanely sharp systems thinker\u2009\u2014\u2009when things get messy, she steps back, sees the whole system clearly, and simplifies it into something the team can actually act on. She brings a level of kindness, joy and care that is uncommon.",
               name: "Shaun Tan",
-              role: "Product Designer, Proof",
+              role: "Senior Product Designer, Hebbia",
               photo: "/images/testimonials/shaun.jpeg",
               gif: "/images/testimonials/office.gif",
             },
